@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/DubrovEva/higher_search/internal/app"
+	"github.com/DubrovEva/higher_search/backend/internal/app"
 	"log"
 	"os/signal"
 	"syscall"

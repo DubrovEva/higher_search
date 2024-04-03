@@ -131,11 +131,11 @@ type UserInfo struct {
 	Surname     string     `protobuf:"bytes,3,opt,name=surname,proto3" json:"surname,omitempty"`
 	MiddleName  string     `protobuf:"bytes,4,opt,name=middle_name,json=middleName,proto3" json:"middle_name,omitempty"`
 	Description string     `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Email       string     `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
-	Contacts    []*Contact `protobuf:"bytes,7,rep,name=contacts,proto3" json:"contacts,omitempty"`
-	Salt        string     `protobuf:"bytes,8,opt,name=salt,proto3" json:"salt,omitempty"`
-	Hash        string     `protobuf:"bytes,9,opt,name=hash,proto3" json:"hash,omitempty"`
-	Role        Role       `protobuf:"varint,10,opt,name=role,proto3,enum=user.Role" json:"role,omitempty"`
+	Email    string     `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	Contacts []*Contact `protobuf:"bytes,7,rep,name=contacts,proto3" json:"contacts,omitempty"`
+	Salt     string     `protobuf:"bytes,8,opt,name=salt,proto3" json:"salt,omitempty"`
+	Hash     string     `protobuf:"bytes,9,opt,name=hash,proto3" json:"hash,omitempty"`
+	Role     Role       `protobuf:"varint,10,opt,name=role,proto3,enum=user.Role" json:"role,omitempty"`
 }
 
 func (x *UserInfo) Reset() {

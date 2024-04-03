@@ -8,7 +8,7 @@ package service
 
 import (
 	context "context"
-	model "github.com/DubrovEva/higher_search/pkg/proto/model"
+	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

@@ -1,9 +1,8 @@
-module github.com/DubrovEva/higher_search
+module github.com/DubrovEva/higher_search/backend
 
 go 1.21.5
 
 require (
-	github.com/go-chi/render v1.0.3
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/lib/pq v1.10.9
@@ -13,7 +12,6 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/ajg/form v1.5.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/golang/protobuf v1.4.3 // indirect

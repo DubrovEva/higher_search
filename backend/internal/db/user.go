@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"github.com/DubrovEva/higher_search/pkg/proto/model"
+	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
 )
 
 const (

@@ -1,13 +1,13 @@
 package models
 
-import "github.com/DubrovEva/higher_search/pkg/proto/model"
+import (
+	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
+)
 
 type UserDB struct {
-
 }
 
 type UserDBInfo struct {
-
 }
 
 func NewUserDB(user *model.User) (*UserDB, error) {

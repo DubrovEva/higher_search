@@ -2,17 +2,17 @@ package service
 
 import (
 	"context"
-	"github.com/DubrovEva/higher_search/internal/db"
-	"github.com/DubrovEva/higher_search/pkg/proto/model"
-	"github.com/DubrovEva/higher_search/pkg/proto/service"
+	"github.com/DubrovEva/higher_search/backend/internal/db"
+	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
+	service2 "github.com/DubrovEva/higher_search/backend/pkg/proto/service"
 )
 
 type AccountImpl struct {
-	service.UnimplementedAccountServer
+	service2.UnimplementedAccountServer
 	User *db.User
 }
 
-func (a *AccountImpl) GetUser(ctx context.Context, userID *model.UserID) (*service.GetUserResponse, error) {
+func (a *AccountImpl) GetUser(ctx context.Context, userID *model.UserID) (*service2.GetUserResponse, error) {
 	// TODO дописать нормальную обработку ошибок
 	// TODO решить, нужно возвращать UserInfo или целиком User
 
@@ -24,5 +24,5 @@ func (a *AccountImpl) GetUser(ctx context.Context, userID *model.UserID) (*servi
 	*/
 
 	user, err := a.User.Get(userID)
-	return &service.GetUserResponse{Response: &service.GetUserResponse_UserInfo{}}, err
+	return &service2.GetUserResponse{Response: &service2.GetUserResponse_UserInfo{UserInfo: user.UserInfo}}, err
 }

@@ -7,7 +7,7 @@
 package service
 
 import (
-	model "github.com/DubrovEva/higher_search/pkg/proto/model"
+	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
