@@ -4,11 +4,11 @@
 // - protoc             v3.21.12
 // source: service/account.proto
 
-package service
+package api
 
 import (
 	context "context"
-	"github.com/DubrovEva/higher_search/backend/pkg/proto/model"
+	model "github.com/DubrovEva/higher_search/backend/pkg/proto/model"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

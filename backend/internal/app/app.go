@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/DubrovEva/higher_search/backend/internal/api"
 	"github.com/DubrovEva/higher_search/backend/internal/config"
 	"github.com/DubrovEva/higher_search/backend/internal/db"
-	"github.com/DubrovEva/higher_search/backend/internal/service"
 	protoservice "github.com/DubrovEva/higher_search/backend/pkg/proto/service"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -48,7 +48,7 @@ func (a *Application) Start(ctx context.Context) error {
 	a.initDatabaseMappers()
 
 	if err := a.initServer(); err != nil {
-		return fmt.Errorf("can't init service: %w", err)
+		return fmt.Errorf("can't init api: %w", err)
 	}
 
 	return nil
@@ -94,7 +94,7 @@ func (a *Application) initDatabaseMappers() {
 func (a *Application) initServer() error {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
-	protoservice.RegisterAccountServer(grpcServer, &service.AccountImpl{
+	protoservice.RegisterAccountServer(grpcServer, &api.AccountImpl{
 		User: a.userDB,
 	})
 
@@ -150,7 +150,7 @@ func (a *Application) Wait(ctx context.Context, cancel context.CancelFunc) error
 	}
 
 	if err := a.hs.Shutdown(ctx); err != nil {
-		log.Printf("failed to stop http service: %v", err)
+		log.Printf("failed to stop http api: %v", err)
 	}
 
 	return appErr

@@ -9,8 +9,8 @@ CREATE TABLE users
     Contacts    JSON,
     Salt        INTEGER             NOT NULL,
     Hash        VARCHAR             NOT NULL,
-    Role        VARCHAR(255)
-)
+    Role        INTEGER
+);
 
 CREATE TABLE studorgs
 (
