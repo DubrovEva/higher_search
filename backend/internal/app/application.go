@@ -2,11 +2,10 @@ package app
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"github.com/DubrovEva/higher_search/backend/internal/api"
 	"github.com/DubrovEva/higher_search/backend/internal/config"
-	"github.com/DubrovEva/higher_search/backend/internal/db"
+	repo "github.com/DubrovEva/higher_search/backend/internal/repository"
 	protoservice "github.com/DubrovEva/higher_search/backend/pkg/proto/service"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -17,15 +16,16 @@ import (
 	"time"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/jmoiron/sqlx"
 )
 
 type Application struct {
 	cfg *config.Config
-	db  *sql.DB
+	db  *sqlx.DB
 	hs  *http.Server
 	wg  *sync.WaitGroup
 
-	userDB *db.User
+	repoUser *repo.User
 
 	errChan chan error
 }
@@ -43,9 +43,9 @@ func (a *Application) Start(ctx context.Context) error {
 	}
 
 	if err := a.initDatabaseConnection(); err != nil {
-		return fmt.Errorf("can't init db connection: %w", err)
+		return fmt.Errorf("can't init repository connection: %w", err)
 	}
-	a.initDatabaseMappers()
+	a.initRepository()
 
 	if err := a.initServer(); err != nil {
 		return fmt.Errorf("can't init api: %w", err)
@@ -73,7 +73,7 @@ func (a *Application) initDatabaseConnection() error {
 		a.cfg.DB.Password,
 		a.cfg.DB.Name)
 
-	dbConn, err := sql.Open("postgres", psqlInfo)
+	dbConn, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
 		return err
 	}
@@ -87,15 +87,15 @@ func (a *Application) initDatabaseConnection() error {
 	return nil
 }
 
-func (a *Application) initDatabaseMappers() {
-	a.userDB = db.NewUser(a.db)
+func (a *Application) initRepository() {
+	a.repoUser = repo.NewUser(a.db)
 }
 
 func (a *Application) initServer() error {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 	protoservice.RegisterAccountServer(grpcServer, &api.AccountImpl{
-		User: a.userDB,
+		User: a.repoUser,
 	})
 
 	wrappedGrpc := grpcweb.WrapServer(grpcServer,
@@ -146,7 +146,7 @@ func (a *Application) Wait(ctx context.Context, cancel context.CancelFunc) error
 	errWg.Wait()
 
 	if err := a.db.Close(); err != nil {
-		log.Fatalf("faild to close db connection: %v", err)
+		log.Fatalf("faild to close repository connection: %v", err)
 	}
 
 	if err := a.hs.Shutdown(ctx); err != nil {

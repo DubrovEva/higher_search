@@ -20,35 +20,39 @@ const (
 )
 
 type UserDB struct {
-	ID   int64
-	Info *UserInfoDB
+	ID int64 `repository:"id"`
+	*Info
 }
-type UserInfoDB struct {
-	Name        string
-	Surname     string
-	MiddleName  string
-	Description string
-	Email       string
-	Contacts    string
-	Salt        int64
-	Hash        string
-	Role        int64
+type Info struct {
+	Name        string `repository:"name"`
+	Surname     string `repository:"surname"`
+	MiddleName  string `repository:"middlename"`
+	Description string `repository:"description"`
+	Email       string `repository:"email"`
+	Contacts    string `repository:"contacts"`
+	Salt        int64  `repository:"salt"`
+	Hash        string `repository:"hash"`
+	Role        int64  `repository:"role"`
 }
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
-	userDBInfo, err := NewUserInfoDB(user.UserInfo)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert proto.User to UserDB: %w", err)
-	}
 	userDB := UserDB{
-		ID:   user.Id.Id,
-		Info: userDBInfo,
+		ID:   user.GetID().GetID(),
+		Info: nil,
+	}
+
+	if user.UserInfo != nil {
+		userInfoDB, err := NewUserInfoDB(user.UserInfo)
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert proto.User to UserDB: %w", err)
+		}
+		userDB.Info = userInfoDB
 	}
 
 	return &userDB, nil
 }
 
-func NewUserInfoDB(info *proto.UserInfo) (*UserInfoDB, error) {
+func NewUserInfoDB(info *proto.UserInfo) (*Info, error) {
 	if info.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
 	}
@@ -70,7 +74,7 @@ func NewUserInfoDB(info *proto.UserInfo) (*UserInfoDB, error) {
 		return nil, fmt.Errorf("field Hash is empty")
 	}
 
-	userInfoDB := UserInfoDB{
+	userInfoDB := Info{
 		Name:        info.Name,
 		Surname:     info.Surname,
 		MiddleName:  info.MiddleName,
@@ -85,23 +89,23 @@ func NewUserInfoDB(info *proto.UserInfo) (*UserInfoDB, error) {
 }
 
 func (u *UserDB) ToProtoUser() (*proto.User, error) {
-	protoUserInfo, err := u.Info.ToProtoUserInfo()
+	protoUserInfo, err := u.ToProtoUserInfo()
 	if err != nil {
 		return nil, fmt.Errorf("TODO")
 	}
 
 	protoUser := proto.User{
-		Id:       &proto.UserID{Id: u.ID},
+		ID:       &proto.UserID{ID: u.ID},
 		UserInfo: protoUserInfo,
 	}
 
 	return &protoUser, nil
 }
 
-func (u *UserInfoDB) ToProtoUserInfo() (*proto.UserInfo, error) {
+func (u *Info) ToProtoUserInfo() (*proto.UserInfo, error) {
 	contacts, err := stringToContracts(u.Contacts)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert UserInfoDB to proto.UserInfo: %w", err)
+		return nil, fmt.Errorf("failed to convert Info to proto.UserInfo: %w", err)
 	}
 	protoUserInfo := proto.UserInfo{
 		Name:        u.Name,

@@ -23,9 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountClient interface {
-	GetUser(ctx context.Context, in *model.UserID, opts ...grpc.CallOption) (*GetUserResponse, error)
-	InsertUser(ctx context.Context, in *model.UserInfo, opts ...grpc.CallOption) (*InsertUserResponse, error)
-	UpdateUser(ctx context.Context, in *model.User, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	GetUser(ctx context.Context, in *model.UserID, opts ...grpc.CallOption) (*UserResponse, error)
+	InsertUser(ctx context.Context, in *model.UserInfo, opts ...grpc.CallOption) (*UserResponse, error)
+	UpdateUser(ctx context.Context, in *model.User, opts ...grpc.CallOption) (*UserResponse, error)
 }
 
 type accountClient struct {
@@ -36,8 +36,8 @@ func NewAccountClient(cc grpc.ClientConnInterface) AccountClient {
 	return &accountClient{cc}
 }
 
-func (c *accountClient) GetUser(ctx context.Context, in *model.UserID, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
+func (c *accountClient) GetUser(ctx context.Context, in *model.UserID, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, "/account.Account/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +45,8 @@ func (c *accountClient) GetUser(ctx context.Context, in *model.UserID, opts ...g
 	return out, nil
 }
 
-func (c *accountClient) InsertUser(ctx context.Context, in *model.UserInfo, opts ...grpc.CallOption) (*InsertUserResponse, error) {
-	out := new(InsertUserResponse)
+func (c *accountClient) InsertUser(ctx context.Context, in *model.UserInfo, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, "/account.Account/InsertUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,8 +54,8 @@ func (c *accountClient) InsertUser(ctx context.Context, in *model.UserInfo, opts
 	return out, nil
 }
 
-func (c *accountClient) UpdateUser(ctx context.Context, in *model.User, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
-	out := new(UpdateUserResponse)
+func (c *accountClient) UpdateUser(ctx context.Context, in *model.User, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, "/account.Account/UpdateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -67,9 +67,9 @@ func (c *accountClient) UpdateUser(ctx context.Context, in *model.User, opts ...
 // All implementations must embed UnimplementedAccountServer
 // for forward compatibility
 type AccountServer interface {
-	GetUser(context.Context, *model.UserID) (*GetUserResponse, error)
-	InsertUser(context.Context, *model.UserInfo) (*InsertUserResponse, error)
-	UpdateUser(context.Context, *model.User) (*UpdateUserResponse, error)
+	GetUser(context.Context, *model.UserID) (*UserResponse, error)
+	InsertUser(context.Context, *model.UserInfo) (*UserResponse, error)
+	UpdateUser(context.Context, *model.User) (*UserResponse, error)
 	mustEmbedUnimplementedAccountServer()
 }
 
@@ -77,13 +77,13 @@ type AccountServer interface {
 type UnimplementedAccountServer struct {
 }
 
-func (UnimplementedAccountServer) GetUser(context.Context, *model.UserID) (*GetUserResponse, error) {
+func (UnimplementedAccountServer) GetUser(context.Context, *model.UserID) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedAccountServer) InsertUser(context.Context, *model.UserInfo) (*InsertUserResponse, error) {
+func (UnimplementedAccountServer) InsertUser(context.Context, *model.UserInfo) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertUser not implemented")
 }
-func (UnimplementedAccountServer) UpdateUser(context.Context, *model.User) (*UpdateUserResponse, error) {
+func (UnimplementedAccountServer) UpdateUser(context.Context, *model.User) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 func (UnimplementedAccountServer) mustEmbedUnimplementedAccountServer() {}

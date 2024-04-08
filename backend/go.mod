@@ -5,6 +5,7 @@ go 1.21.5
 require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/improbable-eng/grpc-web v0.15.0
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.32.0
 	google.golang.org/protobuf v1.25.0

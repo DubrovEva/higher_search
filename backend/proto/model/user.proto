@@ -3,7 +3,7 @@ package user;
 option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/model";
 
 message UserID {
-  int64 id = 1;
+  int64 ID = 1;
 }
 
 message UserInfo {
@@ -19,7 +19,7 @@ message UserInfo {
 }
 
 message User {
-  UserID id = 1;
+  UserID ID = 1;
   UserInfo user_info = 2;
 }
 
