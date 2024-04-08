@@ -1,6 +1,6 @@
 syntax = "proto3";
 package user;
-option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/model";
+option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
 
 message UserID {
   int64 ID = 1;

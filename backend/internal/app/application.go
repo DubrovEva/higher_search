@@ -99,6 +99,7 @@ func (a *Application) initServer() error {
 	})
 
 	wrappedGrpc := grpcweb.WrapServer(grpcServer,
+		grpcweb.WithOriginFunc(func(origin string) bool { return true }),
 		grpcweb.WithWebsockets(true),
 		grpcweb.WithWebsocketOriginFunc(func(req *http.Request) bool {
 			return true
