@@ -1,19 +1,31 @@
 syntax = "proto3";
-package account;
+package router;
 option go_package = "github.com/DubrovEva/backend/higher_search/pkg/proto/api";
 
 import "models/user.proto";
+import "models/studorg.proto";
 
-service Account {
+service Router {
   rpc GetUser    (user.UserID) returns (UserResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (UserResponse);
+
+  rpc GetStudorg    (studorg.StudorgID) returns (StudorgResponse);
+  rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgResponse);
+  rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
 }
 
 message UserResponse {
   oneof response {
     Error err = 1;
     user.User user = 2;
+  }
+}
+
+message StudorgResponse {
+  oneof response {
+    Error err = 1;
+    studorg.Studorg studorg = 2;
   }
 }
 

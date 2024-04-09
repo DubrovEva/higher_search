@@ -6,7 +6,7 @@ import (
 	"github.com/DubrovEva/higher_search/backend/internal/api"
 	"github.com/DubrovEva/higher_search/backend/internal/config"
 	repo "github.com/DubrovEva/higher_search/backend/internal/repository"
-	protoservice "github.com/DubrovEva/higher_search/backend/pkg/proto/service"
+	protoservice "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -25,7 +25,8 @@ type Application struct {
 	hs  *http.Server
 	wg  *sync.WaitGroup
 
-	repoUser *repo.User
+	repoUser    *repo.User
+	repoStudorg *repo.Studorg
 
 	errChan chan error
 }
@@ -89,14 +90,13 @@ func (a *Application) initDatabaseConnection() error {
 
 func (a *Application) initRepository() {
 	a.repoUser = repo.NewUser(a.db)
+	a.repoStudorg = repo.NewStudorg(a.db)
 }
 
 func (a *Application) initServer() error {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
-	protoservice.RegisterAccountServer(grpcServer, &api.AccountImpl{
-		User: a.repoUser,
-	})
+	protoservice.RegisterRouterServer(grpcServer, api.NewRouter(a.repoUser, a.repoStudorg))
 
 	wrappedGrpc := grpcweb.WrapServer(grpcServer,
 		grpcweb.WithOriginFunc(func(origin string) bool { return true }),

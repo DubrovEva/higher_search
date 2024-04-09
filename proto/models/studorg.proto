@@ -1,0 +1,31 @@
+syntax = "proto3";
+package studorg;
+import "models/user.proto";
+import "models/common.proto";
+option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
+
+message StudorgID {
+  int64 ID = 1;
+}
+
+message StudorgInfo {
+  string name = 1;
+  string description = 2;
+  user.UserID head = 3;
+  repeated common.Contact contacts = 4;
+  StudorgStatus status = 5;
+  string faculty = 6;
+  string campus = 7;
+  repeated common.Contact links = 8;
+  string language = 9;
+}
+
+message Studorg {
+  StudorgID ID = 1;
+  StudorgInfo studorg_info = 2;
+}
+
+enum StudorgStatus {
+  NOT_OFFICIAL = 0;
+  OFFICIAL = 1;
+}

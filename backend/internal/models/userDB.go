@@ -1,9 +1,8 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
-	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/model"
+	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
 	"net/mail"
 	"strings"
 )
@@ -21,9 +20,9 @@ const (
 
 type UserDB struct {
 	ID int64 `repository:"id"`
-	*Info
+	*UserInfo
 }
-type Info struct {
+type UserInfo struct {
 	Name        string `repository:"name"`
 	Surname     string `repository:"surname"`
 	MiddleName  string `repository:"middlename"`
@@ -37,8 +36,8 @@ type Info struct {
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
 	userDB := UserDB{
-		ID:   user.GetID().GetID(),
-		Info: nil,
+		ID:       user.GetID().GetID(),
+		UserInfo: nil,
 	}
 
 	if user.UserInfo != nil {
@@ -46,13 +45,13 @@ func NewUserDB(user *proto.User) (*UserDB, error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert proto.User to UserDB: %w", err)
 		}
-		userDB.Info = userInfoDB
+		userDB.UserInfo = userInfoDB
 	}
 
 	return &userDB, nil
 }
 
-func NewUserInfoDB(info *proto.UserInfo) (*Info, error) {
+func NewUserInfoDB(info *proto.UserInfo) (*UserInfo, error) {
 	if info.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
 	}
@@ -74,7 +73,7 @@ func NewUserInfoDB(info *proto.UserInfo) (*Info, error) {
 		return nil, fmt.Errorf("field Hash is empty")
 	}
 
-	userInfoDB := Info{
+	userInfoDB := UserInfo{
 		Name:        info.Name,
 		Surname:     info.Surname,
 		MiddleName:  info.MiddleName,
@@ -102,10 +101,10 @@ func (u *UserDB) ToProtoUser() (*proto.User, error) {
 	return &protoUser, nil
 }
 
-func (u *Info) ToProtoUserInfo() (*proto.UserInfo, error) {
+func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
 	contacts, err := stringToContracts(u.Contacts)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert Info to proto.UserInfo: %w", err)
+		return nil, fmt.Errorf("failed to convert UserInfo to proto.UserInfo: %w", err)
 	}
 	protoUserInfo := proto.UserInfo{
 		Name:        u.Name,
@@ -131,20 +130,4 @@ func processEmail(email string) (string, error) {
 	}
 
 	return address.Address, nil
-}
-
-func contactsToString(contacts []*proto.Contact) (string, error) {
-	contactsJson, err := json.Marshal(&contacts)
-	if err != nil {
-		return "", fmt.Errorf("failed to convert contacts to json")
-	}
-	return string(contactsJson), nil
-}
-func stringToContracts(contacts string) ([]*proto.Contact, error) {
-	var protoContacts []*proto.Contact
-	err := json.Unmarshal([]byte(contacts), &protoContacts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert json to contacts")
-	}
-	return protoContacts, nil
 }

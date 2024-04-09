@@ -6,12 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const (
-	userInfoFields = "Name, Surname, MiddleName, Description, Email, Contacts, Salt, Hash, Role"
-	userIDField    = "ID"
-	userAllFields  = "ID, Name, Surname, MiddleName, Description, Email, Contacts, Salt, Hash, Role"
-)
-
 type User struct {
 	db *sqlx.DB
 }
@@ -34,8 +28,8 @@ func (u *User) Get(userID int64) (*models.UserDB, error) {
 	return user, nil
 }
 
-func (u *User) Insert(userInfo *models.Info) (*models.UserDB, error) {
-	user := &models.UserDB{ID: 0, Info: userInfo}
+func (u *User) Insert(userInfo *models.UserInfo) (*models.UserDB, error) {
+	user := &models.UserDB{ID: 0, UserInfo: userInfo}
 
 	rows, err := u.db.NamedQuery(`
 		INSERT INTO users (Name, Surname, MiddleName, Description, Email, Contacts, Salt, Hash, Role)
