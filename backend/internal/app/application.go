@@ -68,11 +68,11 @@ func (a *Application) initConfig() error {
 
 func (a *Application) initDatabaseConnection() error {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		a.cfg.DB.Host,
-		a.cfg.DB.Port,
-		a.cfg.DB.User,
-		a.cfg.DB.Password,
-		a.cfg.DB.Name)
+		a.cfg.Database.Host,
+		a.cfg.Database.Port,
+		a.cfg.Database.User,
+		a.cfg.Database.Password,
+		a.cfg.Database.Name)
 
 	dbConn, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {

@@ -1,20 +1,21 @@
 package config
 
 import (
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	DB
+	Database
 	HTTPServer
 }
 
-type DB struct {
-	User     string `env:"DB_USER"`
-	Password string `env:"DB_PASSWORD"`
-	Name     string `env:"DB_NAME"`
-	Host     string `env:"DB_HOST"`
-	Port     int64  `env:"DB_PORT"`
+type Database struct {
+	User     string `env:"POSTGRES_USER"`
+	Password string `env:"POSTGRES_PASSWORD"`
+	Name     string `env:"POSTGRES_NAME"`
+	Host     string `env:"POSTGRES_HOST"`
+	Port     int64  `env:"POSTGRES_PORT"`
 }
 
 type HTTPServer struct {
@@ -24,8 +25,9 @@ type HTTPServer struct {
 func ParseConfig() (*Config, error) {
 	var config Config
 
-	if err := cleanenv.ReadConfig("./config/.env", &config); err != nil {
-		return nil, err
+	if err := cleanenv.ReadEnv(&config); err != nil {
+		return nil, fmt.Errorf("failed to read env: %w", err)
 	}
+
 	return &config, nil
 }

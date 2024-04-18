@@ -1,5 +1,5 @@
 services:
-  db:
+  database:
     image: postgres:13
     restart: always
     volumes:
@@ -7,10 +7,19 @@ services:
       - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=default_user
-      - POSTGRES_DB=db
-      - POSTGRES_PASSWORD=default_password
-      - PGDATA=/var/lib/postgresql/data/pgdata
+    env_file: .env
+#    environment:
+#      - POSTGRES_USER=default_user
+#      - POSTGRES_DB=db
+#      - POSTGRES_PASSWORD=default_password
+#      - PGDATA=/var/lib/postgresql/data/pgdata
+  server:
+    build:
+      dockerfile: ../backend/Dockerfile
+    env_file: .env
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
 volumes:
   pg_data: {}
