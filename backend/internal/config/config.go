@@ -13,7 +13,7 @@ type Config struct {
 type Database struct {
 	User     string `env:"POSTGRES_USER"`
 	Password string `env:"POSTGRES_PASSWORD"`
-	Name     string `env:"POSTGRES_NAME"`
+	Name     string `env:"POSTGRES_DB"`
 	Host     string `env:"POSTGRES_HOST"`
 	Port     int64  `env:"POSTGRES_PORT"`
 }

@@ -1,6 +1,6 @@
 FROM golang:latest as builder
 
-COPY go.mod go.sum /go/src/github.com/DubrovEva/higher_search/backend/
+COPY ./go.mod ./go.sum /go/src/github.com/DubrovEva/higher_search/backend/
 WORKDIR /go/src/github.com/DubrovEva/higher_search/backend/
 RUN go mod download
 

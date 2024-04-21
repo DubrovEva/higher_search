@@ -1,4 +1,7 @@
 .idea
 backend/.idea
 backend/vendor
-frontend
+frontend/node_modules
+frontend/.gitignore
+
+frontend-demo

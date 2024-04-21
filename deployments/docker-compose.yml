@@ -8,14 +8,12 @@ services:
     ports:
       - "5432:5432"
     env_file: .env
-#    environment:
-#      - POSTGRES_USER=default_user
-#      - POSTGRES_DB=db
-#      - POSTGRES_PASSWORD=default_password
-#      - PGDATA=/var/lib/postgresql/data/pgdata
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
   server:
     build:
       dockerfile: ../backend/Dockerfile
+      context: ../backend
     env_file: .env
     depends_on:
       - database
