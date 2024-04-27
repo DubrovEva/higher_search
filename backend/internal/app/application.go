@@ -122,7 +122,7 @@ func (a *Application) initServer() error {
 	}()
 
 	a.hs = httpSrv
-	log.Println("Server initialised")
+	log.Println("Server running at ", a.cfg.URL)
 
 	return nil
 }

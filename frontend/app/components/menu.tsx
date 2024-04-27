@@ -34,7 +34,7 @@ export function OrganizationsMenu() {
                 <DropdownItem href="/list" active> Полный список </DropdownItem>
                 <DropdownHeader> Категории </DropdownHeader>
                 <DropdownItem>
-                    <Dropdown text={"Организации"} simple>
+                    <Dropdown text={"Кампус"} simple>
                         <DropdownMenu>
                             <DropdownItem href="#"> Москва </DropdownItem>
                             <DropdownItem href="#"> Санкт-Петербург </DropdownItem>
@@ -52,7 +52,8 @@ export function OrganizationsMenu() {
                         </DropdownMenu>
                     </Dropdown>
                 </DropdownItem>
-                <DropdownItem href="#"> Расширенный поиск </DropdownItem>
+                <DropdownItem href="/search"> Расширенный поиск </DropdownItem>
+                <DropdownItem href="/studorg_creation" > Создать свою организацию </DropdownItem>
             </DropdownMenu>
         </Dropdown>
     );

@@ -12,6 +12,8 @@ import React from "react";
 import {CustomFooter} from "~/components/footer";
 import {FullList} from "~/components/studorg";
 import {FixedMenu} from "~/components/menu";
+// import {Router_client} from "~/proto/api/RouterServiceClientPb";
+import {StudorgID} from "~/proto/models/studorg_pb";
 
 export const meta: MetaFunction = () => {
     return [
@@ -23,6 +25,21 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: semanticStyles},
     {rel: "stylesheet", href: styles},
 ];
+
+/*
+На этой странице нужно:
+1. Доставать из базы все студенческие организации
+2. Выводить каждую из них в свой блок (блоки расположить последовательно)
+
+Последовательность задач:
+1. Сделать константную тестовую модель на основе прото модели
+2. Написать функцию, которая обрабатывает модель и выводит карточку студенческой организации
+3. Протестить, что можно одну и ту же модель последовательно разместить в карточках, и что выглядит норм
+4. Добавить ссылку на страницу конкретной СО, научиться красиво отображать данные конкретной СО
+5. Сделать коннект с бэкендом, доставать настоящую модельку
+6. Доставать с бэкенда вообще все СО
+7. Посортить СО по алфавиту
+ */
 
 function Body() {
     return (

@@ -24,7 +24,7 @@ export function FullList() {
                     <ItemMeta>
                         <span className='cinema'>Union Square 14</span>
                     </ItemMeta>
-                    <ItemExtra>
+                    <ItemExtra  >
                         <Label>IMAX</Label>
                         <Label icon='globe' content='Additional Languages'/>
                     </ItemExtra>
@@ -54,4 +54,8 @@ export function FullList() {
             </Item>
         </ItemGroup>
     );
+}
+
+export function Card() {
+
 }
