@@ -6,14 +6,20 @@ import "models/user.proto";
 import "models/studorg.proto";
 
 service Router {
-  rpc GetUser    (user.UserID) returns (UserResponse);
+  rpc GetUser (user.UserID) returns (UserResponse);
+  rpc GetUsers (user.UserIDs) returns (UsersResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (UserResponse);
 
-  rpc GetStudorg    (studorg.StudorgID) returns (StudorgResponse);
+  rpc GetUserStudorgs (user.UserID) returns (studorg.UserStudorgs);
+  rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
+
+  rpc GetStudorg (studorg.StudorgID) returns (StudorgResponse);
   rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgResponse);
   rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
 }
+
+message WithoutParameters {}
 
 message UserResponse {
   oneof response {
@@ -22,10 +28,24 @@ message UserResponse {
   }
 }
 
+message UsersResponse {
+  oneof response {
+    Error err = 1;
+    user.Users users = 2;
+  }
+}
+
 message StudorgResponse {
   oneof response {
     Error err = 1;
     studorg.Studorg studorg = 2;
+  }
+}
+
+message StudorgsResponse {
+  oneof response {
+    Error err = 1;
+    studorg.Studorgs studorgs = 2;
   }
 }
 

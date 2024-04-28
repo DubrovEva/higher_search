@@ -32,8 +32,8 @@ func (u *User) Insert(userInfo *models.UserInfo) (*models.UserDB, error) {
 	user := &models.UserDB{ID: 0, UserInfo: userInfo}
 
 	rows, err := u.db.NamedQuery(`
-		INSERT INTO users (Name, Surname, MiddleName, Description, Email, Contacts, Salt, Hash, Role)
-		VALUES(:name, :surname, :middlename, :description, :email, :contacts, :salt, :hash, :role)
+		INSERT INTO users (Avatar, Description, Email, Hash, Links, MiddleName, Name, Role, Salt, ShortDescription, Surname)
+		VALUES (:avatar, :description, :email, :hash, :links, :middlename, :name, :role, :salt, :shortdescription, :surname)
 		RETURNING ID`, user)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save user to repository: %w", err)
@@ -51,15 +51,17 @@ func (u *User) Insert(userInfo *models.UserInfo) (*models.UserDB, error) {
 func (u *User) Update(user *models.UserDB) error {
 	_, err := u.db.NamedExec(`
 		UPDATE users
-		SET Name=:name,
-		    Surname=:surname,
-		    MiddleName=:middlename,
-		    Description=:description,
-		    Email=:email,
-		    Contacts=:contacts,
-		    Salt=:salt,
-		    Hash=:hash,
-		    Role=:role
+		SET Avatar=:avatar, 
+		    Description=:description, 
+		    Email=:email, 
+		    Hash=:hash, 
+		    Links=:links, 
+		    MiddleName=:middlename, 
+		    Name=:name, 
+		    Role=:role, 
+		    Salt=:salt, 
+		    ShortDescription=:shortdescription, 
+		    Surname=:surname
 		WHERE ID = :id`, user)
 	if err != nil {
 		return fmt.Errorf("failed to save user to repository: %w", err)

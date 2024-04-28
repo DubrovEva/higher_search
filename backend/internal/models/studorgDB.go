@@ -3,32 +3,52 @@ package models
 import (
 	"fmt"
 	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
+	"log"
+	"time"
 )
 
-// TODO проверить логику, подумать про нейминг
-
-type StudorgStatus int
-
 const (
-	NotOfficial StudorgStatus = iota
-	Official
+	timeLayout = "02.01.2006"
 )
 
 type StudorgDB struct {
-	ID int64 `repository:"id"`
+	ID int64 `repository:"id"` //TODO: нужен ли тут доп тег??
 	*StudorgInfo
 }
 
 type StudorgInfo struct {
-	Name        string
-	Description string
-	Head        int64
-	Contacts    string
-	Status      StudorgStatus
-	Faculty     string
-	Campus      string
-	Links       string
-	Language    string
+	Campus           int64
+	CreatedAt        time.Time
+	Description      string
+	Faculty          int64
+	Language         int64
+	Links            string
+	Logo             string
+	Name             string
+	ShortDescription string
+	Status           int64
+
+	Tags               []string
+	ParticipantsNumber int64
+	Head               *UserDB
+	Contacts           []Contact
+}
+
+type Contact struct {
+	User UserDB
+	Info string
+}
+
+func (c *Contact) toProtoContact() (*proto.Contact, error) {
+	protoUser, err := c.User.ToProtoUser()
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Contact{
+		User: protoUser,
+		Info: c.Info,
+	}, nil
 }
 
 func NewStudorgDB(Studorg *proto.Studorg) (*StudorgDB, error) {
@@ -48,32 +68,37 @@ func NewStudorgDB(Studorg *proto.Studorg) (*StudorgDB, error) {
 	return &StudorgDB, nil
 }
 
-func NewStudorgInfoDB(info *proto.StudorgInfo) (*StudorgInfo, error) {
-	if info.Name == "" {
+func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
+	var err error
+	if protoInfo.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
 	}
-	if info.Description == "" {
-		return nil, fmt.Errorf("field Description is empty")
+	var createdAt time.Time
+	if protoInfo.CreatedAt == "" {
+		createdAt = time.Now()
+	} else {
+		createdAt, err = time.Parse(timeLayout, protoInfo.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse CreatedAt: %w", err)
+		}
 	}
-	contacts, err := contactsToString(info.Contacts)
-	if err != nil {
-		return nil, fmt.Errorf("field Contacts isn't valid")
-	}
-	links, err := contactsToString(info.Contacts)
+
+	links, err := linksToJson(protoInfo.Links)
 	if err != nil {
 		return nil, fmt.Errorf("field Links isn't valid")
 	}
 
 	StudorgInfoDB := StudorgInfo{
-		Name:        info.Name,
-		Description: info.Description,
-		Head:        info.Head.ID,
-		Contacts:    contacts,
-		Status:      StudorgStatus(info.Status),
-		Faculty:     info.Faculty,
-		Campus:      info.Campus,
-		Links:       links,
-		Language:    info.Language,
+		Campus:           int64(protoInfo.Campus),
+		CreatedAt:        createdAt,
+		Description:      protoInfo.Description,
+		Faculty:          int64(protoInfo.Faculty),
+		Language:         int64(protoInfo.Language),
+		Links:            links,
+		Logo:             protoInfo.Logo,
+		Name:             protoInfo.Name,
+		ShortDescription: protoInfo.ShortDescription,
+		Status:           int64(protoInfo.Status),
 	}
 	return &StudorgInfoDB, nil
 }
@@ -81,7 +106,7 @@ func NewStudorgInfoDB(info *proto.StudorgInfo) (*StudorgInfo, error) {
 func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
 	protoStudorgInfo, err := u.ToProtoStudorgInfo()
 	if err != nil {
-		return nil, fmt.Errorf("TODO")
+		return nil, fmt.Errorf("failed to convert StudorgInfoDB to ProtoStudorgInfo: %w", err)
 	}
 
 	protoStudorg := proto.Studorg{
@@ -93,24 +118,43 @@ func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
 }
 
 func (u *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
-	contacts, err := stringToContracts(u.Contacts)
+	links, err := jsonToLinks(u.Links)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert Contacts to proto.Contacts: %w", err)
+		return nil, fmt.Errorf("failed to convert json to proto.StudorgInfo: %w", err)
 	}
-	links, err := stringToContracts(u.Links)
+
+	tags := make([]*proto.Tag, len(u.Tags))
+	for i, tagName := range u.Tags {
+		tags[i] = &proto.Tag{Name: tagName}
+	}
+
+	protoHead, err := u.Head.ToProtoUser()
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert Contacts to proto.StudorgInfo: %w", err)
+		return nil, fmt.Errorf("failed to convert headUser to protoHeadUser: %w", err)
 	}
+
+	protoContacts := make([]*proto.Contact, len(u.Contacts))
+	for i, contact := range u.Contacts {
+		protoContacts[i], err = contact.toProtoContact()
+		log.Println(err.Error())
+	}
+
 	protoStudorgInfo := proto.StudorgInfo{
-		Name:        u.Name,
-		Description: u.Description,
-		Head:        &proto.UserID{ID: u.Head},
-		Contacts:    contacts,
-		Status:      proto.StudorgStatus(u.Status),
-		Faculty:     u.Faculty,
-		Campus:      u.Campus,
-		Links:       links,
-		Language:    u.Language,
+		Campus:           proto.Campus(u.Campus),
+		CreatedAt:        u.CreatedAt.Format(timeLayout),
+		Description:      u.Description,
+		Faculty:          proto.Faculty(u.Faculty),
+		Language:         proto.Language(u.Faculty),
+		Links:            links,
+		Logo:             u.Logo,
+		Name:             u.Name,
+		ShortDescription: u.ShortDescription,
+		Status:           proto.StudorgStatus(u.Status),
+
+		Tags:               tags,
+		ParticipantsNumber: u.ParticipantsNumber,
+		Head:               protoHead,
+		Contacts:           protoContacts,
 	}
 	return &protoStudorgInfo, nil
 }

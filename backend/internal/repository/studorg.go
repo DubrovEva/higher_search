@@ -34,8 +34,8 @@ func (u *Studorg) Insert(StudorgInfo *models.StudorgInfo) (*models.StudorgDB, er
 	Studorg := &models.StudorgDB{ID: 0, StudorgInfo: StudorgInfo}
 
 	rows, err := u.db.NamedQuery(`
-		INSERT INTO Studorgs (Name, Description, Head, Contacts, Status, Faculty, Campus, Links, Language)
-		VALUES(:name, :description, :head, :contacts, :status, :faculty, :campus, :links, :language)
+		INSERT INTO Studorgs (Campus, CreatedAt, Description, Faculty, Language, Links, Logo, Name, ShortDescription, Status)
+		VALUES(:campus, :createdat, :description, :faculty, :language, :links, :logo, :name, :shortdescription, :status)
 		RETURNING ID`, Studorg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save Studorg to repository: %w", err)
@@ -53,15 +53,16 @@ func (u *Studorg) Insert(StudorgInfo *models.StudorgInfo) (*models.StudorgDB, er
 func (u *Studorg) Update(Studorg *models.StudorgDB) error {
 	_, err := u.db.NamedExec(`
 		UPDATE Studorgs
-		SET Name=:name,
-		    Description=:description,
-		    Head=:head,
-		    Contacts=:contacts,
-		    Status=:status,
-		    Faculty=:faculty,
-		    Campus=:campus,
-		    Links=:links,
-		    Language=:language
+		SET Campus=:campus,
+			CreatedAt=:createdat,
+			Description=:description,
+			Faculty=:faculty,
+			Language=:language,
+			Links=:links,
+			Logo=:logo,
+			Name=:name,
+			ShortDescription=:shortdescription,
+			Status=:status
 		WHERE ID = :id`, Studorg)
 	if err != nil {
 		return fmt.Errorf("failed to save Studorg to repository: %w", err)

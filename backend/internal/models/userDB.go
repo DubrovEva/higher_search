@@ -7,31 +7,22 @@ import (
 	"strings"
 )
 
-type Role int
-
-const (
-	Regular Role = iota
-	Admin
-	Head
-	Moderator
-	Developer
-	Unknown
-)
-
 type UserDB struct {
 	ID int64 `repository:"id"`
 	*UserInfo
 }
 type UserInfo struct {
-	Name        string `repository:"name"`
-	Surname     string `repository:"surname"`
-	MiddleName  string `repository:"middlename"`
-	Description string `repository:"description"`
-	Email       string `repository:"email"`
-	Contacts    string `repository:"contacts"`
-	Salt        int64  `repository:"salt"`
-	Hash        string `repository:"hash"`
-	Role        int64  `repository:"role"`
+	Avatar           string
+	Description      string
+	Email            string
+	Hash             string
+	Links            string
+	MiddleName       string
+	Name             string
+	Role             int64
+	Salt             int64
+	ShortDescription string
+	Surname          string
 }
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
@@ -51,38 +42,40 @@ func NewUserDB(user *proto.User) (*UserDB, error) {
 	return &userDB, nil
 }
 
-func NewUserInfoDB(info *proto.UserInfo) (*UserInfo, error) {
-	if info.Name == "" {
+func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
+	if protoInfo.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
 	}
-	if info.Surname == "" {
+	if protoInfo.Surname == "" {
 		return nil, fmt.Errorf("field Surname is empty")
 	}
-	email, err := processEmail(info.Email)
+	email, err := processEmail(protoInfo.Email)
 	if err != nil {
 		return nil, fmt.Errorf("field Email isn't valid: %w", err)
 	}
-	contacts, err := contactsToString(info.Contacts)
+	links, err := linksToJson(protoInfo.Links)
 	if err != nil {
 		return nil, fmt.Errorf("field Contacts isn't valid  ")
 	}
-	if info.Salt == 0 {
+	if protoInfo.Salt == 0 {
 		return nil, fmt.Errorf("field Salt is empty")
 	}
-	if info.Hash == "" {
+	if protoInfo.Hash == "" {
 		return nil, fmt.Errorf("field Hash is empty")
 	}
 
 	userInfoDB := UserInfo{
-		Name:        info.Name,
-		Surname:     info.Surname,
-		MiddleName:  info.MiddleName,
-		Description: info.Description,
-		Email:       email,
-		Contacts:    contacts,
-		Salt:        info.Salt,
-		Hash:        info.Hash,
-		Role:        int64(info.Role),
+		Avatar:           protoInfo.Avatar,
+		Description:      protoInfo.Description,
+		Email:            email,
+		Hash:             protoInfo.Hash,
+		Links:            links,
+		MiddleName:       protoInfo.MiddleName,
+		Name:             protoInfo.Name,
+		Role:             int64(protoInfo.Role),
+		Salt:             protoInfo.Salt,
+		ShortDescription: protoInfo.ShortDescription,
+		Surname:          protoInfo.Surname,
 	}
 	return &userInfoDB, nil
 }
@@ -102,20 +95,22 @@ func (u *UserDB) ToProtoUser() (*proto.User, error) {
 }
 
 func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
-	contacts, err := stringToContracts(u.Contacts)
+	links, err := jsonToLinks(u.Links)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert UserInfo to proto.UserInfo: %w", err)
 	}
 	protoUserInfo := proto.UserInfo{
-		Name:        u.Name,
-		Surname:     u.Surname,
-		MiddleName:  u.MiddleName,
-		Description: u.Description,
-		Email:       u.Email,
-		Contacts:    contacts,
-		Salt:        u.Salt,
-		Hash:        u.Hash,
-		Role:        proto.Role(u.Role),
+		Avatar:           u.Avatar,
+		Description:      u.Description,
+		Email:            u.Email,
+		Hash:             u.Hash,
+		Links:            links,
+		MiddleName:       u.MiddleName,
+		Name:             u.Name,
+		Role:             proto.ProjectRole(u.Role),
+		Salt:             u.Salt,
+		ShortDescription: u.ShortDescription,
+		Surname:          u.Surname,
 	}
 	return &protoUserInfo, nil
 }
