@@ -4,9 +4,10 @@ import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/studorg.css?url";
 import {Container, Header, SidebarPusher} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
-import {StudorgInfo} from "~/proto/models/studorg";
 import {FixedMenu} from "~/components/menu";
 import Client from "~/client";
+import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
+import {useParams} from "react-router";
 
 export const meta: MetaFunction = () => {
     return [
@@ -30,9 +31,13 @@ function PageContent(params: { studorgInfo: StudorgInfo }) {
 
 export default function Studorg() {
     const [studorgInfo, setStudorgInfo] = useState<StudorgInfo | undefined>(undefined)
+    const params = useParams();
+
+    const request = StudorgID.create();
+    request.iD = params.studorgid?.toString()!
 
     useEffect(() => {
-        Client.getInstance().getStudorgInfo().then(x => setStudorgInfo(x))
+        Client.getInstance().getStudorgInfo(request).then(x => setStudorgInfo(x))
     }, [])
 
     return (

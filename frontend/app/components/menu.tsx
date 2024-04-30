@@ -3,15 +3,26 @@ import {
     Dropdown,
     DropdownHeader,
     DropdownItem,
-    DropdownMenu,
+    DropdownMenu, FormButton,
     Header, ItemImage,
     Menu,
-    MenuItem, Sidebar
+    MenuItem, MenuMenu, Sidebar
 } from "semantic-ui-react";
 import React from "react";
 import hs_logo from "../assets/logo.png?url";
+import {useNavigate} from "react-router-dom";
 
 export function FixedMenu() {
+    let navigate = useNavigate();
+    const routeToLogin = () =>{
+        let path = `/login`;
+        navigate(path);
+    }
+    const routeToRegistration = () =>{
+        let path = `/registration`;
+        navigate(path);
+    }
+
     return (
         <Menu fixed="top" inverted>
             <Container>
@@ -20,7 +31,6 @@ export function FixedMenu() {
                     Higher Search
                 </MenuItem>
                 <MenuItem> <OrganizationsMenu/> </MenuItem>
-
             </Container>
 
         </Menu>
@@ -29,31 +39,10 @@ export function FixedMenu() {
 
 export function OrganizationsMenu() {
     return (
-        <Dropdown text={"Организации"} simple>
+        <Dropdown text={"Меню"} simple>
             <DropdownMenu>
                 <DropdownItem href="/list" active> Полный список </DropdownItem>
-                <DropdownHeader> Категории </DropdownHeader>
-                <DropdownItem>
-                    <Dropdown text={"Кампус"} simple>
-                        <DropdownMenu>
-                            <DropdownItem href="#"> Москва </DropdownItem>
-                            <DropdownItem href="#"> Санкт-Петербург </DropdownItem>
-                            <DropdownItem href="#"> Пермь </DropdownItem>
-                            <DropdownItem href="#"> Нижний Новгород </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </DropdownItem>
-                <DropdownItem>
-                    <Dropdown text={"Вид деятельности"} simple>
-                        <DropdownMenu>
-                            <DropdownItem href="#"> Спорт </DropdownItem>
-                            <DropdownItem href="#"> Творчество </DropdownItem>
-                            <DropdownItem href="#"> Учеба </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </DropdownItem>
                 <DropdownItem href="/search"> Расширенный поиск </DropdownItem>
-                <DropdownItem href="/studorg_creation" > Создать свою организацию </DropdownItem>
             </DropdownMenu>
         </Dropdown>
     );

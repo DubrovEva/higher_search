@@ -10,7 +10,10 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Contact } from "./common";
+import { Timestamp } from "../google/protobuf/timestamp";
+import { Gender } from "./common";
+import { Faculty } from "./common";
+import { Links } from "./common";
 /**
  * @generated from protobuf message user.UserID
  */
@@ -21,45 +24,78 @@ export interface UserID {
     iD: string;
 }
 /**
+ * @generated from protobuf message user.UserIDs
+ */
+export interface UserIDs {
+    /**
+     * @generated from protobuf field: repeated int64 IDs = 1 [json_name = "IDs"];
+     */
+    iDs: string[];
+}
+/**
  * @generated from protobuf message user.UserInfo
  */
 export interface UserInfo {
     /**
-     * @generated from protobuf field: string name = 1;
+     * @generated from protobuf field: string avatar = 1;
      */
-    name: string;
+    avatar: string;
     /**
-     * @generated from protobuf field: string surname = 2;
-     */
-    surname: string;
-    /**
-     * @generated from protobuf field: string middle_name = 3;
-     */
-    middleName: string;
-    /**
-     * @generated from protobuf field: string description = 4;
+     * @generated from protobuf field: string description = 2;
      */
     description: string;
     /**
-     * @generated from protobuf field: string email = 5;
+     * @generated from protobuf field: string email = 3;
      */
     email: string;
     /**
-     * @generated from protobuf field: repeated common.Contact contacts = 6;
-     */
-    contacts: Contact[];
-    /**
-     * @generated from protobuf field: int64 salt = 7;
-     */
-    salt: string;
-    /**
-     * @generated from protobuf field: string hash = 8;
+     * @generated from protobuf field: string hash = 4;
      */
     hash: string;
     /**
-     * @generated from protobuf field: user.Role role = 9;
+     * @generated from protobuf field: repeated common.Links links = 5;
      */
-    role: Role;
+    links: Links[];
+    /**
+     * @generated from protobuf field: string middle_name = 6;
+     */
+    middleName: string;
+    /**
+     * @generated from protobuf field: string name = 7;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: user.ProjectRole role = 8;
+     */
+    role: ProjectRole;
+    /**
+     * @generated from protobuf field: int64 salt = 9;
+     */
+    salt: string;
+    /**
+     * @generated from protobuf field: string shortDescription = 10;
+     */
+    shortDescription: string;
+    /**
+     * @generated from protobuf field: string surname = 11;
+     */
+    surname: string;
+    /**
+     * @generated from protobuf field: common.Faculty faculty = 12;
+     */
+    faculty: Faculty;
+    /**
+     * @generated from protobuf field: common.Gender gender = 13;
+     */
+    gender: Gender;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp birth = 14;
+     */
+    birth?: Timestamp;
+    /**
+     * @generated from protobuf field: string EducationInfo = 15 [json_name = "EducationInfo"];
+     */
+    educationInfo: string;
 }
 /**
  * @generated from protobuf message user.User
@@ -75,29 +111,30 @@ export interface User {
     userInfo?: UserInfo;
 }
 /**
- * @generated from protobuf enum user.Role
+ * @generated from protobuf message user.Users
  */
-export enum Role {
+export interface Users {
     /**
-     * @generated from protobuf enum value: REGULAR = 0;
+     * @generated from protobuf field: repeated user.User users = 1;
      */
-    REGULAR = 0,
+    users: User[];
+}
+/**
+ * @generated from protobuf enum user.ProjectRole
+ */
+export enum ProjectRole {
     /**
-     * @generated from protobuf enum value: ADMIN = 1;
+     * @generated from protobuf enum value: DEVELOPER = 0;
      */
-    ADMIN = 1,
+    DEVELOPER = 0,
     /**
-     * @generated from protobuf enum value: HEAD = 2;
+     * @generated from protobuf enum value: MODERATOR = 1;
      */
-    HEAD = 2,
+    MODERATOR = 1,
     /**
-     * @generated from protobuf enum value: MODERATOR = 3;
+     * @generated from protobuf enum value: ORDINARY = 2;
      */
-    MODERATOR = 3,
-    /**
-     * @generated from protobuf enum value: DEVELOPER = 4;
-     */
-    DEVELOPER = 4
+    ORDINARY = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserID$Type extends MessageType<UserID> {
@@ -147,31 +184,97 @@ class UserID$Type extends MessageType<UserID> {
  */
 export const UserID = new UserID$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UserIDs$Type extends MessageType<UserIDs> {
+    constructor() {
+        super("user.UserIDs", [
+            { no: 1, name: "IDs", kind: "scalar", jsonName: "IDs", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserIDs>): UserIDs {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.iDs = [];
+        if (value !== undefined)
+            reflectionMergePartial<UserIDs>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserIDs): UserIDs {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int64 IDs = 1 [json_name = "IDs"];*/ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.iDs.push(reader.int64().toString());
+                    else
+                        message.iDs.push(reader.int64().toString());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserIDs, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 IDs = 1 [json_name = "IDs"]; */
+        if (message.iDs.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.iDs.length; i++)
+                writer.int64(message.iDs[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message user.UserIDs
+ */
+export const UserIDs = new UserIDs$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UserInfo$Type extends MessageType<UserInfo> {
     constructor() {
         super("user.UserInfo", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "surname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "middle_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact },
-            { no: 7, name: "salt", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
-            { no: 8, name: "hash", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "role", kind: "enum", T: () => ["user.Role", Role] }
+            { no: 1, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "hash", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Links },
+            { no: 6, name: "middle_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "role", kind: "enum", T: () => ["user.ProjectRole", ProjectRole] },
+            { no: 9, name: "salt", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
+            { no: 10, name: "shortDescription", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "surname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 12, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
+            { no: 13, name: "gender", kind: "enum", T: () => ["common.Gender", Gender] },
+            { no: 14, name: "birth", kind: "message", T: () => Timestamp },
+            { no: 15, name: "EducationInfo", kind: "scalar", jsonName: "EducationInfo", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserInfo>): UserInfo {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.name = "";
-        message.surname = "";
-        message.middleName = "";
+        message.avatar = "";
         message.description = "";
         message.email = "";
-        message.contacts = [];
-        message.salt = "0";
         message.hash = "";
+        message.links = [];
+        message.middleName = "";
+        message.name = "";
         message.role = 0;
+        message.salt = "0";
+        message.shortDescription = "";
+        message.surname = "";
+        message.faculty = 0;
+        message.gender = 0;
+        message.educationInfo = "";
         if (value !== undefined)
             reflectionMergePartial<UserInfo>(this, message, value);
         return message;
@@ -181,32 +284,50 @@ class UserInfo$Type extends MessageType<UserInfo> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string name */ 1:
-                    message.name = reader.string();
+                case /* string avatar */ 1:
+                    message.avatar = reader.string();
                     break;
-                case /* string surname */ 2:
-                    message.surname = reader.string();
-                    break;
-                case /* string middle_name */ 3:
-                    message.middleName = reader.string();
-                    break;
-                case /* string description */ 4:
+                case /* string description */ 2:
                     message.description = reader.string();
                     break;
-                case /* string email */ 5:
+                case /* string email */ 3:
                     message.email = reader.string();
                     break;
-                case /* repeated common.Contact contacts */ 6:
-                    message.contacts.push(Contact.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* int64 salt */ 7:
-                    message.salt = reader.int64().toString();
-                    break;
-                case /* string hash */ 8:
+                case /* string hash */ 4:
                     message.hash = reader.string();
                     break;
-                case /* user.Role role */ 9:
+                case /* repeated common.Links links */ 5:
+                    message.links.push(Links.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string middle_name */ 6:
+                    message.middleName = reader.string();
+                    break;
+                case /* string name */ 7:
+                    message.name = reader.string();
+                    break;
+                case /* user.ProjectRole role */ 8:
                     message.role = reader.int32();
+                    break;
+                case /* int64 salt */ 9:
+                    message.salt = reader.int64().toString();
+                    break;
+                case /* string shortDescription */ 10:
+                    message.shortDescription = reader.string();
+                    break;
+                case /* string surname */ 11:
+                    message.surname = reader.string();
+                    break;
+                case /* common.Faculty faculty */ 12:
+                    message.faculty = reader.int32();
+                    break;
+                case /* common.Gender gender */ 13:
+                    message.gender = reader.int32();
+                    break;
+                case /* google.protobuf.Timestamp birth */ 14:
+                    message.birth = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.birth);
+                    break;
+                case /* string EducationInfo = 15 [json_name = "EducationInfo"];*/ 15:
+                    message.educationInfo = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -220,33 +341,51 @@ class UserInfo$Type extends MessageType<UserInfo> {
         return message;
     }
     internalBinaryWrite(message: UserInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string name = 1; */
-        if (message.name !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* string surname = 2; */
-        if (message.surname !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.surname);
-        /* string middle_name = 3; */
-        if (message.middleName !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.middleName);
-        /* string description = 4; */
+        /* string avatar = 1; */
+        if (message.avatar !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.avatar);
+        /* string description = 2; */
         if (message.description !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.description);
-        /* string email = 5; */
+            writer.tag(2, WireType.LengthDelimited).string(message.description);
+        /* string email = 3; */
         if (message.email !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.email);
-        /* repeated common.Contact contacts = 6; */
-        for (let i = 0; i < message.contacts.length; i++)
-            Contact.internalBinaryWrite(message.contacts[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* int64 salt = 7; */
-        if (message.salt !== "0")
-            writer.tag(7, WireType.Varint).int64(message.salt);
-        /* string hash = 8; */
+            writer.tag(3, WireType.LengthDelimited).string(message.email);
+        /* string hash = 4; */
         if (message.hash !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.hash);
-        /* user.Role role = 9; */
+            writer.tag(4, WireType.LengthDelimited).string(message.hash);
+        /* repeated common.Links links = 5; */
+        for (let i = 0; i < message.links.length; i++)
+            Links.internalBinaryWrite(message.links[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string middle_name = 6; */
+        if (message.middleName !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.middleName);
+        /* string name = 7; */
+        if (message.name !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.name);
+        /* user.ProjectRole role = 8; */
         if (message.role !== 0)
-            writer.tag(9, WireType.Varint).int32(message.role);
+            writer.tag(8, WireType.Varint).int32(message.role);
+        /* int64 salt = 9; */
+        if (message.salt !== "0")
+            writer.tag(9, WireType.Varint).int64(message.salt);
+        /* string shortDescription = 10; */
+        if (message.shortDescription !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.shortDescription);
+        /* string surname = 11; */
+        if (message.surname !== "")
+            writer.tag(11, WireType.LengthDelimited).string(message.surname);
+        /* common.Faculty faculty = 12; */
+        if (message.faculty !== 0)
+            writer.tag(12, WireType.Varint).int32(message.faculty);
+        /* common.Gender gender = 13; */
+        if (message.gender !== 0)
+            writer.tag(13, WireType.Varint).int32(message.gender);
+        /* google.protobuf.Timestamp birth = 14; */
+        if (message.birth)
+            Timestamp.internalBinaryWrite(message.birth, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* string EducationInfo = 15 [json_name = "EducationInfo"]; */
+        if (message.educationInfo !== "")
+            writer.tag(15, WireType.LengthDelimited).string(message.educationInfo);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -310,3 +449,50 @@ class User$Type extends MessageType<User> {
  * @generated MessageType for protobuf message user.User
  */
 export const User = new User$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Users$Type extends MessageType<Users> {
+    constructor() {
+        super("user.Users", [
+            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User }
+        ]);
+    }
+    create(value?: PartialMessage<Users>): Users {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<Users>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Users): Users {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated user.User users */ 1:
+                    message.users.push(User.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Users, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated user.User users = 1; */
+        for (let i = 0; i < message.users.length; i++)
+            User.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message user.Users
+ */
+export const Users = new Users$Type();

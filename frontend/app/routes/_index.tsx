@@ -3,11 +3,12 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/index.css?url";
 import { useNavigate } from "react-router-dom";
+import hs_logo from "../assets/logo.png?url";
 
 import {
     Button,
     Container, FormButton,
-    Header, Icon,
+    Header, Icon, Image, ItemHeader, ItemImage,
     Menu,
     MenuItem,
     MenuMenu,
@@ -46,6 +47,8 @@ function TopMenu(props: {toggleSidebar: () => void}) {
             <a href="#" className="toc item" onClick={() => props.toggleSidebar()}>
                 <Icon className={"sidebar icon"}/>
             </a>
+
+            {/*<Image as="logo" src={hs_logo}/>*/}
             <MenuItem active> Главная </MenuItem>
             <MenuItem> <OrganizationsMenu/> </MenuItem>
 
@@ -65,9 +68,11 @@ function HeaderOfPage(props: {toggleSidebar: () => void}) {
             <TopMenu toggleSidebar={props.toggleSidebar}/>
 
             <Container text>
-                <Header as={"h1"} inverted> Higher Search </Header>
+                <Header as={"h1"} inverted>
+                    Higher Search
+                </Header>
                 <h2>Сервис для поиска студенческих организаций Высшей Школы Экономики</h2>
-                <Button size="huge" primary> Поиск <i className="right arrow icon"> </i></Button>
+                <Button size="huge" primary href={"/search"}> Поиск <i className="right arrow icon"> </i></Button>
             </Container>
 
         </Segment>

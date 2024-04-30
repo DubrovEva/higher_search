@@ -9,20 +9,18 @@ message StudorgID {
 }
 
 message StudorgInfo {
-  Campus campus = 1;
+  common.Campus campus = 1;
   string createdAt = 2;
   string description = 3;
-  Faculty faculty = 4;
-  Language language = 5;
+  common.Faculty faculty = 4;
+  common.Language language = 5;
   repeated common.Links links = 6;
   string logo = 7;
   string name = 8;
   string shortDescription = 9;
   StudorgStatus status = 10;
 
-  repeated Tag tags = 11;
-  int64 participantsNumber = 12;
-  user.User head = 13;
+  repeated string tags = 11;
   repeated Contact contacts = 14;
 }
 
@@ -38,61 +36,6 @@ message Studorgs {
 enum StudorgStatus {
   NOT_OFFICIAL = 0;
   OFFICIAL = 1;
-}
-
-message Tag {
-  string name = 1;
-}
-
-message Tags {
-  repeated Tag tags = 1;
-}
-
-enum Campus {
-  MSK = 0;
-  NOV = 1;
-  OTHER_CAMPUS = 2;
-  PER = 3;
-  SPB = 4;
-}
-
-enum Faculty {
-  BINST = 0;
-  BIOLOGY = 1;
-  CHEMISTRY = 2;
-  CMD = 3;
-  CS = 4;
-  ECONOMICS = 5;
-  GEOGRAPHY = 6;
-  GOROD = 7;
-  GSB = 8;
-  HUM = 9;
-  ICEF = 10;
-  INMAN = 11;
-  ISSEK = 12;
-  LANG = 13;
-  LAW = 14;
-  MATH = 15;
-  MIEM = 16;
-  OTHER_FACULTY = 17;
-  PHYSICS = 18;
-  PRAVO = 19;
-  SOCIAL = 20;
-  WE = 21;
-}
-
-enum Language {
-  AR = 0;
-  DE = 1;
-  EN = 2;
-  ES = 3;
-  FR = 4;
-  HI = 5;
-  IT = 6;
-  JA = 7;
-  KO = 8;
-  RU = 9;
-  ZH = 10;
 }
 
 enum StudorgRole {

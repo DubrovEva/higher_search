@@ -27,22 +27,24 @@ type StudorgInfo struct {
 	Name             string
 	ShortDescription string
 	Status           int64
-
-	Tags               []string
-	ParticipantsNumber int64
-	Head               *UserDB
-	Contacts           []Contact
+	Tags             []string
+	Contacts         []*Contact
 }
 
 type Contact struct {
-	User UserDB
+	User *UserDB
 	Info string
 }
 
 func (c *Contact) toProtoContact() (*proto.Contact, error) {
-	protoUser, err := c.User.ToProtoUser()
-	if err != nil {
-		return nil, err
+	var protoUser *proto.User
+	var err error
+
+	if c.User != nil {
+		protoUser, err = c.User.ToProtoUser()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &proto.Contact{
@@ -69,6 +71,10 @@ func NewStudorgDB(Studorg *proto.Studorg) (*StudorgDB, error) {
 }
 
 func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
+	if protoInfo == nil {
+		return nil, fmt.Errorf("protoStudorgInfo is empty")
+	}
+
 	var err error
 	if protoInfo.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
@@ -99,6 +105,7 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 		Name:             protoInfo.Name,
 		ShortDescription: protoInfo.ShortDescription,
 		Status:           int64(protoInfo.Status),
+		Tags:             protoInfo.Tags,
 	}
 	return &StudorgInfoDB, nil
 }
@@ -117,44 +124,34 @@ func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
 	return &protoStudorg, nil
 }
 
-func (u *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
-	links, err := jsonToLinks(u.Links)
+func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
+	links, err := jsonToLinks(s.Links)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert json to proto.StudorgInfo: %w", err)
 	}
 
-	tags := make([]*proto.Tag, len(u.Tags))
-	for i, tagName := range u.Tags {
-		tags[i] = &proto.Tag{Name: tagName}
-	}
-
-	protoHead, err := u.Head.ToProtoUser()
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert headUser to protoHeadUser: %w", err)
-	}
-
-	protoContacts := make([]*proto.Contact, len(u.Contacts))
-	for i, contact := range u.Contacts {
+	protoContacts := make([]*proto.Contact, len(s.Contacts))
+	for i, contact := range s.Contacts {
 		protoContacts[i], err = contact.toProtoContact()
-		log.Println(err.Error())
+		if err != nil {
+			log.Printf("failed to convert contract to protoContract: %v", err.Error())
+		}
 	}
 
 	protoStudorgInfo := proto.StudorgInfo{
-		Campus:           proto.Campus(u.Campus),
-		CreatedAt:        u.CreatedAt.Format(timeLayout),
-		Description:      u.Description,
-		Faculty:          proto.Faculty(u.Faculty),
-		Language:         proto.Language(u.Faculty),
+		Campus:           proto.Campus(s.Campus),
+		CreatedAt:        s.CreatedAt.Format(timeLayout),
+		Description:      s.Description,
+		Faculty:          proto.Faculty(s.Faculty),
+		Language:         proto.Language(s.Faculty),
 		Links:            links,
-		Logo:             u.Logo,
-		Name:             u.Name,
-		ShortDescription: u.ShortDescription,
-		Status:           proto.StudorgStatus(u.Status),
-
-		Tags:               tags,
-		ParticipantsNumber: u.ParticipantsNumber,
-		Head:               protoHead,
-		Contacts:           protoContacts,
+		Logo:             s.Logo,
+		Name:             s.Name,
+		ShortDescription: s.ShortDescription,
+		Status:           proto.StudorgStatus(s.Status),
+		Tags:             s.Tags,
+		Contacts:         protoContacts,
 	}
+
 	return &protoStudorgInfo, nil
 }

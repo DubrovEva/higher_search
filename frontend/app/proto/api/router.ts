@@ -3,20 +3,29 @@
 // tslint:disable
 import { StudorgInfo } from "../models/studorg";
 import { StudorgID } from "../models/studorg";
+import { UserStudorgs } from "../models/studorg";
 import { UserInfo } from "../models/user";
+import { UserIDs } from "../models/user";
 import { UserID } from "../models/user";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Studorgs } from "../models/studorg";
 import { Studorg } from "../models/studorg";
+import { Users } from "../models/user";
 import { User } from "../models/user";
+/**
+ * @generated from protobuf message router.WithoutParameters
+ */
+export interface WithoutParameters {
+}
 /**
  * @generated from protobuf message router.UserResponse
  */
@@ -36,6 +45,29 @@ export interface UserResponse {
          * @generated from protobuf field: user.User user = 2;
          */
         user: User;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message router.UsersResponse
+ */
+export interface UsersResponse {
+    /**
+     * @generated from protobuf oneof: response
+     */
+    response: {
+        oneofKind: "err";
+        /**
+         * @generated from protobuf field: router.Error err = 1;
+         */
+        err: Error;
+    } | {
+        oneofKind: "users";
+        /**
+         * @generated from protobuf field: user.Users users = 2;
+         */
+        users: Users;
     } | {
         oneofKind: undefined;
     };
@@ -64,6 +96,29 @@ export interface StudorgResponse {
     };
 }
 /**
+ * @generated from protobuf message router.StudorgsResponse
+ */
+export interface StudorgsResponse {
+    /**
+     * @generated from protobuf oneof: response
+     */
+    response: {
+        oneofKind: "err";
+        /**
+         * @generated from protobuf field: router.Error err = 1;
+         */
+        err: Error;
+    } | {
+        oneofKind: "studorgs";
+        /**
+         * @generated from protobuf field: studorg.Studorgs studorgs = 2;
+         */
+        studorgs: Studorgs;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
  * @generated from protobuf message router.Error
  */
 export interface Error {
@@ -72,6 +127,31 @@ export interface Error {
      */
     msg: string;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class WithoutParameters$Type extends MessageType<WithoutParameters> {
+    constructor() {
+        super("router.WithoutParameters", []);
+    }
+    create(value?: PartialMessage<WithoutParameters>): WithoutParameters {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<WithoutParameters>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WithoutParameters): WithoutParameters {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: WithoutParameters, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.WithoutParameters
+ */
+export const WithoutParameters = new WithoutParameters$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserResponse$Type extends MessageType<UserResponse> {
     constructor() {
@@ -133,6 +213,66 @@ class UserResponse$Type extends MessageType<UserResponse> {
  */
 export const UserResponse = new UserResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UsersResponse$Type extends MessageType<UsersResponse> {
+    constructor() {
+        super("router.UsersResponse", [
+            { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
+            { no: 2, name: "users", kind: "message", oneof: "response", T: () => Users }
+        ]);
+    }
+    create(value?: PartialMessage<UsersResponse>): UsersResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<UsersResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UsersResponse): UsersResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* router.Error err */ 1:
+                    message.response = {
+                        oneofKind: "err",
+                        err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
+                    };
+                    break;
+                case /* user.Users users */ 2:
+                    message.response = {
+                        oneofKind: "users",
+                        users: Users.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).users)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UsersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* router.Error err = 1; */
+        if (message.response.oneofKind === "err")
+            Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* user.Users users = 2; */
+        if (message.response.oneofKind === "users")
+            Users.internalBinaryWrite(message.response.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.UsersResponse
+ */
+export const UsersResponse = new UsersResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class StudorgResponse$Type extends MessageType<StudorgResponse> {
     constructor() {
         super("router.StudorgResponse", [
@@ -193,6 +333,66 @@ class StudorgResponse$Type extends MessageType<StudorgResponse> {
  */
 export const StudorgResponse = new StudorgResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class StudorgsResponse$Type extends MessageType<StudorgsResponse> {
+    constructor() {
+        super("router.StudorgsResponse", [
+            { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
+            { no: 2, name: "studorgs", kind: "message", oneof: "response", T: () => Studorgs }
+        ]);
+    }
+    create(value?: PartialMessage<StudorgsResponse>): StudorgsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<StudorgsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StudorgsResponse): StudorgsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* router.Error err */ 1:
+                    message.response = {
+                        oneofKind: "err",
+                        err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
+                    };
+                    break;
+                case /* studorg.Studorgs studorgs */ 2:
+                    message.response = {
+                        oneofKind: "studorgs",
+                        studorgs: Studorgs.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).studorgs)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: StudorgsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* router.Error err = 1; */
+        if (message.response.oneofKind === "err")
+            Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.Studorgs studorgs = 2; */
+        if (message.response.oneofKind === "studorgs")
+            Studorgs.internalBinaryWrite(message.response.studorgs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.StudorgsResponse
+ */
+export const StudorgsResponse = new StudorgsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Error$Type extends MessageType<Error> {
     constructor() {
         super("router.Error", [
@@ -244,8 +444,11 @@ export const Error = new Error$Type();
  */
 export const Router = new ServiceType("router.Router", [
     { name: "GetUser", options: {}, I: UserID, O: UserResponse },
+    { name: "GetUsers", options: {}, I: UserIDs, O: UsersResponse },
     { name: "InsertUser", options: {}, I: UserInfo, O: UserResponse },
     { name: "UpdateUser", options: {}, I: User, O: UserResponse },
+    { name: "GetUserStudorgs", options: {}, I: UserID, O: UserStudorgs },
+    { name: "GetAllStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
     { name: "GetStudorg", options: {}, I: StudorgID, O: StudorgResponse },
     { name: "InsertStudorg", options: {}, I: StudorgInfo, O: StudorgResponse },
     { name: "UpdateStudorg", options: {}, I: Studorg, O: StudorgResponse }

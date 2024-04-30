@@ -8,12 +8,14 @@ import {
     Container, Divider,
     Header,
 } from "semantic-ui-react";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {CustomFooter} from "~/components/footer";
-import {FullList} from "~/components/studorg";
+import {FullList, OrgCards} from "~/components/studorg";
 import {FixedMenu} from "~/components/menu";
 // import {Router_client} from "~/proto/api/RouterServiceClientPb";
 import {StudorgID} from "~/proto/models/studorg_pb";
+import Client from "~/client";
+import {Studorg, StudorgInfo} from "~/proto/models/studorg";
 
 export const meta: MetaFunction = () => {
     return [
@@ -42,11 +44,17 @@ export const links: LinksFunction = () => [
  */
 
 function Body() {
+    const [studorgs, setStudorgInfo] = useState<Studorg[] | undefined>(undefined)
+
+    useEffect(() => {
+        Client.getInstance().getAllStudorgs().then(x => setStudorgInfo(x))
+    }, [])
+
     return (
         <Container text className="main">
             <Header size={"huge"}> Все организации </Header>
             <Divider/>
-            <FullList/>
+            {studorgs ? <OrgCards studorgs={studorgs}/> : <span>Loading...</span>}
         </Container>
     );
 }

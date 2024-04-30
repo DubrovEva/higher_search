@@ -11,7 +11,11 @@ CREATE TABLE users
     Role             INTEGER,
     Salt             INTEGER             NOT NULL,
     ShortDescription VARCHAR,
-    Surname          VARCHAR(255)        NOT NULL
+    Surname          VARCHAR(255)        NOT NULL,
+    Faculty          INTEGER,
+    Gender           INTEGER,
+    Birth            TIMESTAMP,
+    EducationInfo    VARCHAR
 );
 
 CREATE TABLE studorgs

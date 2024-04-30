@@ -1,55 +1,86 @@
+import {Campus, Faculty, Language} from "~/proto/models/studorg";
 
 
+// TODO: сделать proto.Enum
+// TODO: добавить значение в бд в табличку user
 export const gender = [
     { key: 'м', text: 'Мужской', value: 'мужской' },
     { key: 'ж', text: 'Женский', value: 'женский' },
 ]
 
+// TODO: сделать proto.Enum
+// TODO: добавить значение в бд в табличку user
 export const year = [
-    { key: 'b1', text: 'Бакалавриат, 1 курс', value: 'b1' },
-    { key: 'b2', text: 'Бакалавриат, 2 курс', value: 'b2' },
-    { key: 'b3', text: 'Бакалавриат, 3 курс', value: 'b3' },
-    { key: 'b4', text: 'Бакалавриат, 4 курс', value: 'b4' },
-    { key: 'b5', text: 'Бакалавриат, 5 курс', value: 'b5' },
-    { key: 'm1', text: 'Магистратура, 1 курс', value: 'm1' },
-    { key: 'm2', text: 'Магистратура, 2 курс', value: 'm2' },
-    { key: 'phd', text: 'Аспирантура', value: 'phd' },
-    { key: 'other', text: 'Другое', value: 'other' },
+    { text: 'Бакалавриат, 1 курс', value: 'b1' },
+    { text: 'Бакалавриат, 2 курс', value: 'b2' },
+    { text: 'Бакалавриат, 3 курс', value: 'b3' },
+    { text: 'Бакалавриат, 4 курс', value: 'b4' },
+    { text: 'Бакалавриат, 5 курс', value: 'b5' },
+    { text: 'Магистратура, 1 курс', value: 'm1' },
+    { text: 'Магистратура, 2 курс', value: 'm2' },
+    { text: 'Аспирантура', value: 'phd' },
+    { text: 'Другое', value: 'other' },
 ]
 
 export const campus = [
-    { key: 'msk', text: 'Москва', value: 'msk' },
-    { key: 'spb', text: 'Санкт-Петербург', value: 'spb' },
-    { key: 'novgorod', text: 'Нижний-Новгород', value: 'novgorod' },
-    { key: 'permian', text: 'Пермь', value: 'permian'},
+    { text: 'Москва', value: Campus.MSK },
+    { text: 'Санкт-Петербург', value: Campus.SPB },
+    { text: 'Нижний-Новгород', value: Campus.NOV },
+    { text: 'Пермь', value: Campus.PER },
+    { text: 'Другое', value: Campus.OTHER_CAMPUS },
 ]
 
 export const language = [
-    { key: 'russian', text: 'Русский', value: 'russian' },
-    { key: 'english', text: 'English', value: 'english' },
+    { text: 'Русский', value: Language.RU },
+    { text: 'Английский', value: Language.EN },
+    { text: 'Арабский', value: Language.AR },
+    { text: 'Немецкий', value: Language.DE },
+    { text: 'Французский', value: Language.FR },
+    { text: 'Итальянский', value: Language.IT },
+    { text: 'Японский', value: Language.JA },
+    { text: 'Корейский', value: Language.KO },
+    { text: 'Хинди', value: Language.HI },
+    { text: 'Китайский', value: Language.ZH },
+    { text: 'Испанский', value: Language.ES },
+]
+
+export const category = [
+    { text: 'Спорт', value: 'SPORT' },
+    { text: 'Музыка', value: 'MUSIC' },
+    { text: 'Кино', value: 'MOVIE' },
+    { text: 'Танцы', value: 'DANCE' },
+    { text: 'Медиа', value: 'MEDIA' },
+    { text: 'Наука', value: 'SCIENCE' },
+    { text: 'Иностранные языки', value: 'LANGUAGE' },
+    { text: 'Настольные игры', value: 'BOARD_GAME' },
+    { text: 'Мероприятия', value: 'EVENT' },
+    { text: 'Туризм и путешествия', value: 'TOURISM' },
+    { text: 'Юмор', value: 'HUMOR' },
+    { text: 'Творчество', value: 'ART'},
+    { text: 'Общение и нетворкинг', value: 'COMMUNICATION'},
 ]
 
 export const faculty = [
-    { key: 'math', text: 'Факультет математики', value: 'math'},
-    { key: 'economics', text: 'Факультет экономических наук', value: 'economics'},
-    { key: 'cs', text: 'Факультет компьютерных наук', value: 'cs'},
-    { key: 'miem', text: 'Московский институт электроники и математики им. А.Н. Тихонова', value: 'miem'},
-    { key: 'pravo', text: 'Высшая школа бизнеса', value: 'pravo'},
-    { key: 'gsb', text: 'Факультет права', value: 'gsb'},
-    { key: 'hum', text: 'Факультет гуманитарных наук', value: 'hum'},
-    { key: 'law', text: 'Высшая школа юриспруденции и администрирования', value: 'law'},
-    { key: 'social', text: 'Факультет социальных наук', value: 'social'},
-    { key: 'cmd', text: 'Факультет креативных индустрий', value: 'cmd'},
-    { key: 'physics', text: 'Факультет физики', value: 'physics'},
-    { key: 'we', text: 'Факультет мировой экономики и мировой политики', value: 'we'},
-    { key: 'icef', text: 'Международный институт экономики и финансов', value: 'icef'},
-    { key: 'gorod', text: 'Факультет городского и регионального развития', value: 'gorod'},
-    { key: 'chemistry', text: 'Факультет химии', value: 'chemistry'},
-    { key: 'biology', text: 'Факультет биологии и биотехнологии', value: 'biology'},
-    { key: 'geography', text: 'Факультет географии и геоинформационных технологий', value: 'geography'},
-    { key: 'lang', text: 'Школа иностранных языков', value: 'lang'},
-    { key: 'issek', text: 'Институт статистических исследований и экономики знаний', value: 'issek'},
-    { key: 'binst', text: 'Банковский институт', value: 'binst'},
-    { key: 'inman', text: 'Школа инноватики и предпринимательства', value: 'inman'},
-    { key: 'other', text: 'Другое', value: 'other'},
+    { text: 'Факультет математики', value: Faculty.MATH},
+    { text: 'Факультет экономических наук', value: Faculty.ECONOMICS},
+    { text: 'Факультет компьютерных наук', value: Faculty.CS},
+    { text: 'Московский институт электроники и математики им. А.Н. Тихонова', value: Faculty.MIEM},
+    { text: 'Высшая школа бизнеса', value: Faculty.PRAVO},
+    { text: 'Факультет права', value: Faculty.GSB},
+    { text: 'Факультет гуманитарных наук', value: Faculty.HUM},
+    { text: 'Высшая школа юриспруденции и администрирования', value: Faculty.LAW},
+    { text: 'Факультет социальных наук', value: Faculty.SOCIAL},
+    { text: 'Факультет креативных индустрий', value: Faculty.CMD},
+    { text: 'Факультет физики', value: Faculty.PHYSICS},
+    { text: 'Факультет мировой экономики и мировой политики', value: Faculty.WE},
+    { text: 'Международный институт экономики и финансов', value: Faculty.ICEF},
+    { text: 'Факультет городского и регионального развития', value: Faculty.GOROD},
+    { text: 'Факультет химии', value: Faculty.CHEMISTRY},
+    { text: 'Факультет биологии и биотехнологии', value: Faculty.BIOLOGY},
+    { text: 'Факультет географии и геоинформационных технологий', value: Faculty.GEOGRAPHY},
+    { text: 'Школа иностранных языков', value: Faculty.LANG},
+    { text: 'Институт статистических исследований и экономики знаний', value: Faculty.ISSEK},
+    { text: 'Банковский институт', value: Faculty.BINST},
+    { text: 'Школа инноватики и предпринимательства', value: Faculty.INMAN},
+    { text: 'Другое', value: Faculty.OTHER_FACULTY},
 ]

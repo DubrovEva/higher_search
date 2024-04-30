@@ -3,8 +3,10 @@ package models
 import (
 	"fmt"
 	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"net/mail"
 	"strings"
+	"time"
 )
 
 type UserDB struct {
@@ -23,6 +25,10 @@ type UserInfo struct {
 	Salt             int64
 	ShortDescription string
 	Surname          string
+	Faculty          int64
+	Gender           int64
+	Birth            time.Time
+	EducationInfo    string
 }
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
@@ -76,6 +82,10 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 		Salt:             protoInfo.Salt,
 		ShortDescription: protoInfo.ShortDescription,
 		Surname:          protoInfo.Surname,
+		Faculty:          int64(protoInfo.Faculty),
+		Gender:           int64(protoInfo.Gender),
+		Birth:            protoInfo.Birth.AsTime(),
+		EducationInfo:    protoInfo.EducationInfo,
 	}
 	return &userInfoDB, nil
 }
@@ -111,6 +121,10 @@ func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
 		Salt:             u.Salt,
 		ShortDescription: u.ShortDescription,
 		Surname:          u.Surname,
+		Faculty:          proto.Faculty(u.Faculty),
+		Gender:           proto.Gender(u.Gender),
+		Birth:            timestamppb.New(u.Birth),
+		EducationInfo:    u.EducationInfo,
 	}
 	return &protoUserInfo, nil
 }

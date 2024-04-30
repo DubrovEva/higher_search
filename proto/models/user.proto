@@ -2,6 +2,7 @@ syntax = "proto3";
 import "models/common.proto";
 package user;
 option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
+import "google/protobuf/timestamp.proto";
 
 message UserID {
   int64 ID = 1;
@@ -23,6 +24,10 @@ message UserInfo {
   int64 salt = 9;
   string shortDescription = 10;
   string surname = 11;
+  common.Faculty faculty = 12;
+  common.Gender gender = 13;
+  google.protobuf.Timestamp birth = 14;
+  string EducationInfo = 15;
 }
 
 message User {

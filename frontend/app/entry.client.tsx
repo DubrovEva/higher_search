@@ -5,8 +5,10 @@
  */
 
 import { RemixBrowser } from "@remix-run/react";
-import { startTransition, StrictMode } from "react";
+import {createContext, startTransition, StrictMode} from "react";
 import { hydrateRoot } from "react-dom/client";
+
+const Context = createContext(null);
 
 startTransition(() => {
   hydrateRoot(

@@ -7,3 +7,64 @@ message Links {
   string value = 2;
   string description = 3;
 }
+
+message Tag {
+  string tag = 1;
+}
+
+message Tags {
+  repeated string tags = 1;
+}
+
+enum Campus {
+  MSK = 0;
+  NOV = 1;
+  OTHER_CAMPUS = 2;
+  PER = 3;
+  SPB = 4;
+}
+
+enum Faculty {
+  BINST = 0;
+  BIOLOGY = 1;
+  CHEMISTRY = 2;
+  CMD = 3;
+  CS = 4;
+  ECONOMICS = 5;
+  GEOGRAPHY = 6;
+  GOROD = 7;
+  GSB = 8;
+  HUM = 9;
+  ICEF = 10;
+  INMAN = 11;
+  ISSEK = 12;
+  LANG = 13;
+  LAW = 14;
+  MATH = 15;
+  MIEM = 16;
+  OTHER_FACULTY = 17;
+  PHYSICS = 18;
+  PRAVO = 19;
+  SOCIAL = 20;
+  WE = 21;
+}
+
+enum Language {
+  AR = 0;
+  DE = 1;
+  EN = 2;
+  ES = 3;
+  FR = 4;
+  HI = 5;
+  IT = 6;
+  JA = 7;
+  KO = 8;
+  RU = 9;
+  ZH = 10;
+}
+
+  enum Gender {
+  FEMALE = 0;
+  MALE = 1;
+  OTHER_GENDER = 2;
+}
