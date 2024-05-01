@@ -100,7 +100,7 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 		Description:      protoInfo.Description,
 		Faculty:          int64(protoInfo.Faculty),
 		Language:         int64(protoInfo.Language),
-		Links:            links,
+		Links:            links.String,
 		Logo:             protoInfo.Logo,
 		Name:             protoInfo.Name,
 		ShortDescription: protoInfo.ShortDescription,

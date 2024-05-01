@@ -1,4 +1,4 @@
-import {Campus, Faculty, Language} from "~/proto/models/studorg";
+import {Campus, Faculty, Language} from "~/proto/models/common";
 
 
 // TODO: сделать proto.Enum

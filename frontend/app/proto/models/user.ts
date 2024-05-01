@@ -124,17 +124,17 @@ export interface Users {
  */
 export enum ProjectRole {
     /**
-     * @generated from protobuf enum value: DEVELOPER = 0;
+     * @generated from protobuf enum value: ORDINARY = 0;
      */
-    DEVELOPER = 0,
+    ORDINARY = 0,
     /**
-     * @generated from protobuf enum value: MODERATOR = 1;
+     * @generated from protobuf enum value: DEVELOPER = 1;
      */
-    MODERATOR = 1,
+    DEVELOPER = 1,
     /**
-     * @generated from protobuf enum value: ORDINARY = 2;
+     * @generated from protobuf enum value: MODERATOR = 2;
      */
-    ORDINARY = 2
+    MODERATOR = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserID$Type extends MessageType<UserID> {

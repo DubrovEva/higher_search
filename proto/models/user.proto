@@ -40,7 +40,8 @@ message Users {
 }
 
 enum ProjectRole {
-  DEVELOPER = 0;
-  MODERATOR = 1;
-  ORDINARY = 2;
+  ORDINARY = 0;
+  DEVELOPER = 1;
+  MODERATOR = 2;
+
 }

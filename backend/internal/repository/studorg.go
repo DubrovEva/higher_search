@@ -154,3 +154,15 @@ func (s *Studorg) DeleteTags(studorgID int64) error {
 
 	return err
 }
+
+func (s *Studorg) GetUsersNumber(studorgID int64) (int64, error) {
+	var number int64
+	err := s.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE studorgid = $1`, studorgID)
+	if err != nil {
+		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
+		// TODO: логи и завертывание ошибок
+		return 0, fmt.Errorf("failed to get users number from db: %w", err)
+	}
+
+	return number, nil
+}

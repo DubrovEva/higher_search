@@ -47,6 +47,15 @@ export default class Client {
         await this.router.insertStudorg(studorgInfo).response
         // todo: обработка ошибок
     }
+
+    async usersNumber(studorgID: StudorgID) {
+        const response = await this.router.getStudorgUsersNumber(studorgID).response
+
+        if (response.response.oneofKind == "number") {
+            return response.response.number
+        }
+        // todo: обработка ошибок
+    }
 }
 
 let instance = Client.getInstance(); // сделать что-нибудь с экземпляром...

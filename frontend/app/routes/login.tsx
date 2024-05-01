@@ -5,18 +5,11 @@ import styles from "~/styles/login.css?url";
 import my_logo from "../assets/logo.png?url";
 import {
     Button,
-    Container, FormField, FormInput, Grid, GridColumn,
-    Header, Image, Input, ItemMeta,
-    Menu,
-    MenuItem,
-    MenuMenu,
+    FormField, Grid, GridColumn,
+    Header, Image, Input,
     Segment,
-    Sidebar,
-    SidebarPusher
 } from "semantic-ui-react";
 import React from "react";
-import {RouterClient} from "~/proto/api/RouterServiceClientPb";
-import {StudorgID, StudorgInfo} from "~/proto/models/studorg_pb";
 import {Form} from "@remix-run/react";
 
 export const meta: MetaFunction = () => {

@@ -9,7 +9,9 @@ import (
 	protoservice "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 	"log"
 	"net/http"
 	"sync"
@@ -20,10 +22,11 @@ import (
 )
 
 type Application struct {
-	cfg *config.Config
-	db  *sqlx.DB
-	hs  *http.Server
-	wg  *sync.WaitGroup
+	cfg        *config.Config
+	db         *sqlx.DB
+	hs         *http.Server
+	wg         *sync.WaitGroup
+	jwtManager *api.JWTManager
 
 	repoUser    *repo.User
 	repoStudorg *repo.Studorg
@@ -94,9 +97,11 @@ func (a *Application) initRepository() {
 }
 
 func (a *Application) initServer() error {
-	grpcServer := grpc.NewServer()
+	a.jwtManager = api.NewJWTManager(a.cfg.JWTToken)
+
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(NewInterceptor()))
 	reflection.Register(grpcServer)
-	protoservice.RegisterRouterServer(grpcServer, api.NewRouter(a.repoUser, a.repoStudorg))
+	protoservice.RegisterRouterServer(grpcServer, api.NewRouter(a.repoUser, a.repoStudorg, a.jwtManager))
 
 	wrappedGrpc := grpcweb.WrapServer(grpcServer,
 		grpcweb.WithOriginFunc(func(origin string) bool { return true }),
@@ -155,4 +160,28 @@ func (a *Application) Wait(ctx context.Context, cancel context.CancelFunc) error
 	}
 
 	return appErr
+}
+
+func NewInterceptor() grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (resp interface{}, err error) {
+		log.Println("Processing request")
+
+		defer func() {
+			if r := recover(); r != nil {
+				err = status.Errorf(codes.Internal, "panic: %s", r)
+				log.Printf("Panic detected: %s", r)
+			}
+		}()
+
+		resp, err = handler(ctx, req)
+		errCode := status.Code(err)
+		if errCode == codes.Unknown || errCode == codes.Internal {
+			log.Printf("Request handler returned an internal error: %s", err)
+			return
+		}
+
+		log.Println("Request finished successfully")
+		return
+	}
 }

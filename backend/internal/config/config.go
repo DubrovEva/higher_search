@@ -19,7 +19,8 @@ type Database struct {
 }
 
 type HTTPServer struct {
-	URL string `env:"SERVER_URL" env-default:"localhost:8080"`
+	URL      string `env:"SERVER_URL" env-default:"localhost:8080"`
+	JWTToken string `env:"JWT_TOKEN" env-default:"default_token"`
 }
 
 func ParseConfig() (*Config, error) {

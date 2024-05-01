@@ -1,19 +1,15 @@
 import {
-    Button,
     Card,
     CardContent,
     CardDescription,
     CardGroup,
     CardHeader,
     CardMeta,
-    Container,
     Divider,
-    Header,
     Icon,
     Image,
     Item,
     ItemContent,
-    ItemDescription,
     ItemExtra,
     ItemGroup,
     ItemHeader,
@@ -21,11 +17,11 @@ import {
     ItemMeta,
     Label
 } from "semantic-ui-react";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import dummy from "../assets/dummy.png?url";
-import {StudorgInfo, Tags, Tag, Studorg} from "~/proto/models/studorg";
+import {StudorgInfo, Studorg, StudorgID} from "~/proto/models/studorg";
 import {category} from "~/components/options";
-import {SemanticCOLORS} from "semantic-ui-react/dist/commonjs/generic";
+import Client from "~/client";
 
 
 export function FullList() {
@@ -75,23 +71,29 @@ export function OrgCards(params: { studorgs: Studorg[]}) {
     return (
         <CardGroup stackable itemsPerRow={1}>
             {params.studorgs.map(
-                studorg => <OrgCard studorgInfo={studorg.studorgInfo!} ID={studorg.iD?.iD!}/>
+                studorg => <OrgCard studorgInfo={studorg.studorgInfo!} ID={studorg.iD!}/>
             )}
         </CardGroup>
     );
 }
 
-export function OrgCard(params: { studorgInfo: StudorgInfo, ID: string}) {
+export function OrgCard(params: { studorgInfo: StudorgInfo, ID: StudorgID}) {
+    const [usersNumber, setUsersNumber] = useState<string | undefined>(undefined)
+
+    useEffect(() => {
+        Client.getInstance().usersNumber(params.ID).then(x => setUsersNumber(x))
+    }, [])
+
     return (
         <Card>
             <CardContent>
                 <Image floated='left' size='tiny' src={dummy}/>
-                <CardHeader href={"/studorg/" + params.ID}> {params.studorgInfo.name} </CardHeader>
+                <CardHeader href={"/studorg/" + params.ID.iD}> {params.studorgInfo.name} </CardHeader>
                 <CardMeta>
                     C {params.studorgInfo.createdAt}
                 </CardMeta>
                 <CardMeta>
-                    {params.studorgInfo.participantsNumber} <Icon name="id card"/>
+                    {usersNumber} <Icon name="id card"/>
                 </CardMeta>
                 <CardDescription> {params.studorgInfo.shortDescription} </CardDescription>
                 <Divider/>

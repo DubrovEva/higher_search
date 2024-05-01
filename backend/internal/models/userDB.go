@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,21 +15,21 @@ type UserDB struct {
 	*UserInfo
 }
 type UserInfo struct {
-	Avatar           string
-	Description      string
-	Email            string
-	Hash             string
-	Links            string
-	MiddleName       string
+	Avatar           sql.NullString
+	Description      sql.NullString
+	Email            sql.NullString
+	Hash             sql.NullString
+	Links            sql.NullString
+	MiddleName       sql.NullString
 	Name             string
 	Role             int64
 	Salt             int64
-	ShortDescription string
+	ShortDescription sql.NullString
 	Surname          string
-	Faculty          int64
-	Gender           int64
-	Birth            time.Time
-	EducationInfo    string
+	Faculty          sql.NullInt64
+	Gender           sql.NullInt64
+	Birth            *time.Time
+	EducationInfo    sql.NullString
 }
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
@@ -69,23 +70,24 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 	if protoInfo.Hash == "" {
 		return nil, fmt.Errorf("field Hash is empty")
 	}
+	birthTime := protoInfo.Birth.AsTime()
 
 	userInfoDB := UserInfo{
-		Avatar:           protoInfo.Avatar,
-		Description:      protoInfo.Description,
-		Email:            email,
-		Hash:             protoInfo.Hash,
+		Avatar:           sql.NullString{Valid: true, String: protoInfo.Avatar},
+		Description:      sql.NullString{Valid: true, String: protoInfo.Description},
+		Email:            sql.NullString{Valid: true, String: email},
+		Hash:             sql.NullString{Valid: true, String: protoInfo.Hash},
 		Links:            links,
-		MiddleName:       protoInfo.MiddleName,
+		MiddleName:       sql.NullString{Valid: true, String: protoInfo.MiddleName},
 		Name:             protoInfo.Name,
 		Role:             int64(protoInfo.Role),
 		Salt:             protoInfo.Salt,
-		ShortDescription: protoInfo.ShortDescription,
+		ShortDescription: sql.NullString{Valid: true, String: protoInfo.ShortDescription},
 		Surname:          protoInfo.Surname,
-		Faculty:          int64(protoInfo.Faculty),
-		Gender:           int64(protoInfo.Gender),
-		Birth:            protoInfo.Birth.AsTime(),
-		EducationInfo:    protoInfo.EducationInfo,
+		Faculty:          sql.NullInt64{Valid: true, Int64: int64(protoInfo.Faculty)},
+		Gender:           sql.NullInt64{Valid: true, Int64: int64(protoInfo.Gender)},
+		Birth:            &birthTime,
+		EducationInfo:    sql.NullString{Valid: true, String: protoInfo.EducationInfo},
 	}
 	return &userInfoDB, nil
 }
@@ -93,7 +95,7 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 func (u *UserDB) ToProtoUser() (*proto.User, error) {
 	protoUserInfo, err := u.ToProtoUserInfo()
 	if err != nil {
-		return nil, fmt.Errorf("TODO")
+		return nil, fmt.Errorf("failed to convert UserDB to proto.User: %w", err)
 	}
 
 	protoUser := proto.User{
@@ -105,26 +107,32 @@ func (u *UserDB) ToProtoUser() (*proto.User, error) {
 }
 
 func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
-	links, err := jsonToLinks(u.Links)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert UserInfo to proto.UserInfo: %w", err)
+	//TODO
+	//links, err := jsonToLinks(u.Links)
+	//if err != nil {
+	//	return nil, fmt.Errorf("failed to convert UserInfo links to proto.UserInfo links: %w", err)
+	//}
+	var birth *timestamppb.Timestamp
+	if u.Birth != nil {
+		birth = timestamppb.New(*u.Birth)
 	}
+	links := make([]*proto.Links, 0)
 	protoUserInfo := proto.UserInfo{
-		Avatar:           u.Avatar,
-		Description:      u.Description,
-		Email:            u.Email,
-		Hash:             u.Hash,
+		Avatar:           u.Avatar.String,
+		Description:      u.Description.String,
+		Email:            u.Email.String,
+		Hash:             u.Hash.String,
 		Links:            links,
-		MiddleName:       u.MiddleName,
+		MiddleName:       u.MiddleName.String,
 		Name:             u.Name,
 		Role:             proto.ProjectRole(u.Role),
 		Salt:             u.Salt,
-		ShortDescription: u.ShortDescription,
+		ShortDescription: u.ShortDescription.String,
 		Surname:          u.Surname,
-		Faculty:          proto.Faculty(u.Faculty),
-		Gender:           proto.Gender(u.Gender),
-		Birth:            timestamppb.New(u.Birth),
-		EducationInfo:    u.EducationInfo,
+		Faculty:          proto.Faculty(u.Faculty.Int64),
+		Gender:           proto.Gender(u.Gender.Int64),
+		Birth:            birth,
+		EducationInfo:    u.EducationInfo.String,
 	}
 	return &protoUserInfo, nil
 }

@@ -10,6 +10,9 @@ service Router {
   rpc GetUsers (user.UserIDs) returns (UsersResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (UserResponse);
+  rpc AuthorizeUser (AuthorizationRequest) returns (UserResponse);
+  rpc RegisterUser (RegistrationRequest) returns (UserResponse);
+  rpc ValidateAuthorization (WithoutParameters) returns (ValidationResponse);
 
   rpc GetUserStudorgs (user.UserID) returns (studorg.UserStudorgs);
   rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
@@ -17,6 +20,8 @@ service Router {
   rpc GetStudorg (studorg.StudorgID) returns (StudorgResponse);
   rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgResponse);
   rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
+
+  rpc GetStudorgUsersNumber (studorg.StudorgID) returns (UsersNumberResponse);
 }
 
 message WithoutParameters {}
@@ -51,4 +56,30 @@ message StudorgsResponse {
 
 message Error {
   string msg = 1;
+}
+
+message UsersNumberResponse {
+  oneof response {
+    Error err = 1;
+    int64 number = 2;
+  }
+}
+
+message AuthorizationRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message ValidationResponse {
+  oneof response {
+    Error err = 1;
+    bool valid = 2;
+  }
+}
+
+message RegistrationRequest {
+  string Email = 1;
+  string Password = 2;
+  string Name = 3;
+  string Surname = 4;
 }

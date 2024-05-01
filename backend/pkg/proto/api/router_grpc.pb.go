@@ -27,11 +27,15 @@ type RouterClient interface {
 	GetUsers(ctx context.Context, in *models.UserIDs, opts ...grpc.CallOption) (*UsersResponse, error)
 	InsertUser(ctx context.Context, in *models.UserInfo, opts ...grpc.CallOption) (*UserResponse, error)
 	UpdateUser(ctx context.Context, in *models.User, opts ...grpc.CallOption) (*UserResponse, error)
+	AuthorizeUser(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	RegisterUser(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	ValidateAuthorization(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*ValidationResponse, error)
 	GetUserStudorgs(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*models.UserStudorgs, error)
 	GetAllStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error)
 	GetStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*StudorgResponse, error)
 	InsertStudorg(ctx context.Context, in *models.StudorgInfo, opts ...grpc.CallOption) (*StudorgResponse, error)
 	UpdateStudorg(ctx context.Context, in *models.Studorg, opts ...grpc.CallOption) (*StudorgResponse, error)
+	GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*UsersNumberResponse, error)
 }
 
 type routerClient struct {
@@ -72,6 +76,33 @@ func (c *routerClient) InsertUser(ctx context.Context, in *models.UserInfo, opts
 func (c *routerClient) UpdateUser(ctx context.Context, in *models.User, opts ...grpc.CallOption) (*UserResponse, error) {
 	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, "/router.Router/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) AuthorizeUser(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/AuthorizeUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) RegisterUser(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/RegisterUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) ValidateAuthorization(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*ValidationResponse, error) {
+	out := new(ValidationResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/ValidateAuthorization", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,6 +154,15 @@ func (c *routerClient) UpdateStudorg(ctx context.Context, in *models.Studorg, op
 	return out, nil
 }
 
+func (c *routerClient) GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*UsersNumberResponse, error) {
+	out := new(UsersNumberResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetStudorgUsersNumber", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RouterServer is the server API for Router service.
 // All implementations must embed UnimplementedRouterServer
 // for forward compatibility
@@ -131,11 +171,15 @@ type RouterServer interface {
 	GetUsers(context.Context, *models.UserIDs) (*UsersResponse, error)
 	InsertUser(context.Context, *models.UserInfo) (*UserResponse, error)
 	UpdateUser(context.Context, *models.User) (*UserResponse, error)
+	AuthorizeUser(context.Context, *AuthorizationRequest) (*UserResponse, error)
+	RegisterUser(context.Context, *RegistrationRequest) (*UserResponse, error)
+	ValidateAuthorization(context.Context, *WithoutParameters) (*ValidationResponse, error)
 	GetUserStudorgs(context.Context, *models.UserID) (*models.UserStudorgs, error)
 	GetAllStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error)
 	GetStudorg(context.Context, *models.StudorgID) (*StudorgResponse, error)
 	InsertStudorg(context.Context, *models.StudorgInfo) (*StudorgResponse, error)
 	UpdateStudorg(context.Context, *models.Studorg) (*StudorgResponse, error)
+	GetStudorgUsersNumber(context.Context, *models.StudorgID) (*UsersNumberResponse, error)
 	mustEmbedUnimplementedRouterServer()
 }
 
@@ -155,6 +199,15 @@ func (UnimplementedRouterServer) InsertUser(context.Context, *models.UserInfo) (
 func (UnimplementedRouterServer) UpdateUser(context.Context, *models.User) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
+func (UnimplementedRouterServer) AuthorizeUser(context.Context, *AuthorizationRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthorizeUser not implemented")
+}
+func (UnimplementedRouterServer) RegisterUser(context.Context, *RegistrationRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
+}
+func (UnimplementedRouterServer) ValidateAuthorization(context.Context, *WithoutParameters) (*ValidationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateAuthorization not implemented")
+}
 func (UnimplementedRouterServer) GetUserStudorgs(context.Context, *models.UserID) (*models.UserStudorgs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudorgs not implemented")
 }
@@ -169,6 +222,9 @@ func (UnimplementedRouterServer) InsertStudorg(context.Context, *models.StudorgI
 }
 func (UnimplementedRouterServer) UpdateStudorg(context.Context, *models.Studorg) (*StudorgResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudorg not implemented")
+}
+func (UnimplementedRouterServer) GetStudorgUsersNumber(context.Context, *models.StudorgID) (*UsersNumberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudorgUsersNumber not implemented")
 }
 func (UnimplementedRouterServer) mustEmbedUnimplementedRouterServer() {}
 
@@ -251,6 +307,60 @@ func _Router_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RouterServer).UpdateUser(ctx, req.(*models.User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_AuthorizeUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).AuthorizeUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/AuthorizeUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).AuthorizeUser(ctx, req.(*AuthorizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegistrationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).RegisterUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/RegisterUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).RegisterUser(ctx, req.(*RegistrationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_ValidateAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WithoutParameters)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).ValidateAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/ValidateAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).ValidateAuthorization(ctx, req.(*WithoutParameters))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -345,6 +455,24 @@ func _Router_UpdateStudorg_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Router_GetStudorgUsersNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(models.StudorgID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetStudorgUsersNumber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetStudorgUsersNumber",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetStudorgUsersNumber(ctx, req.(*models.StudorgID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Router_ServiceDesc is the grpc.ServiceDesc for Router service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -369,6 +497,18 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Router_UpdateUser_Handler,
 		},
 		{
+			MethodName: "AuthorizeUser",
+			Handler:    _Router_AuthorizeUser_Handler,
+		},
+		{
+			MethodName: "RegisterUser",
+			Handler:    _Router_RegisterUser_Handler,
+		},
+		{
+			MethodName: "ValidateAuthorization",
+			Handler:    _Router_ValidateAuthorization_Handler,
+		},
+		{
 			MethodName: "GetUserStudorgs",
 			Handler:    _Router_GetUserStudorgs_Handler,
 		},
@@ -387,6 +527,10 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateStudorg",
 			Handler:    _Router_UpdateStudorg_Handler,
+		},
+		{
+			MethodName: "GetStudorgUsersNumber",
+			Handler:    _Router_GetStudorgUsersNumber_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
