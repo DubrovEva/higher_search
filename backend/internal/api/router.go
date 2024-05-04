@@ -48,7 +48,7 @@ func NewRouter(user UserRepo, studorg StudorgRepo, manager *JWTManager) *Router 
 	}
 }
 
-func (r *Router) GetUser(ctx context.Context, userID *proto.UserID) (*service.UserResponse, error) {
+func (r *Router) GetUser(_ context.Context, userID *proto.UserID) (*service.UserResponse, error) {
 	userDB, err := r.User.Get(userID.GetID())
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -64,7 +64,7 @@ func (r *Router) GetUser(ctx context.Context, userID *proto.UserID) (*service.Us
 	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
 }
 
-func (r *Router) InsertUser(ctx context.Context, userInfo *proto.UserInfo) (*service.UserResponse, error) {
+func (r *Router) InsertUser(_ context.Context, userInfo *proto.UserInfo) (*service.UserResponse, error) {
 	userInfoDB, err := models.NewUserInfoDB(userInfo)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -86,7 +86,7 @@ func (r *Router) InsertUser(ctx context.Context, userInfo *proto.UserInfo) (*ser
 	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
 }
 
-func (r *Router) UpdateUser(ctx context.Context, protoUser *proto.User) (*service.UserResponse, error) {
+func (r *Router) UpdateUser(_ context.Context, protoUser *proto.User) (*service.UserResponse, error) {
 	userDB, err := models.NewUserDB(protoUser)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -107,7 +107,7 @@ func (r *Router) UpdateUser(ctx context.Context, protoUser *proto.User) (*servic
 	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, err
 }
 
-func (r *Router) GetStudorg(ctx context.Context, studorgID *proto.StudorgID) (*service.StudorgResponse, error) {
+func (r *Router) GetStudorg(_ context.Context, studorgID *proto.StudorgID) (*service.StudorgResponse, error) {
 	StudorgDB, err := r.Studorg.Get(studorgID.GetID())
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -143,7 +143,7 @@ func (r *Router) GetAllStudorgs(context.Context, *service.WithoutParameters) (*s
 	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
 }
 
-func (r *Router) InsertStudorg(ctx context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgResponse, error) {
+func (r *Router) InsertStudorg(_ context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgResponse, error) {
 	StudorgInfoDB, err := models.NewStudorgInfoDB(StudorgInfo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert protoStudorgInfo to dbStudorgInfo: %w", err)
@@ -162,7 +162,7 @@ func (r *Router) InsertStudorg(ctx context.Context, StudorgInfo *proto.StudorgIn
 	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, nil
 }
 
-func (r *Router) UpdateStudorg(ctx context.Context, protoStudorg *proto.Studorg) (*service.StudorgResponse, error) {
+func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (*service.StudorgResponse, error) {
 	StudorgDB, err := models.NewStudorgDB(protoStudorg)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -183,7 +183,7 @@ func (r *Router) UpdateStudorg(ctx context.Context, protoStudorg *proto.Studorg)
 	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, err
 }
 
-func (r *Router) GetStudorgUsersNumber(ctx context.Context, studorgID *proto.StudorgID) (*service.UsersNumberResponse, error) {
+func (r *Router) GetStudorgUsersNumber(_ context.Context, studorgID *proto.StudorgID) (*service.UsersNumberResponse, error) {
 	number, err := r.Studorg.GetUsersNumber(studorgID.GetID())
 	if err != nil {
 		return nil, err
@@ -191,7 +191,7 @@ func (r *Router) GetStudorgUsersNumber(ctx context.Context, studorgID *proto.Stu
 	return &service.UsersNumberResponse{Response: &service.UsersNumberResponse_Number{Number: number}}, nil
 }
 
-func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *service.AuthorizationRequest) (*service.UserResponse, error) {
+func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *service.AuthorizationRequest) (*service.UserIDResponse, error) {
 	userDB, err := r.User.GetByAuthorizationData(authorizationRequest.Email, authorizationRequest.Password)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -204,19 +204,27 @@ func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *servic
 		return nil, err
 	}
 
-	jwt, err := r.JwtManager.GenerateJWT(result.ID.ID)
+	cookieRequest, err := r.JwtManager.GenerateJWTCookie(result.ID.ID)
 	if err != nil {
 		return nil, err
 	}
-	err = grpc.SendHeader(ctx, metadata.Pairs("jwt", jwt))
+	err = grpc.SendHeader(ctx, cookieRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
+	return &service.UserIDResponse{Response: &service.UserIDResponse_UserID{UserID: result.ID}}, nil
 }
 
-func (r *Router) RegisterUser(ctx context.Context, registrationRequest *service.RegistrationRequest) (*service.UserResponse, error) {
+func (r *Router) Logout(ctx context.Context, _ *service.WithoutParameters) (*service.SuccessResponse, error) {
+	if err := grpc.SendHeader(ctx, r.JwtManager.RemovedJWTCookie()); err != nil {
+		return nil, err
+	}
+
+	return &service.SuccessResponse{Response: &service.SuccessResponse_Success{Success: true}}, nil
+}
+
+func (r *Router) RegisterUser(ctx context.Context, registrationRequest *service.RegistrationRequest) (*service.UserIDResponse, error) {
 	userDB, err := r.User.Create(registrationRequest.Email, registrationRequest.Password, registrationRequest.Name, registrationRequest.Surname)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
@@ -229,27 +237,27 @@ func (r *Router) RegisterUser(ctx context.Context, registrationRequest *service.
 		return nil, fmt.Errorf("failed to convert UserDB to proto.User: %w", err)
 	}
 
-	jwt, err := r.JwtManager.GenerateJWT(result.ID.ID)
+	cookieRequest, err := r.JwtManager.GenerateJWTCookie(result.ID.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate jwt: %w", err)
 	}
 
-	err = grpc.SendHeader(ctx, metadata.Pairs("jwt", jwt))
+	err = grpc.SendHeader(ctx, cookieRequest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send header jwt: %w", err)
 	}
 
 	fmt.Println("success4")
-	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
+	return &service.UserIDResponse{Response: &service.UserIDResponse_UserID{UserID: result.ID}}, nil
 }
 
-func (r *Router) ValidateAuthorization(ctx context.Context, withoutParameters *service.WithoutParameters) (*service.ValidationResponse, error) {
+func (r *Router) ValidateAuthorization(ctx context.Context, _ *service.WithoutParameters) (*service.SuccessResponse, error) {
 	_, err := r.validateAuthorization(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify jwt: %w", err)
 	}
 
-	return &service.ValidationResponse{Response: &service.ValidationResponse_Valid{Valid: true}}, nil
+	return &service.SuccessResponse{Response: &service.SuccessResponse_Success{Success: true}}, nil
 }
 
 func (r *Router) validateAuthorization(ctx context.Context) (*proto.UserID, error) {
@@ -257,13 +265,10 @@ func (r *Router) validateAuthorization(ctx context.Context) (*proto.UserID, erro
 	if !ok {
 		return nil, fmt.Errorf("no metadata in context")
 	}
-	jwt := md.Get("jwt")
-	if len(jwt) == 0 {
-		return nil, fmt.Errorf("not valid jwt")
-	}
-	claims, err := r.JwtManager.VerifyJWT(jwt[0])
+
+	cookie := md.Get("Cookie")
+	claims, err := r.JwtManager.VerifyJWT(cookie[0])
 	if err != nil {
-		// TODO: обрабатывать два вида ошибок
 		return nil, fmt.Errorf("not valid jwt: %w", err)
 	}
 

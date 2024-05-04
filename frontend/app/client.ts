@@ -1,7 +1,8 @@
 import {RouterClient} from "~/proto/api/router_client";
 import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
 import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
-import {WithoutParameters} from "~/proto/api/router";
+import {AuthorizationRequest, RegistrationRequest, WithoutParameters} from "~/proto/api/router";
+import {User, UserID, UserInfo} from "~/proto/models/user";
 
 export default class Client {
     private static instance?: Client;
@@ -10,7 +11,10 @@ export default class Client {
     private constructor() {
         this.router = new RouterClient(
             new GrpcWebFetchTransport({
-                baseUrl: 'http://127.0.0.1:8080'
+                baseUrl: '/',
+                fetchInit: {
+                    credentials: "same-origin",
+                }
             })
         );
     }
@@ -34,11 +38,43 @@ export default class Client {
         // todo: обработка ошибок
     }
 
+    async getUserInfo(userID: UserID) {
+        const response = await this.router.getUser(userID).response
+        if (response.response.oneofKind == "user") {
+            return response.response.user.userInfo
+        }
+        // if (response.response.oneofKind == "err") {
+        //     throw response.response.err
+        // }
+        // throw "unknown response"
+        // todo: обработка ошибок
+    }
+
+    async updateUserInfo(user: User) {
+        const response = await this.router.updateUser(user).response
+        if (response.response.oneofKind == "user") {
+            return response.response.user
+        }
+        // if (response.response.oneofKind == "err") {
+        //     throw response.response.err
+        // }
+        // throw "unknown response"
+        // todo: обработка ошибок
+    }
+
     async getAllStudorgs() {
         const request = WithoutParameters.create()
         const response = await this.router.getAllStudorgs(request).response
         if (response.response.oneofKind == "studorgs") {
             return response.response.studorgs.studorgs
+        }
+        // todo: обработка ошибок
+    }
+
+    async isAuthorized() {
+        const response = await this.router.validateAuthorization(WithoutParameters.create()).response
+        if (response.response.oneofKind == "success") {
+            return response.response.success
         }
         // todo: обработка ошибок
     }
@@ -54,6 +90,33 @@ export default class Client {
         if (response.response.oneofKind == "number") {
             return response.response.number
         }
+        // todo: обработка ошибок
+    }
+
+    async authorize(authorizationRequest: AuthorizationRequest) {
+        const response = await this.router.authorizeUser(authorizationRequest).response
+
+        if (response.response.oneofKind == "userID") {
+            return response.response.userID
+        }
+        // todo: обработка ошибок
+    }
+
+    async register(registerRequest: RegistrationRequest) {
+        const response = await this.router.registerUser(registerRequest).response
+
+        if (response.response.oneofKind == "userID") {
+            return response.response.userID
+        }
+        // todo: обработка ошибок
+    }
+
+    async logout() {
+        const response = await this.router.logout(WithoutParameters.create()).response
+
+        return response.response.oneofKind == "success";
+
+
         // todo: обработка ошибок
     }
 }

@@ -2,8 +2,11 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"github.com/DubrovEva/higher_search/backend/internal/models"
 	"github.com/golang-jwt/jwt"
+	"google.golang.org/grpc/metadata"
+	"strings"
 )
 
 type JWTManager struct {
@@ -12,31 +15,43 @@ type JWTManager struct {
 
 func NewJWTManager(secretKey string) *JWTManager {
 	return &JWTManager{
-		SecretKey: []byte("TODO"),
+		SecretKey: []byte(secretKey),
 	}
 }
 
-func (m *JWTManager) GenerateJWT(userID int64) (string, error) {
+func (m *JWTManager) GenerateJWTCookie(userID int64) (metadata.MD, error) {
 	claims := models.Claims{
 		UserID: userID,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(m.SecretKey)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return tokenString, nil
+	cookieValue := fmt.Sprintf("jwt=%s; Max-Age=%d; Path=/; HttpOnly", tokenString, 10*60*60)
+
+	return metadata.Pairs("Set-Cookie", cookieValue), nil
 }
 
-func (m *JWTManager) VerifyJWT(token string) (*models.Claims, error) {
+func (m *JWTManager) RemovedJWTCookie() metadata.MD {
+	cookieValue := fmt.Sprintf("jwt=%s; Max-Age=%d; Path=/; HttpOnly", "", 0)
+
+	return metadata.Pairs("Set-Cookie", cookieValue)
+}
+
+func (m *JWTManager) VerifyJWT(cookie string) (*models.Claims, error) {
+	token, err := m.getJwtFromCookie(cookie)
+	if err != nil {
+		return nil, err
+	}
+
 	parsed, err := jwt.ParseWithClaims(token, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return m.SecretKey, nil
 	})
-
 	if err != nil {
 		// TODO: разделить два вида ошибок
-		return nil, err
+		return nil, fmt.Errorf("failed to parse jwt with claims: %w", err)
 	}
 
 	claims, ok := parsed.Claims.(*models.Claims)
@@ -45,4 +60,18 @@ func (m *JWTManager) VerifyJWT(token string) (*models.Claims, error) {
 	}
 
 	return claims, nil
+}
+
+func (m *JWTManager) getJwtFromCookie(cookie string) (string, error) {
+	cookies := strings.Split(cookie, "; ")
+	for _, currentCookie := range cookies {
+		idAndValue := strings.Split(currentCookie, "=")
+
+		if idAndValue[0] == "jwt" && len(idAndValue) == 2 {
+
+			return idAndValue[1], nil
+		}
+	}
+
+	return "", errors.New("failed to find jwt")
 }

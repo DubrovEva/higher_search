@@ -299,7 +299,7 @@ func (x *UserInfo) GetFaculty() Faculty {
 	if x != nil {
 		return x.Faculty
 	}
-	return Faculty_BINST
+	return Faculty_OTHER_FACULTY
 }
 
 func (x *UserInfo) GetGender() Gender {

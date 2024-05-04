@@ -6,7 +6,6 @@ import { StudorgID } from "../models/studorg";
 import { UserStudorgs } from "../models/studorg";
 import { UserInfo } from "../models/user";
 import { UserIDs } from "../models/user";
-import { UserID } from "../models/user";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
@@ -20,6 +19,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Studorgs } from "../models/studorg";
 import { Studorg } from "../models/studorg";
 import { Users } from "../models/user";
+import { UserID } from "../models/user";
 import { User } from "../models/user";
 /**
  * @generated from protobuf message router.WithoutParameters
@@ -45,6 +45,29 @@ export interface UserResponse {
          * @generated from protobuf field: user.User user = 2;
          */
         user: User;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message router.UserIDResponse
+ */
+export interface UserIDResponse {
+    /**
+     * @generated from protobuf oneof: response
+     */
+    response: {
+        oneofKind: "err";
+        /**
+         * @generated from protobuf field: router.Error err = 1;
+         */
+        err: Error;
+    } | {
+        oneofKind: "userID";
+        /**
+         * @generated from protobuf field: user.UserID userID = 2;
+         */
+        userID: UserID;
     } | {
         oneofKind: undefined;
     };
@@ -164,9 +187,9 @@ export interface AuthorizationRequest {
     password: string;
 }
 /**
- * @generated from protobuf message router.ValidationResponse
+ * @generated from protobuf message router.SuccessResponse
  */
-export interface ValidationResponse {
+export interface SuccessResponse {
     /**
      * @generated from protobuf oneof: response
      */
@@ -177,11 +200,11 @@ export interface ValidationResponse {
          */
         err: Error;
     } | {
-        oneofKind: "valid";
+        oneofKind: "success";
         /**
-         * @generated from protobuf field: bool valid = 2;
+         * @generated from protobuf field: bool success = 2;
          */
-        valid: boolean;
+        success: boolean;
     } | {
         oneofKind: undefined;
     };
@@ -292,6 +315,66 @@ class UserResponse$Type extends MessageType<UserResponse> {
  * @generated MessageType for protobuf message router.UserResponse
  */
 export const UserResponse = new UserResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserIDResponse$Type extends MessageType<UserIDResponse> {
+    constructor() {
+        super("router.UserIDResponse", [
+            { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
+            { no: 2, name: "userID", kind: "message", oneof: "response", T: () => UserID }
+        ]);
+    }
+    create(value?: PartialMessage<UserIDResponse>): UserIDResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<UserIDResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserIDResponse): UserIDResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* router.Error err */ 1:
+                    message.response = {
+                        oneofKind: "err",
+                        err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
+                    };
+                    break;
+                case /* user.UserID userID */ 2:
+                    message.response = {
+                        oneofKind: "userID",
+                        userID: UserID.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).userID)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserIDResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* router.Error err = 1; */
+        if (message.response.oneofKind === "err")
+            Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* user.UserID userID = 2; */
+        if (message.response.oneofKind === "userID")
+            UserID.internalBinaryWrite(message.response.userID, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.UserIDResponse
+ */
+export const UserIDResponse = new UserIDResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UsersResponse$Type extends MessageType<UsersResponse> {
     constructor() {
@@ -635,21 +718,21 @@ class AuthorizationRequest$Type extends MessageType<AuthorizationRequest> {
  */
 export const AuthorizationRequest = new AuthorizationRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ValidationResponse$Type extends MessageType<ValidationResponse> {
+class SuccessResponse$Type extends MessageType<SuccessResponse> {
     constructor() {
-        super("router.ValidationResponse", [
+        super("router.SuccessResponse", [
             { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
-            { no: 2, name: "valid", kind: "scalar", oneof: "response", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "success", kind: "scalar", oneof: "response", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<ValidationResponse>): ValidationResponse {
+    create(value?: PartialMessage<SuccessResponse>): SuccessResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.response = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<ValidationResponse>(this, message, value);
+            reflectionMergePartial<SuccessResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ValidationResponse): ValidationResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SuccessResponse): SuccessResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -660,10 +743,10 @@ class ValidationResponse$Type extends MessageType<ValidationResponse> {
                         err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
                     };
                     break;
-                case /* bool valid */ 2:
+                case /* bool success */ 2:
                     message.response = {
-                        oneofKind: "valid",
-                        valid: reader.bool()
+                        oneofKind: "success",
+                        success: reader.bool()
                     };
                     break;
                 default:
@@ -677,13 +760,13 @@ class ValidationResponse$Type extends MessageType<ValidationResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: ValidationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: SuccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* router.Error err = 1; */
         if (message.response.oneofKind === "err")
             Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool valid = 2; */
-        if (message.response.oneofKind === "valid")
-            writer.tag(2, WireType.Varint).bool(message.response.valid);
+        /* bool success = 2; */
+        if (message.response.oneofKind === "success")
+            writer.tag(2, WireType.Varint).bool(message.response.success);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -691,9 +774,9 @@ class ValidationResponse$Type extends MessageType<ValidationResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message router.ValidationResponse
+ * @generated MessageType for protobuf message router.SuccessResponse
  */
-export const ValidationResponse = new ValidationResponse$Type();
+export const SuccessResponse = new SuccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RegistrationRequest$Type extends MessageType<RegistrationRequest> {
     constructor() {
@@ -773,9 +856,10 @@ export const Router = new ServiceType("router.Router", [
     { name: "GetUsers", options: {}, I: UserIDs, O: UsersResponse },
     { name: "InsertUser", options: {}, I: UserInfo, O: UserResponse },
     { name: "UpdateUser", options: {}, I: User, O: UserResponse },
-    { name: "AuthorizeUser", options: {}, I: AuthorizationRequest, O: UserResponse },
-    { name: "RegisterUser", options: {}, I: RegistrationRequest, O: UserResponse },
-    { name: "ValidateAuthorization", options: {}, I: WithoutParameters, O: ValidationResponse },
+    { name: "AuthorizeUser", options: {}, I: AuthorizationRequest, O: UserIDResponse },
+    { name: "Logout", options: {}, I: WithoutParameters, O: SuccessResponse },
+    { name: "RegisterUser", options: {}, I: RegistrationRequest, O: UserIDResponse },
+    { name: "ValidateAuthorization", options: {}, I: WithoutParameters, O: SuccessResponse },
     { name: "GetUserStudorgs", options: {}, I: UserID, O: UserStudorgs },
     { name: "GetAllStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
     { name: "GetStudorg", options: {}, I: StudorgID, O: StudorgResponse },

@@ -25,7 +25,7 @@ enum Campus {
 }
 
 enum Faculty {
-  BINST = 0;
+  OTHER_FACULTY = 0;
   BIOLOGY = 1;
   CHEMISTRY = 2;
   CMD = 3;
@@ -42,7 +42,7 @@ enum Faculty {
   LAW = 14;
   MATH = 15;
   MIEM = 16;
-  OTHER_FACULTY = 17;
+  BINST = 17;
   PHYSICS = 18;
   PRAVO = 19;
   SOCIAL = 20;
@@ -50,7 +50,7 @@ enum Faculty {
 }
 
 enum Language {
-  AR = 0;
+  RU = 0;
   DE = 1;
   EN = 2;
   ES = 3;
@@ -59,7 +59,7 @@ enum Language {
   IT = 6;
   JA = 7;
   KO = 8;
-  RU = 9;
+  AR = 9;
   ZH = 10;
 }
 

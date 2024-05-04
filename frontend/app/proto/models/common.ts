@@ -75,9 +75,9 @@ export enum Campus {
  */
 export enum Faculty {
     /**
-     * @generated from protobuf enum value: BINST = 0;
+     * @generated from protobuf enum value: OTHER_FACULTY = 0;
      */
-    BINST = 0,
+    OTHER_FACULTY = 0,
     /**
      * @generated from protobuf enum value: BIOLOGY = 1;
      */
@@ -143,9 +143,9 @@ export enum Faculty {
      */
     MIEM = 16,
     /**
-     * @generated from protobuf enum value: OTHER_FACULTY = 17;
+     * @generated from protobuf enum value: BINST = 17;
      */
-    OTHER_FACULTY = 17,
+    BINST = 17,
     /**
      * @generated from protobuf enum value: PHYSICS = 18;
      */
@@ -168,9 +168,9 @@ export enum Faculty {
  */
 export enum Language {
     /**
-     * @generated from protobuf enum value: AR = 0;
+     * @generated from protobuf enum value: RU = 0;
      */
-    AR = 0,
+    RU = 0,
     /**
      * @generated from protobuf enum value: DE = 1;
      */
@@ -204,9 +204,9 @@ export enum Language {
      */
     KO = 8,
     /**
-     * @generated from protobuf enum value: RU = 9;
+     * @generated from protobuf enum value: AR = 9;
      */
-    RU = 9,
+    AR = 9,
     /**
      * @generated from protobuf enum value: ZH = 10;
      */

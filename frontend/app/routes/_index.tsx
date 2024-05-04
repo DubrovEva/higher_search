@@ -2,22 +2,24 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/index.css?url";
-import { useNavigate } from "react-router-dom";
-import hs_logo from "../assets/logo.png?url";
+import {useNavigate} from "react-router-dom";
 
 import {
     Button,
-    Container, FormButton,
-    Header, Icon, Image, ItemHeader, ItemImage,
+    Container,
+    FormButton,
+    Header,
+    Icon,
     Menu,
     MenuItem,
     MenuMenu,
     Segment,
     SidebarPusher
 } from "semantic-ui-react";
-import React, {useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import {CustomFooter} from "~/components/footer";
 import {OrganizationsMenu, SidebarMenu} from "~/components/menu";
+import Client from "~/client";
 
 export const meta: MetaFunction = () => {
     return [
@@ -30,41 +32,61 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: styles},
 ];
 
-function TopMenu(props: {toggleSidebar: () => void}) {
-    let navigate = useNavigate();
-    const routeToLogin = () =>{
-        let path = `/login`;
-        navigate(path);
-    }
-    const routeToRegistration = () =>{
-        let path = `/registration`;
-        navigate(path);
-    }
+function TopMenu(props: { toggleSidebar: () => void }) {
+    const [isAuth, setStatus] = useState(false)
+    useEffect(() => {
+        Client.getInstance().isAuthorized().then(x => setStatus(x!))
+    }, [])
 
     return (
         <Container>
-        <Menu size="large" secondary inverted pointing>
-            <a href="#" className="toc item" onClick={() => props.toggleSidebar()}>
-                <Icon className={"sidebar icon"}/>
-            </a>
+            <Menu size="large" secondary inverted pointing>
+                <a href="#" className="toc item" onClick={() => props.toggleSidebar()}>
+                    <Icon className={"sidebar icon"}/>
+                </a>
 
-            {/*<Image as="logo" src={hs_logo}/>*/}
-            <MenuItem active> Главная </MenuItem>
-            <MenuItem> <OrganizationsMenu/> </MenuItem>
+                {/*<Image as="logo" src={hs_logo}/>*/}
+                <MenuItem active> Главная </MenuItem>
+                <MenuItem> <OrganizationsMenu/> </MenuItem>
 
-            <MenuMenu position="right">
-                <FormButton inverted onClick={routeToLogin}>Войти</FormButton>
-                <FormButton inverted onClick={routeToRegistration}>Зарегистрироваться</FormButton>
-            </MenuMenu>
+                <MenuMenu position="right">
+                    <Buttons isAuth={isAuth}/>
+                </MenuMenu>
 
-        </Menu>
+            </Menu>
         </Container>
-    );
+    )
 }
 
-function HeaderOfPage(props: {toggleSidebar: () => void}) {
+function Buttons(params: { isAuth: boolean }) {
+    let navigate = useNavigate();
+
+    const routeToLogin = () => {
+        let path = `/login`;
+        navigate(path);
+    }
+    const routeToRegistration = () => {
+        let path = `/registration`;
+        navigate(path);
+    }
+    const logout = async () => {
+        await Client.getInstance().logout()
+        window.location.href = "/"
+    }
+
+    if (!params.isAuth) {
+        return <>
+            <FormButton inverted onClick={routeToLogin}>Войти</FormButton>
+            <FormButton inverted onClick={routeToRegistration}>Зарегистрироваться</FormButton>
+        </>
+    } else {
+        return <FormButton inverted onClick={logout}> Выйти </FormButton>
+    }
+}
+
+function HeaderOfPage(props: { toggleSidebar: () => void }) {
     return (
-        <Segment inverted vertical  className={"masthead"} textAlign={"center"}>
+        <Segment inverted vertical className={"masthead"} textAlign={"center"}>
             <TopMenu toggleSidebar={props.toggleSidebar}/>
 
             <Container text>
@@ -72,6 +94,8 @@ function HeaderOfPage(props: {toggleSidebar: () => void}) {
                     Higher Search
                 </Header>
                 <h2>Сервис для поиска студенческих организаций Высшей Школы Экономики</h2>
+
+
                 <Button size="huge" primary href={"/search"}> Поиск <i className="right arrow icon"> </i></Button>
             </Container>
 

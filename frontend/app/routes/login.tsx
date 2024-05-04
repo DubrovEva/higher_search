@@ -7,10 +7,13 @@ import {
     Button,
     FormField, Grid, GridColumn,
     Header, Image, Input,
-    Segment,
+    Segment, Form, Message,
 } from "semantic-ui-react";
-import React from "react";
-import {Form} from "@remix-run/react";
+import React, {EventHandler, FormEvent, MouseEvent, useState} from "react";
+import {StudorgInfo} from "~/proto/models/studorg";
+import { AuthorizationRequest } from "~/proto/api/router";
+import Client from "~/client";
+import {UserID} from "~/proto/models/user";
 
 export const meta: MetaFunction = () => {
     return [
@@ -23,7 +26,33 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: styles},
 ];
 
-function Body() {
+export default function Login() {
+    const [authorizationRequest, setAuthorizationRequest] = useState(
+        AuthorizationRequest.create()
+    )
+    const [noError, setNoError] = useState(true)
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        let response: UserID | undefined;
+        try {
+            response = await Client.getInstance().authorize(authorizationRequest);
+        } catch {
+            response = undefined
+        }
+        if (response !== undefined) {
+            setNoError(false)
+            window.location.href = "/user/" + response.iD
+        } else {
+            setNoError(false)
+        }
+    }
+
+    function handleUpdate(key: keyof AuthorizationRequest) {
+        return (e: any, data: { value?: string }) => {
+            setAuthorizationRequest({...authorizationRequest, [key]: data.value})
+        }
+    }
+
     return (
         <Grid verticalAlign={"middle"} textAlign={"center"}>
             <GridColumn>
@@ -33,19 +62,25 @@ function Body() {
                         Авторизация
                     </div>
                 </Header>
-                <Form className="ui large form" action={"/account"}>
+                <Form className="ui large form" onSubmit={handleSubmit} error={!noError}>
                     <Segment stacked>
                         <FormField>
-                            <Input iconPosition={"left"}>
+                            <Input iconPosition={"left"} onChange={handleUpdate("email")}  value={authorizationRequest.email}>
                                 <i className="user icon"></i>
                                 <input type="text" name="email" placeholder="E-mail address"/>
                             </Input>
                         </FormField>
                         <FormField>
-                            <Input iconPosition={"left"}>
+                            <Input iconPosition={"left"} onChange={handleUpdate("password")} value={authorizationRequest.password}>
                                 <i className="lock icon"></i>
                                 <input type="password" name="password" placeholder="Password"/>
                             </Input>
+                            <Message
+                                error
+                                header='Некорректные данные'
+                                id={"errorMessage"}
+                                content='Отсутствует пользователь с введеными данными'
+                            />
                         </FormField>
                         <Button fluid color="black" size="large" type="submit"> Login </Button>
                     </Segment>
@@ -59,13 +94,5 @@ function Body() {
                 </div>
             </GridColumn>
         </Grid>
-    );
-}
-
-export default function Login() {
-    return (
-        <>
-            <Body/>
-        </>
     );
 }

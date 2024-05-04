@@ -1,26 +1,21 @@
 import {
     Container,
     Dropdown,
-    DropdownHeader,
     DropdownItem,
     DropdownMenu, FormButton,
-    Header, ItemImage,
+    ItemImage,
     Menu,
     MenuItem, MenuMenu, Sidebar
 } from "semantic-ui-react";
 import React from "react";
 import hs_logo from "../assets/logo.png?url";
 import {useNavigate} from "react-router-dom";
+import Client from "~/client";
 
 export function FixedMenu() {
-    let navigate = useNavigate();
-    const routeToLogin = () =>{
-        let path = `/login`;
-        navigate(path);
-    }
-    const routeToRegistration = () =>{
-        let path = `/registration`;
-        navigate(path);
+    const logout = async () => {
+        await Client.getInstance().logout()
+        window.location.href = "/"
     }
 
     return (
@@ -31,6 +26,12 @@ export function FixedMenu() {
                     Higher Search
                 </MenuItem>
                 <MenuItem> <OrganizationsMenu/> </MenuItem>
+
+                <MenuMenu position="right">
+                    <MenuItem>
+                    <FormButton  inverted basic onClick={logout}> Выйти</FormButton>
+                    </MenuItem>
+                </MenuMenu>
             </Container>
 
         </Menu>

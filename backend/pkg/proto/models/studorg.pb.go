@@ -238,14 +238,14 @@ func (x *StudorgInfo) GetFaculty() Faculty {
 	if x != nil {
 		return x.Faculty
 	}
-	return Faculty_BINST
+	return Faculty_OTHER_FACULTY
 }
 
 func (x *StudorgInfo) GetLanguage() Language {
 	if x != nil {
 		return x.Language
 	}
-	return Language_AR
+	return Language_RU
 }
 
 func (x *StudorgInfo) GetLinks() []*Links {

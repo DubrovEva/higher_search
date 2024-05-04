@@ -1,11 +1,11 @@
-import {Campus, Faculty, Language} from "~/proto/models/common";
+import {Campus, Faculty, Gender, Language} from "~/proto/models/common";
 
 
 // TODO: сделать proto.Enum
 // TODO: добавить значение в бд в табличку user
 export const gender = [
-    { key: 'м', text: 'Мужской', value: 'мужской' },
-    { key: 'ж', text: 'Женский', value: 'женский' },
+    { key: 'ж', text: 'Женский', value: Gender.FEMALE },
+    { key: 'м', text: 'Мужской', value: Gender.MALE },
 ]
 
 // TODO: сделать proto.Enum
@@ -61,6 +61,7 @@ export const category = [
 ]
 
 export const faculty = [
+    { text: '', value: Faculty.OTHER_FACULTY},
     { text: 'Факультет математики', value: Faculty.MATH},
     { text: 'Факультет экономических наук', value: Faculty.ECONOMICS},
     { text: 'Факультет компьютерных наук', value: Faculty.CS},
@@ -82,5 +83,4 @@ export const faculty = [
     { text: 'Институт статистических исследований и экономики знаний', value: Faculty.ISSEK},
     { text: 'Банковский институт', value: Faculty.BINST},
     { text: 'Школа инноватики и предпринимательства', value: Faculty.INMAN},
-    { text: 'Другое', value: Faculty.OTHER_FACULTY},
 ]

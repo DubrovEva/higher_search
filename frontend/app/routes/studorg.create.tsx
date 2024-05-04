@@ -43,7 +43,6 @@ function StudorgInfoForm() {
     )
 
     const handleSubmit = () => {
-        console.log(studorgInfo);
         Client.getInstance().createStudorg(studorgInfo).then()
     }
 

@@ -10,9 +10,10 @@ service Router {
   rpc GetUsers (user.UserIDs) returns (UsersResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (UserResponse);
-  rpc AuthorizeUser (AuthorizationRequest) returns (UserResponse);
-  rpc RegisterUser (RegistrationRequest) returns (UserResponse);
-  rpc ValidateAuthorization (WithoutParameters) returns (ValidationResponse);
+  rpc AuthorizeUser (AuthorizationRequest) returns (UserIDResponse);
+  rpc Logout (WithoutParameters) returns (SuccessResponse);
+  rpc RegisterUser (RegistrationRequest) returns (UserIDResponse);
+  rpc ValidateAuthorization (WithoutParameters) returns (SuccessResponse);
 
   rpc GetUserStudorgs (user.UserID) returns (studorg.UserStudorgs);
   rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
@@ -30,6 +31,13 @@ message UserResponse {
   oneof response {
     Error err = 1;
     user.User user = 2;
+  }
+}
+
+message UserIDResponse {
+  oneof response {
+    Error err = 1;
+    user.UserID userID = 2;
   }
 }
 
@@ -70,10 +78,10 @@ message AuthorizationRequest {
   string password = 2;
 }
 
-message ValidationResponse {
+message SuccessResponse {
   oneof response {
     Error err = 1;
-    bool valid = 2;
+    bool success = 2;
   }
 }
 

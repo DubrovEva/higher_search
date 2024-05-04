@@ -7,6 +7,12 @@ installGlobals();
 
 export default defineConfig({
   plugins: [remix(), tsconfigPaths()],
+  server: {
+    proxy: {
+      // string shorthand: http://localhost:5173/foo -> http://localhost:4567/foo
+      '/router.Router': 'http://127.0.0.1:8080',
+    }
+  },
   define: {
     'process.env': {}
   }
