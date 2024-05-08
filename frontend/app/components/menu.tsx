@@ -44,6 +44,7 @@ export function OrganizationsMenu() {
             <DropdownMenu>
                 <DropdownItem href="/list" active> Полный список </DropdownItem>
                 <DropdownItem href="/search"> Расширенный поиск </DropdownItem>
+                <DropdownItem href="/studorg/create"> Новая организация </DropdownItem>
             </DropdownMenu>
         </Dropdown>
     );

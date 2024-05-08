@@ -35,7 +35,7 @@ export default function Login() {
             response = undefined
         }
         if (response !== undefined) {
-            setNoError(false)
+            setNoError(true)
             window.location.href = "/user/" + response.iD
         } else {
             setNoError(false)

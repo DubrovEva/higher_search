@@ -19,7 +19,6 @@ message StudorgInfo {
   string name = 8;
   string shortDescription = 9;
   StudorgStatus status = 10;
-
   repeated string tags = 11;
   repeated Contact contacts = 14;
 }

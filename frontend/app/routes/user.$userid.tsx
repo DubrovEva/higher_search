@@ -48,7 +48,7 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: styles},
 ];
 
-function BasicUserInfo(params: { userInfo: UserInfo }) {
+export function UserCard(params: { userInfo: UserInfo }) {
     const currentFaculty = faculty.find(f => f.value === params.userInfo.faculty)?.text
     return (
         <Card>
@@ -65,7 +65,7 @@ function BasicUserInfo(params: { userInfo: UserInfo }) {
             <CardContent extra>
 
                     <Icon name='users'/>
-                    13 студенческих организаций
+                    3 студенческих организации
 
             </CardContent>
         </Card>
@@ -151,7 +151,7 @@ function AllPersonalInfo() {
             <Header size={"huge"}> Личная информация </Header>
             <Divider/>
             <Grid stackable columns={2}>
-                <GridColumn> <BasicUserInfo userInfo={userInfo!}/> </GridColumn>
+                <GridColumn> <UserCard userInfo={userInfo!}/> </GridColumn>
                 <GridColumn>
                     <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>

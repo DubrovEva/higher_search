@@ -1,5 +1,4 @@
 export PATH := "${PATH}:$(go env GOPATH)/bin"
-# на основе протобуфов генерирует модели для бэкенда
 
 ./pkg/proto:
 	rm -rf backend/pkg/proto

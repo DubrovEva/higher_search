@@ -1,2 +1,11 @@
 # higher_search
-Application for Navigation in Student Organizations of the Higher School of Economics.
+
+Приложение для навигации в студенческих организациях Высшей Школы Экономики.
+
+###  Запуск frotend-а:
+    
+Из директории frontend: ```npm run dev```
+
+###  Запуск backend-а:
+
+Из директории deployments: ```docker compose up --build```

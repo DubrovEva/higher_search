@@ -44,6 +44,8 @@ function StudorgInfoForm() {
 
     const handleSubmit = () => {
         Client.getInstance().createStudorg(studorgInfo).then()
+
+        // TODO: тут доставать из метода id и перекидывать на страницу новой организации
     }
 
     function handleUpdate(key: keyof StudorgInfo) {

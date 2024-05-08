@@ -119,6 +119,7 @@ func (u *User) GetByAuthorizationData(email, password string) (*models.UserDB, e
 	}
 
 	// TODO: сделать соль строкой
+	// TODO: применять соль
 	hash := pbkdf2.Key([]byte(password), []byte(strconv.FormatInt(user.UserInfo.Salt, 10)), 1, 64, sha256.New)
 	stringHash := base64.URLEncoding.EncodeToString(hash)
 	if stringHash != user.UserInfo.Hash.String {

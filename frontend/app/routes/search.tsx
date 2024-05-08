@@ -31,7 +31,6 @@ import React from "react";
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
 import {faculty, gender, year, campus} from "~/components/options";
-import {StudorgInfo} from "~/proto/models/studorg_pb";
 
 export const meta: MetaFunction = () => {
     return [
