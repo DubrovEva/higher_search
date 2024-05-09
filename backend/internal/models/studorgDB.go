@@ -1,8 +1,10 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"time"
 )
@@ -29,6 +31,9 @@ type StudorgInfo struct {
 	Status           int64
 	Tags             []string
 	Contacts         []*Contact
+
+	Role          sql.NullInt64
+	AdmissionTime *time.Time
 }
 
 type Contact struct {
@@ -79,19 +84,22 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 	if protoInfo.Name == "" {
 		return nil, fmt.Errorf("field Name is empty")
 	}
+
 	var createdAt time.Time
-	if protoInfo.CreatedAt == "" {
+	if protoInfo.CreatedAt == nil {
 		createdAt = time.Now()
 	} else {
-		createdAt, err = time.Parse(timeLayout, protoInfo.CreatedAt)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse CreatedAt: %w", err)
-		}
+		createdAt = protoInfo.CreatedAt.AsTime()
 	}
 
 	links, err := linksToJson(protoInfo.Links)
 	if err != nil {
 		return nil, fmt.Errorf("field Links isn't valid")
+	}
+
+	var admissionTime time.Time
+	if protoInfo.AdmissionTime != nil {
+		admissionTime = protoInfo.AdmissionTime.AsTime()
 	}
 
 	StudorgInfoDB := StudorgInfo{
@@ -106,6 +114,8 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 		ShortDescription: protoInfo.ShortDescription,
 		Status:           int64(protoInfo.Status),
 		Tags:             protoInfo.Tags,
+		AdmissionTime:    &admissionTime,
+		Role:             ToSqlInt64(int64(protoInfo.Role)),
 	}
 	return &StudorgInfoDB, nil
 }
@@ -138,9 +148,14 @@ func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
 		}
 	}
 
+	var admissionTime *timestamppb.Timestamp
+	if s.AdmissionTime != nil {
+		admissionTime = timestamppb.New(*s.AdmissionTime)
+	}
+
 	protoStudorgInfo := proto.StudorgInfo{
 		Campus:           proto.Campus(s.Campus),
-		CreatedAt:        s.CreatedAt.Format(timeLayout),
+		CreatedAt:        timestamppb.New(s.CreatedAt),
 		Description:      s.Description,
 		Faculty:          proto.Faculty(s.Faculty),
 		Language:         proto.Language(s.Faculty),
@@ -151,6 +166,8 @@ func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
 		Status:           proto.StudorgStatus(s.Status),
 		Tags:             s.Tags,
 		Contacts:         protoContacts,
+		Role:             proto.StudorgRole(s.Role.Int64),
+		AdmissionTime:    admissionTime,
 	}
 
 	return &protoStudorgInfo, nil

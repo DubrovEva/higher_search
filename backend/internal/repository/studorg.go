@@ -57,6 +57,41 @@ func (s *Studorg) GetAll() ([]models.StudorgDB, error) {
 	return studorgs, nil
 }
 
+func (s *Studorg) GetByUser(userID int64) ([]models.StudorgDB, error) {
+	var studorgs []models.StudorgDB
+	err := s.db.Select(&studorgs, `SELECT
+    	ID,
+    	Campus,
+		CreatedAt,
+		Description,
+		Faculty,
+		Language,
+		Links,
+		Logo,
+		Name,
+		ShortDescription,
+		Status,
+		Role,
+		AdmissionTime
+    FROM Studorgs JOIN user2studorg ON studorgs.id = user2studorg.studorgid WHERE user2studorg.userid = $1`, userID)
+	if err != nil {
+		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	for i, studorg := range studorgs {
+		tags, err := s.GetTags(studorg.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get studorg tags: %w", err)
+		}
+		studorgs[i].Tags = tags
+
+	}
+
+	return studorgs, nil
+}
+
 func (s *Studorg) Insert(studorgInfo *models.StudorgInfo) (*models.StudorgDB, error) {
 	studorg := &models.StudorgDB{ID: 0, StudorgInfo: studorgInfo}
 
@@ -153,16 +188,4 @@ func (s *Studorg) DeleteTags(studorgID int64) error {
 	_, err := s.db.NamedExec(`DELETE FROM studorg2tag WHERE studorgid = :studorgid`, map[string]interface{}{"studorgid": studorgID})
 
 	return err
-}
-
-func (s *Studorg) GetUsersNumber(studorgID int64) (int64, error) {
-	var number int64
-	err := s.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE studorgid = $1`, studorgID)
-	if err != nil {
-		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
-		// TODO: логи и завертывание ошибок
-		return 0, fmt.Errorf("failed to get users number from db: %w", err)
-	}
-
-	return number, nil
 }

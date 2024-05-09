@@ -20,6 +20,7 @@ import React, {FormEvent, useEffect, useState} from "react";
 import {CustomFooter} from "~/components/footer";
 import {OrganizationsMenu, SidebarMenu} from "~/components/menu";
 import Client from "~/client";
+import {AuthInfo} from "~/proto/models/user";
 
 export const meta: MetaFunction = () => {
     return [
@@ -33,9 +34,9 @@ export const links: LinksFunction = () => [
 ];
 
 function TopMenu(props: { toggleSidebar: () => void }) {
-    const [isAuth, setStatus] = useState(false)
+    const [authInfo, setAuthInfo] = useState<AuthInfo | null>(null)
     useEffect(() => {
-        Client.getInstance().isAuthorized().then(x => setStatus(x!))
+        Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
 
     return (
@@ -47,10 +48,12 @@ function TopMenu(props: { toggleSidebar: () => void }) {
 
                 {/*<Image as="logo" src={hs_logo}/>*/}
                 <MenuItem active> Главная </MenuItem>
-                <MenuItem> <OrganizationsMenu/> </MenuItem>
+                <MenuItem>
+                    {authInfo && <OrganizationsMenu authInfo={authInfo}/>}
+                </MenuItem>
 
                 <MenuMenu position="right">
-                    <Buttons isAuth={isAuth}/>
+                    {authInfo && <Buttons authInfo={authInfo}/>}
                 </MenuMenu>
 
             </Menu>
@@ -58,29 +61,26 @@ function TopMenu(props: { toggleSidebar: () => void }) {
     )
 }
 
-function Buttons(params: { isAuth: boolean }) {
-    let navigate = useNavigate();
+function Buttons(params: { authInfo: AuthInfo }) {
+    console.log("isAuth", params.authInfo.isAuth)
 
     const routeToLogin = () => {
-        let path = `/login`;
-        navigate(path);
+        window.location.href = "/login"
     }
     const routeToRegistration = () => {
-        let path = `/registration`;
-        navigate(path);
+        window.location.href = "/registration";
     }
-    const logout = async () => {
-        await Client.getInstance().logout()
-        window.location.href = "/"
+    const routeToAccount = async () => {
+        window.location.href = `/user/${params.authInfo.userID?.iD}`;
     }
 
-    if (!params.isAuth) {
+    if (!params.authInfo.isAuth) {
         return <>
             <FormButton inverted onClick={routeToLogin}>Войти</FormButton>
             <FormButton inverted onClick={routeToRegistration}>Зарегистрироваться</FormButton>
         </>
     } else {
-        return <FormButton inverted onClick={logout}> Выйти </FormButton>
+        return <FormButton inverted onClick={routeToAccount }> Личный кабинет </FormButton>
     }
 }
 

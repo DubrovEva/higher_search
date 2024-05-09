@@ -28,8 +28,9 @@ type Application struct {
 	wg         *sync.WaitGroup
 	jwtManager *api.JWTManager
 
-	repoUser    *repo.User
-	repoStudorg *repo.Studorg
+	repoUser         *repo.User
+	repoStudorg      *repo.Studorg
+	repoUser2Studorg *repo.User2Studorg
 
 	errChan chan error
 }
@@ -94,6 +95,7 @@ func (a *Application) initDatabaseConnection() error {
 func (a *Application) initRepository() {
 	a.repoUser = repo.NewUser(a.db)
 	a.repoStudorg = repo.NewStudorg(a.db)
+	a.repoUser2Studorg = repo.NewUser2Studorg(a.db)
 }
 
 func (a *Application) initServer() error {
@@ -101,7 +103,7 @@ func (a *Application) initServer() error {
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(NewInterceptor()))
 	reflection.Register(grpcServer)
-	protoservice.RegisterRouterServer(grpcServer, api.NewRouter(a.repoUser, a.repoStudorg, a.jwtManager))
+	protoservice.RegisterRouterServer(grpcServer, api.NewRouter(a.repoUser, a.repoStudorg, a.repoUser2Studorg, a.jwtManager))
 
 	wrappedGrpc := grpcweb.WrapServer(grpcServer,
 		grpcweb.WithOriginFunc(func(origin string) bool { return true }),

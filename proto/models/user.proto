@@ -43,5 +43,9 @@ enum ProjectRole {
   ORDINARY = 0;
   DEVELOPER = 1;
   MODERATOR = 2;
+}
 
+message AuthInfo {
+  bool isAuth = 1;
+  UserID userID = 2;
 }

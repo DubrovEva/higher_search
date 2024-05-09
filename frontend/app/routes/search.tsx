@@ -24,13 +24,15 @@ import {
     Image,
     Form,
     Label,
-    CardGroup, GridRow
+    CardGroup, GridRow, FormDropdown
 } from "semantic-ui-react";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {faculty, gender, year, campus} from "~/components/options";
+import {faculty, gender, year, campus, language, category} from "~/components/options";
+import {AuthInfo} from "~/proto/models/user";
+import Client from "~/client";
 
 export const meta: MetaFunction = () => {
     return [
@@ -46,38 +48,29 @@ export const links: LinksFunction = () => [
 function StudorgInfoForm() {
     return (
         <Form>
-            <FormGroup widths='equal'>
-                <FormInput fluid placeholder='Полное название' />
-                <FormInput fluid placeholder='Краткое название' />
+            <FormSelect
+                fluid
+                options={faculty}
+                label={"Факультет"}
+                placeholder='Факультет'
+            />
+            <FormGroup widths="equal">
                 <FormSelect
                     fluid
+                    label={"Кампус"}
                     options={campus}
-                    placeholder='Пол'
-                />
-            </FormGroup>
-            <FormGroup>
-                <FormSelect
-                    fluid
-                    options={faculty}
-                    placeholder='Факультет'
-                    width={12}
+                    placeholder='Кампус'
                 />
                 <FormSelect
                     fluid
-                    options={year}
-                    placeholder='Курс'
+                    label={"Основной язык"}
+                    options={language}
+                    placeholder='Основной язык'
                 />
+
             </FormGroup>
-            <FormTextArea label='Описание' placeholder='Расскажите о себе' />
-            <FormGroup  widths='equal'>
-                <FormInput fluid placeholder='Email' />
-                <FormInput fluid placeholder='Phone' />
-            </FormGroup>
-            <FormGroup  widths='equal'>
-                <FormInput fluid placeholder='Telgram' />
-                <FormInput fluid placeholder='VK' />
-            </FormGroup>
-            <FormInput fluid label='Photo' type={"file"}/>
+            <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection options={category}/>
+
             <FormButton>Submit</FormButton>
         </Form>
     );
@@ -93,10 +86,15 @@ function AllInfo() {
     );
 }
 
-export default function Account() {
+export default function Search() {
+    const [authInfo, setAuthInfo] = useState(AuthInfo.create())
+    useEffect(() => {
+        Client.getInstance().authInfo().then(info => setAuthInfo(info))
+    }, [])
+
     return (
         <>
-            <FixedMenu/>
+            <FixedMenu authInfo={authInfo}/>
 
             <AllInfo/>
 

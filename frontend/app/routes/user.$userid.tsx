@@ -24,18 +24,18 @@ import {
     Image,
     Form,
     Label,
-    CardGroup, Message
+    CardGroup, Message, FormDropdown
 } from "semantic-ui-react";
 import React, {FormEvent, useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
-import {FixedMenu} from "~/components/menu";
-import {faculty, gender, year} from "~/components/options";
-import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
+import {FixedMenuForAccount} from "~/components/menu";
+import {category, faculty, gender} from "~/components/options";
 import {useParams} from "react-router";
 import Client from "~/client";
-import {User, UserID, UserInfo} from "~/proto/models/user";
-import {RegistrationRequest} from "~/proto/api/router";
+import {AuthInfo, UserID, UserInfo} from "~/proto/models/user";
+import {UserOrgCards} from "~/components/studorg";
+import {Studorg} from "~/proto/models/studorg";
 
 export const meta: MetaFunction = () => {
     return [
@@ -73,48 +73,17 @@ export function UserCard(params: { userInfo: UserInfo }) {
 }
 
 function Organizations() {
+    const [studorgs, setStudorgs] = useState([] as Studorg[])
+    useEffect(() => {
+        Client.getInstance().getUserStudorgs().then(result => setStudorgs(result))
+    }, [])
+
+    console.log("userStudorgs", studorgs)
     return (
         <Container text className={"main"}>
             <Divider horizontal><Header as='h2'><Icon name='users'/>Организации</Header></Divider>
 
-            <CardGroup stackable itemsPerRow={1}>
-                <Card>
-                    <CardContent>
-                        <Image
-                            floated='left'
-                            size='tiny'
-                            src={dummy}
-                        />
-                        <CardHeader href={"#"}> Ролевой клуб</CardHeader>
-                        <CardMeta> С 24 апреля 2024     </CardMeta>
-                        <CardContent extra> <Label> Участник </Label></CardContent>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <Image
-                            floated='left'
-                            size='tiny'
-                            src={dummy}
-                        />
-                        <CardHeader href={"#"}> Шахматный клуб </CardHeader>
-                        <CardMeta> С 16 мая 2024     </CardMeta>
-                        <CardContent extra> <Label color={"blue"}> Организатор </Label></CardContent>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <Image
-                            floated='left'
-                            size='tiny'
-                            src={dummy}
-                        />
-                        <CardHeader href={"#"}> Клуб веселых и находчивых </CardHeader>
-                        <CardMeta> С 1 апреля 2024     </CardMeta>
-                        <CardContent extra> <Label color={"green"}> Глава </Label></CardContent>
-                    </CardContent>
-                </Card>
-            </CardGroup>
+            <UserOrgCards studorgs={studorgs}/>
 
         </Container>
     );
@@ -203,9 +172,14 @@ function AllPersonalInfo() {
 }
 
 export default function UserUserid() {
+    const [authInfo, setAuthInfo] = useState(AuthInfo.create())
+    useEffect(() => {
+        Client.getInstance().authInfo().then(info => setAuthInfo(info))
+    }, [])
+
     return (
         <>
-            <FixedMenu/>
+            <FixedMenuForAccount authInfo={authInfo}/>
 
             <AllPersonalInfo/>
             <Organizations/>

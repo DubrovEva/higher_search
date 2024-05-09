@@ -2,8 +2,7 @@
 // @generated from protobuf file "api/router.proto" (package "router", syntax proto3)
 // tslint:disable
 import { StudorgInfo } from "../models/studorg";
-import { StudorgID } from "../models/studorg";
-import { UserStudorgs } from "../models/studorg";
+import { AuthInfo } from "../models/user";
 import { UserInfo } from "../models/user";
 import { UserIDs } from "../models/user";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
@@ -16,7 +15,10 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../google/protobuf/timestamp";
+import { StudorgRole } from "../models/studorg";
 import { Studorgs } from "../models/studorg";
+import { StudorgID } from "../models/studorg";
 import { Studorg } from "../models/studorg";
 import { Users } from "../models/user";
 import { UserID } from "../models/user";
@@ -114,6 +116,29 @@ export interface StudorgResponse {
          * @generated from protobuf field: studorg.Studorg studorg = 2;
          */
         studorg: Studorg;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message router.StudorgIDResponse
+ */
+export interface StudorgIDResponse {
+    /**
+     * @generated from protobuf oneof: response
+     */
+    response: {
+        oneofKind: "err";
+        /**
+         * @generated from protobuf field: router.Error err = 1;
+         */
+        err: Error;
+    } | {
+        oneofKind: "studorgID";
+        /**
+         * @generated from protobuf field: studorg.StudorgID studorgID = 2;
+         */
+        studorgID: StudorgID;
     } | {
         oneofKind: undefined;
     };
@@ -229,6 +254,43 @@ export interface RegistrationRequest {
      * @generated from protobuf field: string Surname = 4 [json_name = "Surname"];
      */
     surname: string;
+}
+/**
+ * @generated from protobuf message router.UserToStudorg
+ */
+export interface UserToStudorg {
+    /**
+     * @generated from protobuf field: user.UserID userID = 1;
+     */
+    userID?: UserID;
+    /**
+     * @generated from protobuf field: studorg.StudorgID studorgID = 2;
+     */
+    studorgID?: StudorgID;
+    /**
+     * @generated from protobuf field: studorg.StudorgRole role = 3;
+     */
+    role: StudorgRole;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp admissionTime = 4;
+     */
+    admissionTime?: Timestamp;
+    /**
+     * @generated from protobuf field: string contactInfo = 5;
+     */
+    contactInfo: string;
+    /**
+     * @generated from protobuf field: string customRole = 6;
+     */
+    customRole: string;
+    /**
+     * @generated from protobuf field: string info = 7;
+     */
+    info: string;
+    /**
+     * @generated from protobuf field: bool isContact = 8;
+     */
+    isContact: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class WithoutParameters$Type extends MessageType<WithoutParameters> {
@@ -495,6 +557,66 @@ class StudorgResponse$Type extends MessageType<StudorgResponse> {
  * @generated MessageType for protobuf message router.StudorgResponse
  */
 export const StudorgResponse = new StudorgResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class StudorgIDResponse$Type extends MessageType<StudorgIDResponse> {
+    constructor() {
+        super("router.StudorgIDResponse", [
+            { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
+            { no: 2, name: "studorgID", kind: "message", oneof: "response", T: () => StudorgID }
+        ]);
+    }
+    create(value?: PartialMessage<StudorgIDResponse>): StudorgIDResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<StudorgIDResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StudorgIDResponse): StudorgIDResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* router.Error err */ 1:
+                    message.response = {
+                        oneofKind: "err",
+                        err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
+                    };
+                    break;
+                case /* studorg.StudorgID studorgID */ 2:
+                    message.response = {
+                        oneofKind: "studorgID",
+                        studorgID: StudorgID.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).studorgID)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: StudorgIDResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* router.Error err = 1; */
+        if (message.response.oneofKind === "err")
+            Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.StudorgID studorgID = 2; */
+        if (message.response.oneofKind === "studorgID")
+            StudorgID.internalBinaryWrite(message.response.studorgID, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.StudorgIDResponse
+ */
+export const StudorgIDResponse = new StudorgIDResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StudorgsResponse$Type extends MessageType<StudorgsResponse> {
     constructor() {
@@ -848,6 +970,106 @@ class RegistrationRequest$Type extends MessageType<RegistrationRequest> {
  * @generated MessageType for protobuf message router.RegistrationRequest
  */
 export const RegistrationRequest = new RegistrationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserToStudorg$Type extends MessageType<UserToStudorg> {
+    constructor() {
+        super("router.UserToStudorg", [
+            { no: 1, name: "userID", kind: "message", T: () => UserID },
+            { no: 2, name: "studorgID", kind: "message", T: () => StudorgID },
+            { no: 3, name: "role", kind: "enum", T: () => ["studorg.StudorgRole", StudorgRole] },
+            { no: 4, name: "admissionTime", kind: "message", T: () => Timestamp },
+            { no: 5, name: "contactInfo", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "customRole", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "info", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "isContact", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserToStudorg>): UserToStudorg {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.role = 0;
+        message.contactInfo = "";
+        message.customRole = "";
+        message.info = "";
+        message.isContact = false;
+        if (value !== undefined)
+            reflectionMergePartial<UserToStudorg>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserToStudorg): UserToStudorg {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* user.UserID userID */ 1:
+                    message.userID = UserID.internalBinaryRead(reader, reader.uint32(), options, message.userID);
+                    break;
+                case /* studorg.StudorgID studorgID */ 2:
+                    message.studorgID = StudorgID.internalBinaryRead(reader, reader.uint32(), options, message.studorgID);
+                    break;
+                case /* studorg.StudorgRole role */ 3:
+                    message.role = reader.int32();
+                    break;
+                case /* google.protobuf.Timestamp admissionTime */ 4:
+                    message.admissionTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.admissionTime);
+                    break;
+                case /* string contactInfo */ 5:
+                    message.contactInfo = reader.string();
+                    break;
+                case /* string customRole */ 6:
+                    message.customRole = reader.string();
+                    break;
+                case /* string info */ 7:
+                    message.info = reader.string();
+                    break;
+                case /* bool isContact */ 8:
+                    message.isContact = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserToStudorg, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* user.UserID userID = 1; */
+        if (message.userID)
+            UserID.internalBinaryWrite(message.userID, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.StudorgID studorgID = 2; */
+        if (message.studorgID)
+            StudorgID.internalBinaryWrite(message.studorgID, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.StudorgRole role = 3; */
+        if (message.role !== 0)
+            writer.tag(3, WireType.Varint).int32(message.role);
+        /* google.protobuf.Timestamp admissionTime = 4; */
+        if (message.admissionTime)
+            Timestamp.internalBinaryWrite(message.admissionTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string contactInfo = 5; */
+        if (message.contactInfo !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.contactInfo);
+        /* string customRole = 6; */
+        if (message.customRole !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.customRole);
+        /* string info = 7; */
+        if (message.info !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.info);
+        /* bool isContact = 8; */
+        if (message.isContact !== false)
+            writer.tag(8, WireType.Varint).bool(message.isContact);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.UserToStudorg
+ */
+export const UserToStudorg = new UserToStudorg$Type();
 /**
  * @generated ServiceType for protobuf service router.Router
  */
@@ -857,13 +1079,17 @@ export const Router = new ServiceType("router.Router", [
     { name: "InsertUser", options: {}, I: UserInfo, O: UserResponse },
     { name: "UpdateUser", options: {}, I: User, O: UserResponse },
     { name: "AuthorizeUser", options: {}, I: AuthorizationRequest, O: UserIDResponse },
+    { name: "IsAuth", options: {}, I: WithoutParameters, O: AuthInfo },
     { name: "Logout", options: {}, I: WithoutParameters, O: SuccessResponse },
     { name: "RegisterUser", options: {}, I: RegistrationRequest, O: UserIDResponse },
-    { name: "ValidateAuthorization", options: {}, I: WithoutParameters, O: SuccessResponse },
-    { name: "GetUserStudorgs", options: {}, I: UserID, O: UserStudorgs },
     { name: "GetAllStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
+    { name: "GetUserStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
     { name: "GetStudorg", options: {}, I: StudorgID, O: StudorgResponse },
-    { name: "InsertStudorg", options: {}, I: StudorgInfo, O: StudorgResponse },
+    { name: "InsertStudorg", options: {}, I: StudorgInfo, O: StudorgIDResponse },
     { name: "UpdateStudorg", options: {}, I: Studorg, O: StudorgResponse },
+    { name: "AddUserToStudorg", options: {}, I: StudorgID, O: SuccessResponse },
+    { name: "CheckUserInStudorg", options: {}, I: StudorgID, O: SuccessResponse },
+    { name: "DeleteUserFromStudorg", options: {}, I: StudorgID, O: SuccessResponse },
+    { name: "UpdateUserInStudorg", options: {}, I: UserToStudorg, O: SuccessResponse },
     { name: "GetStudorgUsersNumber", options: {}, I: StudorgID, O: UsersNumberResponse }
 ]);

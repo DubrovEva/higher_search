@@ -120,6 +120,19 @@ export interface Users {
     users: User[];
 }
 /**
+ * @generated from protobuf message user.AuthInfo
+ */
+export interface AuthInfo {
+    /**
+     * @generated from protobuf field: bool isAuth = 1;
+     */
+    isAuth: boolean;
+    /**
+     * @generated from protobuf field: user.UserID userID = 2;
+     */
+    userID?: UserID;
+}
+/**
  * @generated from protobuf enum user.ProjectRole
  */
 export enum ProjectRole {
@@ -496,3 +509,57 @@ class Users$Type extends MessageType<Users> {
  * @generated MessageType for protobuf message user.Users
  */
 export const Users = new Users$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuthInfo$Type extends MessageType<AuthInfo> {
+    constructor() {
+        super("user.AuthInfo", [
+            { no: 1, name: "isAuth", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "userID", kind: "message", T: () => UserID }
+        ]);
+    }
+    create(value?: PartialMessage<AuthInfo>): AuthInfo {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.isAuth = false;
+        if (value !== undefined)
+            reflectionMergePartial<AuthInfo>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthInfo): AuthInfo {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool isAuth */ 1:
+                    message.isAuth = reader.bool();
+                    break;
+                case /* user.UserID userID */ 2:
+                    message.userID = UserID.internalBinaryRead(reader, reader.uint32(), options, message.userID);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AuthInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool isAuth = 1; */
+        if (message.isAuth !== false)
+            writer.tag(1, WireType.Varint).bool(message.isAuth);
+        /* user.UserID userID = 2; */
+        if (message.userID)
+            UserID.internalBinaryWrite(message.userID, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message user.AuthInfo
+ */
+export const AuthInfo = new AuthInfo$Type();

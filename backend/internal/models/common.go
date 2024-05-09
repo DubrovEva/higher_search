@@ -29,3 +29,15 @@ func jsonToLinks(contacts string) ([]*proto.Links, error) {
 	}
 	return protoLinks, nil
 }
+
+func ToSqlString(str string) sql.NullString {
+	return sql.NullString{Valid: true, String: str}
+}
+
+func ToSqlInt64(number int64) sql.NullInt64 {
+	return sql.NullInt64{Valid: true, Int64: number}
+}
+
+func ToSqlBool(b bool) sql.NullBool {
+	return sql.NullBool{Valid: true, Bool: b}
+}

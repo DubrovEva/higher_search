@@ -40,10 +40,10 @@ func (m *JWTManager) RemovedJWTCookie() metadata.MD {
 	return metadata.Pairs("Set-Cookie", cookieValue)
 }
 
-func (m *JWTManager) VerifyJWT(cookie string) (*models.Claims, error) {
+func (m *JWTManager) VerifyJWT(cookie string) (int64, error) {
 	token, err := m.getJwtFromCookie(cookie)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	parsed, err := jwt.ParseWithClaims(token, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
@@ -51,15 +51,15 @@ func (m *JWTManager) VerifyJWT(cookie string) (*models.Claims, error) {
 	})
 	if err != nil {
 		// TODO: разделить два вида ошибок
-		return nil, fmt.Errorf("failed to parse jwt with claims: %w", err)
+		return 0, fmt.Errorf("failed to parse jwt with claims: %w", err)
 	}
 
 	claims, ok := parsed.Claims.(*models.Claims)
 	if !ok {
-		return nil, errors.New("failed to parse claims")
+		return 0, errors.New("failed to parse claims")
 	}
 
-	return claims, nil
+	return claims.UserID, nil
 }
 
 func (m *JWTManager) getJwtFromCookie(cookie string) (string, error) {

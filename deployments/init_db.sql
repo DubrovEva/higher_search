@@ -48,12 +48,13 @@ CREATE TABLE studorg2tag
 
 CREATE TABLE user2studorg
 (
+    Role          INTEGER NOT NULL,
+    StudorgID     INTEGER NOT NULL REFERENCES studorgs (ID),
+    UserID        INTEGER NOT NULL REFERENCES users (ID),
+
     AdmissionTime TIMESTAMP,
     ContactInfo   VARCHAR,
     CustomRole    VARCHAR,
     Info          VARCHAR,
-    IsContact     BOOLEAN,
-    Role          INTEGER,
-    StudorgID     INTEGER NOT NULL REFERENCES studorgs (ID),
-    UserID        INTEGER NOT NULL REFERENCES users (ID)
+    IsContact     BOOLEAN
 );

@@ -14,6 +14,7 @@ import { User } from "./user";
 import { Links } from "./common";
 import { Language } from "./common";
 import { Faculty } from "./common";
+import { Timestamp } from "../google/protobuf/timestamp";
 import { Campus } from "./common";
 /**
  * @generated from protobuf message studorg.StudorgID
@@ -33,9 +34,9 @@ export interface StudorgInfo {
      */
     campus: Campus;
     /**
-     * @generated from protobuf field: string createdAt = 2;
+     * @generated from protobuf field: google.protobuf.Timestamp createdAt = 2;
      */
-    createdAt: string;
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: string description = 3;
      */
@@ -76,6 +77,14 @@ export interface StudorgInfo {
      * @generated from protobuf field: repeated studorg.Contact contacts = 14;
      */
     contacts: Contact[];
+    /**
+     * @generated from protobuf field: studorg.StudorgRole role = 16;
+     */
+    role: StudorgRole;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp admissionTime = 17;
+     */
+    admissionTime?: Timestamp;
 }
 /**
  * @generated from protobuf message studorg.Studorg
@@ -111,32 +120,6 @@ export interface Contact {
      * @generated from protobuf field: string info = 2;
      */
     info: string;
-}
-/**
- * @generated from protobuf message studorg.UserStudorg
- */
-export interface UserStudorg {
-    /**
-     * @generated from protobuf field: studorg.Studorg studorg = 1;
-     */
-    studorg?: Studorg;
-    /**
-     * @generated from protobuf field: studorg.StudorgRole role = 2;
-     */
-    role: StudorgRole;
-    /**
-     * @generated from protobuf field: string admissionTime = 3;
-     */
-    admissionTime: string;
-}
-/**
- * @generated from protobuf message studorg.UserStudorgs
- */
-export interface UserStudorgs {
-    /**
-     * @generated from protobuf field: repeated studorg.UserStudorg studorgs = 1;
-     */
-    studorgs: UserStudorg[];
 }
 /**
  * @generated from protobuf enum studorg.StudorgStatus
@@ -220,7 +203,7 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
     constructor() {
         super("studorg.StudorgInfo", [
             { no: 1, name: "campus", kind: "enum", T: () => ["common.Campus", Campus] },
-            { no: 2, name: "createdAt", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "createdAt", kind: "message", T: () => Timestamp },
             { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
             { no: 5, name: "language", kind: "enum", T: () => ["common.Language", Language] },
@@ -230,13 +213,14 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
             { no: 9, name: "shortDescription", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "status", kind: "enum", T: () => ["studorg.StudorgStatus", StudorgStatus] },
             { no: 11, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 14, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact }
+            { no: 14, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact },
+            { no: 16, name: "role", kind: "enum", T: () => ["studorg.StudorgRole", StudorgRole] },
+            { no: 17, name: "admissionTime", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<StudorgInfo>): StudorgInfo {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.campus = 0;
-        message.createdAt = "";
         message.description = "";
         message.faculty = 0;
         message.language = 0;
@@ -247,6 +231,7 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         message.status = 0;
         message.tags = [];
         message.contacts = [];
+        message.role = 0;
         if (value !== undefined)
             reflectionMergePartial<StudorgInfo>(this, message, value);
         return message;
@@ -259,8 +244,8 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
                 case /* common.Campus campus */ 1:
                     message.campus = reader.int32();
                     break;
-                case /* string createdAt */ 2:
-                    message.createdAt = reader.string();
+                case /* google.protobuf.Timestamp createdAt */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 case /* string description */ 3:
                     message.description = reader.string();
@@ -292,6 +277,12 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
                 case /* repeated studorg.Contact contacts */ 14:
                     message.contacts.push(Contact.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* studorg.StudorgRole role */ 16:
+                    message.role = reader.int32();
+                    break;
+                case /* google.protobuf.Timestamp admissionTime */ 17:
+                    message.admissionTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.admissionTime);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -307,9 +298,9 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         /* common.Campus campus = 1; */
         if (message.campus !== 0)
             writer.tag(1, WireType.Varint).int32(message.campus);
-        /* string createdAt = 2; */
-        if (message.createdAt !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.createdAt);
+        /* google.protobuf.Timestamp createdAt = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* string description = 3; */
         if (message.description !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.description);
@@ -340,6 +331,12 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         /* repeated studorg.Contact contacts = 14; */
         for (let i = 0; i < message.contacts.length; i++)
             Contact.internalBinaryWrite(message.contacts[i], writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.StudorgRole role = 16; */
+        if (message.role !== 0)
+            writer.tag(16, WireType.Varint).int32(message.role);
+        /* google.protobuf.Timestamp admissionTime = 17; */
+        if (message.admissionTime)
+            Timestamp.internalBinaryWrite(message.admissionTime, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -504,112 +501,3 @@ class Contact$Type extends MessageType<Contact> {
  * @generated MessageType for protobuf message studorg.Contact
  */
 export const Contact = new Contact$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UserStudorg$Type extends MessageType<UserStudorg> {
-    constructor() {
-        super("studorg.UserStudorg", [
-            { no: 1, name: "studorg", kind: "message", T: () => Studorg },
-            { no: 2, name: "role", kind: "enum", T: () => ["studorg.StudorgRole", StudorgRole] },
-            { no: 3, name: "admissionTime", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<UserStudorg>): UserStudorg {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.role = 0;
-        message.admissionTime = "";
-        if (value !== undefined)
-            reflectionMergePartial<UserStudorg>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserStudorg): UserStudorg {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* studorg.Studorg studorg */ 1:
-                    message.studorg = Studorg.internalBinaryRead(reader, reader.uint32(), options, message.studorg);
-                    break;
-                case /* studorg.StudorgRole role */ 2:
-                    message.role = reader.int32();
-                    break;
-                case /* string admissionTime */ 3:
-                    message.admissionTime = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UserStudorg, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* studorg.Studorg studorg = 1; */
-        if (message.studorg)
-            Studorg.internalBinaryWrite(message.studorg, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* studorg.StudorgRole role = 2; */
-        if (message.role !== 0)
-            writer.tag(2, WireType.Varint).int32(message.role);
-        /* string admissionTime = 3; */
-        if (message.admissionTime !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.admissionTime);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message studorg.UserStudorg
- */
-export const UserStudorg = new UserStudorg$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UserStudorgs$Type extends MessageType<UserStudorgs> {
-    constructor() {
-        super("studorg.UserStudorgs", [
-            { no: 1, name: "studorgs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserStudorg }
-        ]);
-    }
-    create(value?: PartialMessage<UserStudorgs>): UserStudorgs {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.studorgs = [];
-        if (value !== undefined)
-            reflectionMergePartial<UserStudorgs>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserStudorgs): UserStudorgs {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated studorg.UserStudorg studorgs */ 1:
-                    message.studorgs.push(UserStudorg.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UserStudorgs, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated studorg.UserStudorg studorgs = 1; */
-        for (let i = 0; i < message.studorgs.length; i++)
-            UserStudorg.internalBinaryWrite(message.studorgs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message studorg.UserStudorgs
- */
-export const UserStudorgs = new UserStudorgs$Type();

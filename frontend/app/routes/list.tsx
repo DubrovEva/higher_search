@@ -12,6 +12,7 @@ import {OrgCards} from "~/components/studorg";
 import {FixedMenu} from "~/components/menu";
 import Client from "~/client";
 import {Studorg} from "~/proto/models/studorg";
+import {AuthInfo} from "~/proto/models/user";
 
 export const meta: MetaFunction = () => {
     return [
@@ -41,9 +42,14 @@ function Body() {
 }
 
 export default function List() {
+    const [authInfo, setAuthInfo] = useState(AuthInfo.create())
+    useEffect(() => {
+        Client.getInstance().authInfo().then(info => setAuthInfo(info))
+    }, [])
+
     return (
         <>
-            <FixedMenu/>
+            <FixedMenu authInfo={authInfo}/>
             <Body/>
             <CustomFooter/>
         </>

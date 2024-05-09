@@ -15,12 +15,13 @@ import {
     FormTextArea,
     Header
 } from "semantic-ui-react";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
 import {campus, category, faculty, language} from "~/components/options";
 import {StudorgInfo} from "~/proto/models/studorg";
+import {AuthInfo} from "~/proto/models/user";
 
 export const meta: MetaFunction = () => {
     return [
@@ -42,10 +43,12 @@ function StudorgInfoForm() {
         StudorgInfo.create()
     )
 
-    const handleSubmit = () => {
-        Client.getInstance().createStudorg(studorgInfo).then()
-
-        // TODO: тут доставать из метода id и перекидывать на страницу новой организации
+    const handleSubmit = async () => {
+        const studorgID = await Client.getInstance().createStudorg(studorgInfo)
+        if (studorgID !== undefined) {
+            window.location.href = "/studorg/" + studorgID.iD;
+        }
+        // TODO: обработка ошибок??
     }
 
     function handleUpdate(key: keyof StudorgInfo) {
@@ -123,9 +126,15 @@ function AllInfo() {
 }
 
 export default function Account() {
+    const [authInfo, setAuthInfo] = useState(AuthInfo.create())
+    useEffect(() => {
+        Client.getInstance().authInfo().then(info => setAuthInfo(info))
+    }, [])
+
+
     return (
         <>
-            <FixedMenu/>
+            <FixedMenu authInfo={authInfo}/>
 
             <AllInfo/>
 

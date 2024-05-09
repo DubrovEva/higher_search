@@ -2,7 +2,7 @@ import {RouterClient} from "~/proto/api/router_client";
 import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
 import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
 import {AuthorizationRequest, RegistrationRequest, WithoutParameters} from "~/proto/api/router";
-import {User, UserID, UserInfo} from "~/proto/models/user";
+import {User, UserID} from "~/proto/models/user";
 
 export default class Client {
     private static instance?: Client;
@@ -71,16 +71,27 @@ export default class Client {
         // todo: обработка ошибок
     }
 
-    async isAuthorized() {
-        const response = await this.router.validateAuthorization(WithoutParameters.create()).response
-        if (response.response.oneofKind == "success") {
-            return response.response.success
+    async getUserStudorgs() {
+        const request = WithoutParameters.create()
+        const response = await this.router.getUserStudorgs(request).response
+        if (response.response.oneofKind == "studorgs") {
+            return response.response.studorgs.studorgs
+        } else {
+            return []
         }
         // todo: обработка ошибок
     }
 
+    async authInfo() {
+        return await this.router.isAuth(WithoutParameters.create()).response
+        // todo: обработка ошибок
+    }
+
     async createStudorg(studorgInfo: StudorgInfo) {
-        await this.router.insertStudorg(studorgInfo).response
+        const response = await this.router.insertStudorg(studorgInfo).response
+        if (response.response.oneofKind == "studorgID") {
+            return response.response.studorgID
+        }
         // todo: обработка ошибок
     }
 
@@ -116,6 +127,29 @@ export default class Client {
 
         return response.response.oneofKind == "success";
 
+
+        // todo: обработка ошибок
+    }
+
+    async addUserToStudorg(studorgID: StudorgID) {
+        const response = await this.router.addUserToStudorg(studorgID).response
+
+        return response.response.oneofKind == "success";
+
+        // todo: обработка ошибок
+    }
+
+    async deleteUserFromStudorg(studorgID: StudorgID) {
+        const response = await this.router.deleteUserFromStudorg(studorgID).response
+
+        return response.response.oneofKind == "success";
+
+        // todo: обработка ошибок
+    }
+
+    async checkUserInStudorg(studorgID: StudorgID) {
+        const response = await this.router.checkUserInStudorg(studorgID).response
+        return response.response.oneofKind == "success" && response.response.success;
 
         // todo: обработка ошибок
     }

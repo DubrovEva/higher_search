@@ -2,6 +2,7 @@ syntax = "proto3";
 package router;
 option go_package = "github.com/DubrovEva/backend/higher_search/pkg/proto/api";
 
+import "google/protobuf/timestamp.proto";
 import "models/user.proto";
 import "models/studorg.proto";
 
@@ -12,16 +13,22 @@ service Router {
   rpc UpdateUser (user.User) returns (UserResponse);
 
   rpc AuthorizeUser (AuthorizationRequest) returns (UserIDResponse);
+  rpc IsAuth (WithoutParameters) returns (user.AuthInfo);
   rpc Logout (WithoutParameters) returns (SuccessResponse);
   rpc RegisterUser (RegistrationRequest) returns (UserIDResponse);
-  rpc ValidateAuthorization (WithoutParameters) returns (SuccessResponse);
 
-  rpc GetUserStudorgs (user.UserID) returns (studorg.UserStudorgs);
   rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
+  rpc GetUserStudorgs (WithoutParameters) returns (StudorgsResponse);
 
   rpc GetStudorg (studorg.StudorgID) returns (StudorgResponse);
-  rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgResponse);
+  rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgIDResponse);
   rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
+
+  rpc AddUserToStudorg (studorg.StudorgID) returns (SuccessResponse);
+  rpc CheckUserInStudorg (studorg.StudorgID) returns (SuccessResponse);
+  rpc DeleteUserFromStudorg (studorg.StudorgID) returns (SuccessResponse);
+
+  rpc UpdateUserInStudorg (UserToStudorg) returns (SuccessResponse);
 
   rpc GetStudorgUsersNumber (studorg.StudorgID) returns (UsersNumberResponse);
 }
@@ -53,6 +60,13 @@ message StudorgResponse {
   oneof response {
     Error err = 1;
     studorg.Studorg studorg = 2;
+  }
+}
+
+message StudorgIDResponse {
+  oneof response {
+    Error err = 1;
+    studorg.StudorgID studorgID = 2;
   }
 }
 
@@ -91,4 +105,15 @@ message RegistrationRequest {
   string Password = 2;
   string Name = 3;
   string Surname = 4;
+}
+
+message UserToStudorg {
+  user.UserID userID = 1;
+  studorg.StudorgID studorgID = 2;
+  studorg.StudorgRole role = 3;
+  google.protobuf.Timestamp admissionTime = 4;
+  string contactInfo = 5;
+  string customRole = 6;
+  string info = 7;
+  bool isContact = 8;
 }

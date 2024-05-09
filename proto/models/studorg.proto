@@ -2,6 +2,7 @@ syntax = "proto3";
 package studorg;
 import "models/user.proto";
 import "models/common.proto";
+import "google/protobuf/timestamp.proto";
 option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
 
 message StudorgID {
@@ -10,7 +11,7 @@ message StudorgID {
 
 message StudorgInfo {
   common.Campus campus = 1;
-  string createdAt = 2;
+  google.protobuf.Timestamp createdAt = 2;
   string description = 3;
   common.Faculty faculty = 4;
   common.Language language = 5;
@@ -21,6 +22,9 @@ message StudorgInfo {
   StudorgStatus status = 10;
   repeated string tags = 11;
   repeated Contact contacts = 14;
+
+  studorg.StudorgRole role = 16;
+  google.protobuf.Timestamp admissionTime = 17;
 }
 
 message Studorg {
@@ -46,14 +50,4 @@ enum StudorgRole {
 message Contact {
   user.User user = 1;
   string info = 2;
-}
-
-message UserStudorg {
-  studorg.Studorg studorg = 1;
-  studorg.StudorgRole role = 2;
-  string admissionTime = 3;
-}
-
-message UserStudorgs {
-  repeated UserStudorg studorgs = 1;
 }
