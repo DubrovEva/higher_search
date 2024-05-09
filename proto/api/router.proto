@@ -30,7 +30,8 @@ service Router {
 
   rpc UpdateUserInStudorg (UserToStudorg) returns (SuccessResponse);
 
-  rpc GetStudorgUsersNumber (studorg.StudorgID) returns (UsersNumberResponse);
+  rpc GetStudorgUsersNumber (studorg.StudorgID) returns (NumberResponse);
+  rpc GetUserStudorgsNumber (user.UserID) returns (NumberResponse);
 }
 
 message WithoutParameters {}
@@ -81,7 +82,7 @@ message Error {
   string msg = 1;
 }
 
-message UsersNumberResponse {
+message NumberResponse {
   oneof response {
     Error err = 1;
     int64 number = 2;

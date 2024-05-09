@@ -83,6 +83,8 @@ export function RoleToLabel(params: {role: StudorgRole}) {
 }
 
 function UserOrgCard(params: {studorg: Studorg}) {
+    // params.studorg.studorgInfo?.admissionTime
+
     return <Card href={"/studorg/" + params.studorg.iD?.iD}>
         <CardContent>
             <Image
@@ -91,7 +93,7 @@ function UserOrgCard(params: {studorg: Studorg}) {
                 src={dummy}
             />
             <CardHeader > {params.studorg.studorgInfo?.name} </CardHeader>
-            <CardMeta> Участник с {params.studorg.studorgInfo?.admissionTime?.seconds}    </CardMeta>
+            {params.studorg.studorgInfo?.admissionTime && <CardMeta> Участник с <AdmissionTime seconds={+params.studorg.studorgInfo?.admissionTime?.seconds}/> </CardMeta> }
             <CardContent extra> <RoleToLabel role={params.studorg.studorgInfo?.role!}/> </CardContent>
         </CardContent>
     </Card>
@@ -105,4 +107,8 @@ export function UserOrgCards(params: {studorgs: Studorg[]}) {
             )}
         </CardGroup>
     );
+}
+
+function AdmissionTime(params: {seconds: number}) {
+    return new Date( params.seconds * 1000).toLocaleDateString();  // convert timestamp to milliseconds and construct Date object
 }

@@ -42,7 +42,8 @@ type StudorgRepo interface {
 }
 
 type User2StudorgRepo interface {
-	GetUsersNumber(studorgID int64) (int64, error)
+	GetStudorgUsersNumber(studorgID int64) (int64, error)
+	GetUserStudorgsNumber(userID int64) (int64, error)
 	Add(user2studorg *models.User2StudorgDB) error
 	Update(user2studorg *models.User2StudorgDB) error
 	Delete(user2studorg *models.User2StudorgDB) error
@@ -231,12 +232,20 @@ func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (
 	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, err
 }
 
-func (r *Router) GetStudorgUsersNumber(_ context.Context, studorgID *proto.StudorgID) (*service.UsersNumberResponse, error) {
-	number, err := r.User2Studorg.GetUsersNumber(studorgID.GetID())
+func (r *Router) GetStudorgUsersNumber(_ context.Context, studorgID *proto.StudorgID) (*service.NumberResponse, error) {
+	number, err := r.User2Studorg.GetStudorgUsersNumber(studorgID.GetID())
 	if err != nil {
 		return nil, err
 	}
-	return &service.UsersNumberResponse{Response: &service.UsersNumberResponse_Number{Number: number}}, nil
+	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
+}
+
+func (r *Router) GetUserStudorgsNumber(_ context.Context, userID *proto.UserID) (*service.NumberResponse, error) {
+	number, err := r.User2Studorg.GetUserStudorgsNumber(userID.GetID())
+	if err != nil {
+		return nil, err
+	}
+	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
 }
 
 func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *service.AuthorizationRequest) (*service.UserIDResponse, error) {

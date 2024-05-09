@@ -38,10 +38,10 @@ export default class Client {
         // todo: обработка ошибок
     }
 
-    async getUserInfo(userID: UserID) {
+    async getUser(userID: UserID) {
         const response = await this.router.getUser(userID).response
         if (response.response.oneofKind == "user") {
-            return response.response.user.userInfo
+            return response.response.user
         }
         // if (response.response.oneofKind == "err") {
         //     throw response.response.err
@@ -101,6 +101,16 @@ export default class Client {
         if (response.response.oneofKind == "number") {
             return response.response.number
         }
+        // todo: обработка ошибок
+    }
+
+    async studorgsNumber(userID: UserID) {
+        const response = await this.router.getUserStudorgsNumber(userID).response
+
+        if (response.response.oneofKind == "number") {
+            return +response.response.number
+        }
+        return 0
         // todo: обработка ошибок
     }
 

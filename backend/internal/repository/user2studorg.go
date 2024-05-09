@@ -99,13 +99,25 @@ func (u *User2Studorg) Delete(user2studorg *models.User2StudorgDB) error {
 	return nil
 }
 
-func (u *User2Studorg) GetUsersNumber(studorgID int64) (int64, error) {
+func (u *User2Studorg) GetStudorgUsersNumber(studorgID int64) (int64, error) {
 	var number int64
 	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE studorgid = $1`, studorgID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
-		return 0, fmt.Errorf("failed to get users number from db: %w", err)
+		return 0, fmt.Errorf("failed to get studorg users number from db: %w", err)
+	}
+
+	return number, nil
+}
+
+func (u *User2Studorg) GetUserStudorgsNumber(userID int64) (int64, error) {
+	var number int64
+	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE userid = $1`, userID)
+	if err != nil {
+		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
+		// TODO: логи и завертывание ошибок
+		return 0, fmt.Errorf("failed to get user studorgs number from db: %w", err)
 	}
 
 	return number, nil

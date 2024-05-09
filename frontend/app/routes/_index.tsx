@@ -62,8 +62,6 @@ function TopMenu(props: { toggleSidebar: () => void }) {
 }
 
 function Buttons(params: { authInfo: AuthInfo }) {
-    console.log("isAuth", params.authInfo.isAuth)
-
     const routeToLogin = () => {
         window.location.href = "/login"
     }

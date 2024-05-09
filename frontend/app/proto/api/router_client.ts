@@ -4,7 +4,7 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { Router } from "./router";
-import type { UsersNumberResponse } from "./router";
+import type { NumberResponse } from "./router";
 import type { UserToStudorg } from "./router";
 import type { Studorg } from "../models/studorg";
 import type { StudorgIDResponse } from "./router";
@@ -100,9 +100,13 @@ export interface IRouterClient {
      */
     updateUserInStudorg(input: UserToStudorg, options?: RpcOptions): UnaryCall<UserToStudorg, SuccessResponse>;
     /**
-     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.UsersNumberResponse);
+     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.NumberResponse);
      */
-    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, UsersNumberResponse>;
+    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse>;
+    /**
+     * @generated from protobuf rpc: GetUserStudorgsNumber(user.UserID) returns (router.NumberResponse);
+     */
+    getUserStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse>;
 }
 /**
  * @generated from protobuf service router.Router
@@ -233,10 +237,17 @@ export class RouterClient implements IRouterClient, ServiceInfo {
         return stackIntercept<UserToStudorg, SuccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.UsersNumberResponse);
+     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.NumberResponse);
      */
-    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, UsersNumberResponse> {
+    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse> {
         const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<StudorgID, UsersNumberResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<StudorgID, NumberResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetUserStudorgsNumber(user.UserID) returns (router.NumberResponse);
+     */
+    getUserStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse> {
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UserID, NumberResponse>("unary", this._transport, method, opt, input);
     }
 }

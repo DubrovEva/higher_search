@@ -40,7 +40,8 @@ type RouterClient interface {
 	CheckUserInStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*SuccessResponse, error)
 	DeleteUserFromStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*SuccessResponse, error)
 	UpdateUserInStudorg(ctx context.Context, in *UserToStudorg, opts ...grpc.CallOption) (*SuccessResponse, error)
-	GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*UsersNumberResponse, error)
+	GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*NumberResponse, error)
+	GetUserStudorgsNumber(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*NumberResponse, error)
 }
 
 type routerClient struct {
@@ -204,9 +205,18 @@ func (c *routerClient) UpdateUserInStudorg(ctx context.Context, in *UserToStudor
 	return out, nil
 }
 
-func (c *routerClient) GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*UsersNumberResponse, error) {
-	out := new(UsersNumberResponse)
+func (c *routerClient) GetStudorgUsersNumber(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*NumberResponse, error) {
+	out := new(NumberResponse)
 	err := c.cc.Invoke(ctx, "/router.Router/GetStudorgUsersNumber", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) GetUserStudorgsNumber(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*NumberResponse, error) {
+	out := new(NumberResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetUserStudorgsNumber", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +244,8 @@ type RouterServer interface {
 	CheckUserInStudorg(context.Context, *models.StudorgID) (*SuccessResponse, error)
 	DeleteUserFromStudorg(context.Context, *models.StudorgID) (*SuccessResponse, error)
 	UpdateUserInStudorg(context.Context, *UserToStudorg) (*SuccessResponse, error)
-	GetStudorgUsersNumber(context.Context, *models.StudorgID) (*UsersNumberResponse, error)
+	GetStudorgUsersNumber(context.Context, *models.StudorgID) (*NumberResponse, error)
+	GetUserStudorgsNumber(context.Context, *models.UserID) (*NumberResponse, error)
 	mustEmbedUnimplementedRouterServer()
 }
 
@@ -293,8 +304,11 @@ func (UnimplementedRouterServer) DeleteUserFromStudorg(context.Context, *models.
 func (UnimplementedRouterServer) UpdateUserInStudorg(context.Context, *UserToStudorg) (*SuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInStudorg not implemented")
 }
-func (UnimplementedRouterServer) GetStudorgUsersNumber(context.Context, *models.StudorgID) (*UsersNumberResponse, error) {
+func (UnimplementedRouterServer) GetStudorgUsersNumber(context.Context, *models.StudorgID) (*NumberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudorgUsersNumber not implemented")
+}
+func (UnimplementedRouterServer) GetUserStudorgsNumber(context.Context, *models.UserID) (*NumberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudorgsNumber not implemented")
 }
 func (UnimplementedRouterServer) mustEmbedUnimplementedRouterServer() {}
 
@@ -633,6 +647,24 @@ func _Router_GetStudorgUsersNumber_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Router_GetUserStudorgsNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(models.UserID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetUserStudorgsNumber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetUserStudorgsNumber",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetUserStudorgsNumber(ctx, req.(*models.UserID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Router_ServiceDesc is the grpc.ServiceDesc for Router service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -711,6 +743,10 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStudorgUsersNumber",
 			Handler:    _Router_GetStudorgUsersNumber_Handler,
+		},
+		{
+			MethodName: "GetUserStudorgsNumber",
+			Handler:    _Router_GetUserStudorgsNumber_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

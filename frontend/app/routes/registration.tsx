@@ -27,7 +27,6 @@ export default function Login() {
     const [noError, setNoError] = useState(true)
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        console.log(registrationRequest)
         let response: UserID | undefined;
         try {
             response = await Client.getInstance().register(registrationRequest);

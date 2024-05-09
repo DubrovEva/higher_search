@@ -176,9 +176,9 @@ export interface Error {
     msg: string;
 }
 /**
- * @generated from protobuf message router.UsersNumberResponse
+ * @generated from protobuf message router.NumberResponse
  */
-export interface UsersNumberResponse {
+export interface NumberResponse {
     /**
      * @generated from protobuf oneof: response
      */
@@ -725,21 +725,21 @@ class Error$Type extends MessageType<Error> {
  */
 export const Error = new Error$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UsersNumberResponse$Type extends MessageType<UsersNumberResponse> {
+class NumberResponse$Type extends MessageType<NumberResponse> {
     constructor() {
-        super("router.UsersNumberResponse", [
+        super("router.NumberResponse", [
             { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
             { no: 2, name: "number", kind: "scalar", oneof: "response", T: 3 /*ScalarType.INT64*/ }
         ]);
     }
-    create(value?: PartialMessage<UsersNumberResponse>): UsersNumberResponse {
+    create(value?: PartialMessage<NumberResponse>): NumberResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.response = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<UsersNumberResponse>(this, message, value);
+            reflectionMergePartial<NumberResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UsersNumberResponse): UsersNumberResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NumberResponse): NumberResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -767,7 +767,7 @@ class UsersNumberResponse$Type extends MessageType<UsersNumberResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: UsersNumberResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: NumberResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* router.Error err = 1; */
         if (message.response.oneofKind === "err")
             Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -781,9 +781,9 @@ class UsersNumberResponse$Type extends MessageType<UsersNumberResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message router.UsersNumberResponse
+ * @generated MessageType for protobuf message router.NumberResponse
  */
-export const UsersNumberResponse = new UsersNumberResponse$Type();
+export const NumberResponse = new NumberResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AuthorizationRequest$Type extends MessageType<AuthorizationRequest> {
     constructor() {
@@ -1091,5 +1091,6 @@ export const Router = new ServiceType("router.Router", [
     { name: "CheckUserInStudorg", options: {}, I: StudorgID, O: SuccessResponse },
     { name: "DeleteUserFromStudorg", options: {}, I: StudorgID, O: SuccessResponse },
     { name: "UpdateUserInStudorg", options: {}, I: UserToStudorg, O: SuccessResponse },
-    { name: "GetStudorgUsersNumber", options: {}, I: StudorgID, O: UsersNumberResponse }
+    { name: "GetStudorgUsersNumber", options: {}, I: StudorgID, O: NumberResponse },
+    { name: "GetUserStudorgsNumber", options: {}, I: UserID, O: NumberResponse }
 ]);
