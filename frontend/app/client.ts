@@ -1,6 +1,6 @@
 import {RouterClient} from "~/proto/api/router_client";
 import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
-import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
+import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {AuthorizationRequest, RegistrationRequest, WithoutParameters} from "~/proto/api/router";
 import {User, UserID} from "~/proto/models/user";
 
@@ -38,10 +38,10 @@ export default class Client {
         // todo: обработка ошибок
     }
 
-    async getUser(userID: UserID) {
+    async getUserInfo(userID: UserID) {
         const response = await this.router.getUser(userID).response
         if (response.response.oneofKind == "user") {
-            return response.response.user
+            return response.response.user.userInfo
         }
         // if (response.response.oneofKind == "err") {
         //     throw response.response.err
@@ -91,6 +91,14 @@ export default class Client {
         const response = await this.router.insertStudorg(studorgInfo).response
         if (response.response.oneofKind == "studorgID") {
             return response.response.studorgID
+        }
+        // todo: обработка ошибок
+    }
+
+    async updateStudorg(studorg: Studorg) {
+        const response = await this.router.updateStudorg(studorg).response
+        if (response.response.oneofKind == "studorg") {
+            return response.response.studorg.studorgInfo
         }
         // todo: обработка ошибок
     }
@@ -158,8 +166,15 @@ export default class Client {
     }
 
     async checkUserInStudorg(studorgID: StudorgID) {
-        const response = await this.router.checkUserInStudorg(studorgID).response
-        return response.response.oneofKind == "success" && response.response.success;
+        const response = await this.router.getStudorgRole(studorgID).response
+        return response.role != StudorgRole.UNKNOWN;
+
+        // todo: обработка ошибок
+    }
+
+    async getStudorgRole(studorgID: StudorgID) {
+        const response = await this.router.getStudorgRole(studorgID).response
+        return response.role
 
         // todo: обработка ошибок
     }

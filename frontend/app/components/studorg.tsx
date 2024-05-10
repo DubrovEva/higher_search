@@ -1,4 +1,5 @@
 import {
+    Button,
     Card,
     CardContent,
     CardDescription,
@@ -45,9 +46,8 @@ export function OrgCard(params: { studorgInfo: StudorgInfo, ID: StudorgID}) {
             <CardContent>
                 <Image floated='left' size='tiny' src={dummy}/>
                 <CardHeader> {params.studorgInfo.name} </CardHeader>
-                <CardMeta>
-                    C {params.studorgInfo.createdAt?.seconds}
-                </CardMeta>
+
+                {params.studorgInfo.createdAt && <CardMeta> C <AdmissionTime seconds={+params.studorgInfo?.createdAt?.seconds}/> </CardMeta> }
                 <CardMeta>
                     {usersNumber} <Icon name="id card"/>
                 </CardMeta>
@@ -72,27 +72,21 @@ export function TagToLabel(params: {tag: string}) {
     )
 }
 
-export function RoleToLabel(params: {role: StudorgRole}) {
-    if (params.role == StudorgRole.PARTICIPANT) {
-        return <Label> Участник </Label>
-    } else if (params.role == StudorgRole.ORGANIZER) {
-        return <Label color="blue"> Организатор </Label>
-    } else {
-        return <Label color="green"> Глава </Label>
-    }
-}
-
 function UserOrgCard(params: {studorg: Studorg}) {
     // params.studorg.studorgInfo?.admissionTime
+    const [isDeleted, setIsDeleted] = useState(false)
 
-    return <Card href={"/studorg/" + params.studorg.iD?.iD}>
+    return !isDeleted && <Card color={"grey"} href={"/studorg/" + params.studorg.iD?.iD}>
         <CardContent>
             <Image
                 floated='left'
                 size='tiny'
                 src={dummy}
             />
-            <CardHeader > {params.studorg.studorgInfo?.name} </CardHeader>
+
+            <EditButton role={params.studorg.studorgInfo?.role!} studorgID={params.studorg.iD!} onDelete={() => setIsDeleted(true)}/>
+            <CardHeader > {params.studorg.studorgInfo?.name}
+            </CardHeader>
             {params.studorg.studorgInfo?.admissionTime && <CardMeta> Участник с <AdmissionTime seconds={+params.studorg.studorgInfo?.admissionTime?.seconds}/> </CardMeta> }
             <CardContent extra> <RoleToLabel role={params.studorg.studorgInfo?.role!}/> </CardContent>
         </CardContent>
@@ -111,4 +105,32 @@ export function UserOrgCards(params: {studorgs: Studorg[]}) {
 
 function AdmissionTime(params: {seconds: number}) {
     return new Date( params.seconds * 1000).toLocaleDateString();  // convert timestamp to milliseconds and construct Date object
+}
+
+function EditButton(params: {role: StudorgRole, studorgID: StudorgID, onDelete: () => void}) {
+    const deleteUserFromStudorg = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        params.onDelete()
+        await Client.getInstance().deleteUserFromStudorg(params.studorgID)
+    }
+    const routeToEditOrg = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        window.location.href = `/edit/${params.studorgID.iD}`;
+    }
+
+    if (params.role == StudorgRole.HEAD || params.role == StudorgRole.ORGANIZER) {
+        return <Button floated={"right"} onClick={routeToEditOrg} basic> Редактировать </Button>
+    } else {
+        return <Button floated={"right"} onClick={deleteUserFromStudorg} basic> Покинуть </Button>
+    }
+}
+
+function RoleToLabel(params: {role: StudorgRole}) {
+    if (params.role == StudorgRole.PARTICIPANT) {
+        return <Label> Участник </Label>
+    } else if (params.role == StudorgRole.ORGANIZER) {
+        return <Label color="blue"> Организатор </Label>
+    } else {
+        return <Label color="green"> Глава </Label>
+    }
 }

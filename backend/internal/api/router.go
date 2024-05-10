@@ -44,10 +44,10 @@ type StudorgRepo interface {
 type User2StudorgRepo interface {
 	GetStudorgUsersNumber(studorgID int64) (int64, error)
 	GetUserStudorgsNumber(userID int64) (int64, error)
+	Get(user2studorg *models.User2StudorgDB) (*models.User2StudorgDB, error)
 	Add(user2studorg *models.User2StudorgDB) error
 	Update(user2studorg *models.User2StudorgDB) error
 	Delete(user2studorg *models.User2StudorgDB) error
-	CheckUserInStudorg(studorgID int64, userID int64) bool
 }
 
 func NewRouter(user UserRepo, studorg StudorgRepo, user2studorg User2StudorgRepo, manager *JWTManager) *Router {
@@ -318,6 +318,29 @@ func (r *Router) IsAuth(ctx context.Context, _ *service.WithoutParameters) (*pro
 	return &proto.AuthInfo{IsAuth: true, UserID: userID}, nil
 }
 
+func (r *Router) GetStudorgRole(ctx context.Context, studorgID *proto.StudorgID) (*service.RoleResponse, error) {
+	userID, err := r.validateAuthorization(ctx)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return &service.RoleResponse{Role: proto.StudorgRole_UNKNOWN}, nil
+	}
+
+	protoUser2Studorg := proto.User2Studorg{UserID: userID, StudorgID: studorgID}
+	user2studorg, err := models.NewUser2StudorgDB(&protoUser2Studorg)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return &service.RoleResponse{Role: proto.StudorgRole_UNKNOWN}, nil
+	}
+
+	user2studorg, err = r.User2Studorg.Get(user2studorg)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return &service.RoleResponse{Role: proto.StudorgRole_UNKNOWN}, nil
+	}
+
+	return &service.RoleResponse{Role: proto.StudorgRole(user2studorg.Role)}, nil
+}
+
 func (r *Router) AddUserToStudorg(ctx context.Context, studorgID *proto.StudorgID) (*service.SuccessResponse, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -339,23 +362,7 @@ func (r *Router) AddUserToStudorg(ctx context.Context, studorgID *proto.StudorgI
 	return &service.SuccessResponse{Response: &service.SuccessResponse_Success{Success: true}}, nil
 }
 
-func (r *Router) CheckUserInStudorg(ctx context.Context, studorgID *proto.StudorgID) (*service.SuccessResponse, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, fmt.Errorf("no metadata in context")
-	}
-
-	cookie := md.Get("Cookie")
-	userID, err := r.JwtManager.VerifyJWT(cookie[0])
-	if err != nil {
-		return nil, fmt.Errorf("not valid jwt: %w", err)
-	}
-
-	check := r.User2Studorg.CheckUserInStudorg(studorgID.GetID(), userID)
-	return &service.SuccessResponse{Response: &service.SuccessResponse_Success{Success: check}}, nil
-}
-
-func (r *Router) UpdateUserInStudorg(_ context.Context, request *service.UserToStudorg) (*service.SuccessResponse, error) {
+func (r *Router) UpdateUserInStudorg(_ context.Context, request *proto.User2Studorg) (*service.SuccessResponse, error) {
 	user2studorgDB, err := models.NewUser2StudorgDB(request)
 	if err != nil {
 		// TODO: логи и завертывание ошибок

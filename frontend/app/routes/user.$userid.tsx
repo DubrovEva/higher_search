@@ -27,7 +27,7 @@ import {FixedMenuForAccount} from "~/components/menu";
 import {category, faculty, gender} from "~/components/options";
 import {useParams} from "react-router";
 import Client from "~/client";
-import {AuthInfo, User, UserID, UserInfo} from "~/proto/models/user";
+import {AuthInfo, UserID, UserInfo} from "~/proto/models/user";
 import {UserOrgCards} from "~/components/studorg";
 import {Studorg} from "~/proto/models/studorg";
 import {UserCard} from "~/components/user";
@@ -59,8 +59,9 @@ function Organizations() {
     );
 }
 
-function AllPersonalInfo() {
-    const [user, setUser] = useState(User.create())
+function AllPersonalInfo()
+{
+    const [userInfo, setUserInfo] = useState(UserInfo.create())
     const [saved, saveInfo] = useState(false)
 
     const params = useParams();
@@ -69,18 +70,17 @@ function AllPersonalInfo() {
     request.iD = params.userid?.toString()!
 
     useEffect(() => {
-        Client.getInstance().getUser(request).then(x => setUser(x!))
+        Client.getInstance().getUserInfo(request).then(x => setUserInfo(x!))
     }, [])
 
     function handleUpdate(key: keyof UserInfo) {
-        // saveInfo(false)
         return (e: any, data: { value?: boolean | number | string | (boolean | number | string)[] }) => {
-            setUser({...user, [key]: data.value})
+            setUserInfo({...userInfo, [key]: data.value})
         }
     }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        await Client.getInstance().updateUserInfo(user);
+        await Client.getInstance().updateUserInfo({userInfo: userInfo, iD: request});
         saveInfo(true)
         setTimeout(() => saveInfo(false), 2000)
     }
@@ -90,13 +90,13 @@ function AllPersonalInfo() {
             <Header size={"huge"}> Личная информация </Header>
             <Divider/>
             <Grid stackable columns={2}>
-                <GridColumn> <UserCard user={user}/> </GridColumn>
+                <GridColumn> <UserCard user={{userInfo: userInfo, iD: request}}/> </GridColumn>
                 <GridColumn>
                     <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>
-                            <FormInput fluid label="Имя" placeholder='Имя' value={user.userInfo?.name} onChange={handleUpdate("name")}/>
-                            <FormInput fluid label="Отчество" placeholder='Отчество' value={user.userInfo?.middleName} onChange={handleUpdate("middleName")}/>
-                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={user.userInfo?.surname} onChange={handleUpdate("surname")} />
+                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo?.name} onChange={handleUpdate("name")}/>
+                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo?.middleName} onChange={handleUpdate("middleName")}/>
+                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo?.surname} onChange={handleUpdate("surname")} />
                         </FormGroup>
                         <FormGroup>
                             <FormSelect
@@ -104,7 +104,7 @@ function AllPersonalInfo() {
                                 label="Пол"
                                 options={gender}
                                 placeholder='Пол'
-                                value={user.userInfo?.gender}
+                                value={userInfo?.gender}
                                 onChange={handleUpdate("gender")}
                             />
                             <FormSelect
@@ -113,20 +113,20 @@ function AllPersonalInfo() {
                                 label='Факультет'
                                 placeholder='Факультет'
                                 width={12}
-                                value={user.userInfo?.faculty}
+                                value={userInfo?.faculty}
                                 onChange={handleUpdate("faculty")}
                             />
                         </FormGroup>
                         <FormTextArea
                             label='Информация об обучении'
                             placeholder='Курс, учебная программа, группа и прочее'
-                            value={user.userInfo?.educationInfo}
+                            value={userInfo?.educationInfo}
                             onChange={handleUpdate("educationInfo")}
                         />
                         <FormTextArea
                             label='Описание'
                             placeholder='Расскажите о себе'
-                            value={user.userInfo?.description}
+                            value={userInfo?.description}
                             onChange={handleUpdate("description")}
                         />
                         <Message
@@ -141,7 +141,7 @@ function AllPersonalInfo() {
     );
 }
 
-export default function UserUserid() {
+export default function ViewUser() {
     const [authInfo, setAuthInfo] = useState(AuthInfo.create())
     useEffect(() => {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))

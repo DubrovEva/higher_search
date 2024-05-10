@@ -13,15 +13,21 @@ import {
     FormInput,
     FormSelect,
     FormTextArea,
-    Header
+    Header,
+    Icon,
+    Message,
+    MessageContent,
+    MessageHeader
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
 import {campus, category, faculty, language} from "~/components/options";
-import {StudorgInfo} from "~/proto/models/studorg";
+import {StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {AuthInfo} from "~/proto/models/user";
+import {useParams} from "react-router";
+import {LoadingRightsMessage, NoRightsMessage} from "~/components/messages";
 
 export const meta: MetaFunction = () => {
     return [
@@ -35,19 +41,36 @@ export const links: LinksFunction = () => [
 ];
 
 type Filter<T, F> = {
-        [K in keyof T as T[K] extends F ? K : never]: T[K] & F
+    [K in keyof T as T[K] extends F ? K : never]: T[K] & F
 };
 
 function StudorgInfoForm() {
     const [studorgInfo, setStudorgInfo] = useState(
         StudorgInfo.create()
     )
+    const [saved, saveInfo] = useState(false)
+
+    const params = useParams();
+    const studorgID = StudorgID.create();
+    studorgID.iD = params.studorgid?.toString()!
+
+    const [isOrg, setOrg] = useState<boolean | undefined>(undefined)
+    useEffect(() => {
+        Client.getInstance().getStudorgRole(studorgID).then(role => setOrg(role == StudorgRole.ORGANIZER || role == StudorgRole.HEAD))
+    }, [])
+
+    useEffect(() => {
+        Client.getInstance().getStudorgInfo(studorgID).then(x => x ? setStudorgInfo(x) : undefined)
+    }, [])
+
+    if (isOrg == undefined)
+        return <LoadingRightsMessage/>
+    if (!isOrg) return <NoRightsMessage/>
 
     const handleSubmit = async () => {
-        const studorgID = await Client.getInstance().createStudorg(studorgInfo)
-        if (studorgID !== undefined) {
-            window.location.href = "/studorg/" + studorgID.iD;
-        }
+        await Client.getInstance().updateStudorg({studorgInfo: studorgInfo, iD: studorgID})
+        saveInfo(true)
+        setTimeout(() => saveInfo(false), 2000)
         // TODO: обработка ошибок??
     }
 
@@ -66,7 +89,7 @@ function StudorgInfoForm() {
     }
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} success={saved}>
             <FormInput fluid label="Название" placeholder='Название' required {...editable('name')}/>
             <FormGroup widths='equal'>
                 <FormSelect
@@ -104,14 +127,18 @@ function StudorgInfoForm() {
                           {...editable('description')}/>
 
             <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection options={category}
-                value={studorgInfo.tags}
-                onChange={handleUpdate("tags")}
+                          value={studorgInfo.tags}
+                          onChange={handleUpdate("tags")}
             />
 
             <FormGroup widths='equal'>
             </FormGroup>
             <FormInput fluid label='Photo' type={"file"}/>
-            <FormButton>Создать</FormButton>
+            <Message
+                success
+                header='Сохранено'
+            />
+            <FormButton>Сохранить</FormButton>
         </Form>
     );
 }
@@ -119,18 +146,17 @@ function StudorgInfoForm() {
 function AllInfo() {
     return (
         <Container text className={"main"}>
-            <Header size={"huge"}> Создание студенческой организации </Header>
+            <Header size={"huge"}> Редактирование студенческой организации </Header>
             <StudorgInfoForm/>
         </Container>
     );
 }
 
-export default function CreateStudorg() {
+export default function EditStudorg() {
     const [authInfo, setAuthInfo] = useState(AuthInfo.create())
     useEffect(() => {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
-
 
     return (
         <>
@@ -142,3 +168,4 @@ export default function CreateStudorg() {
         </>
     );
 }
+

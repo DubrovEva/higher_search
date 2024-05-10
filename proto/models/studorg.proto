@@ -45,6 +45,7 @@ enum StudorgRole {
   HEAD = 0;
   ORGANIZER = 1;
   PARTICIPANT = 2;
+  UNKNOWN = 3;
 }
 
 message Contact {

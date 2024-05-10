@@ -149,7 +149,11 @@ export enum StudorgRole {
     /**
      * @generated from protobuf enum value: PARTICIPANT = 2;
      */
-    PARTICIPANT = 2
+    PARTICIPANT = 2,
+    /**
+     * @generated from protobuf enum value: UNKNOWN = 3;
+     */
+    UNKNOWN = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StudorgID$Type extends MessageType<StudorgID> {

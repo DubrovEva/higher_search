@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	service "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
 	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
@@ -20,7 +19,7 @@ type User2StudorgDB struct {
 	IsContact   sql.NullBool
 }
 
-func NewUser2StudorgDB(protoUser2Studorg *service.UserToStudorg) (*User2StudorgDB, error) {
+func NewUser2StudorgDB(protoUser2Studorg *proto.User2Studorg) (*User2StudorgDB, error) {
 	var admissionTime time.Time
 	if protoUser2Studorg.AdmissionTime != nil {
 		admissionTime = protoUser2Studorg.AdmissionTime.AsTime()
@@ -61,8 +60,8 @@ func NewHead(studorgID, userID int64) *User2StudorgDB {
 	}
 }
 
-func (u *User2StudorgDB) ToProto() *service.UserToStudorg {
-	return &service.UserToStudorg{
+func (u *User2StudorgDB) ToProto() *proto.User2Studorg {
+	return &proto.User2Studorg{
 		Role:          proto.StudorgRole(u.Role),
 		StudorgID:     &proto.StudorgID{ID: u.StudorgID},
 		UserID:        &proto.UserID{ID: u.UserID},

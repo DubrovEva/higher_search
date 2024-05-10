@@ -46,8 +46,11 @@ export const links: LinksFunction = () => [
 ];
 
 function StudorgInfoForm() {
+    const routeToList = () => {
+        window.location.href = "/list"
+    }
     return (
-        <Form>
+        <Form onSubmit={routeToList}>
             <FormSelect
                 fluid
                 options={faculty}

@@ -71,8 +71,9 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
         <>
             <Segment>
             <Header size="huge">
-                {params.studorgInfo.name}
                 {params.authInfo.isAuth && <UserInStudorgButton studorgID={params.studorgID}/>}
+                {params.studorgInfo.name}
+
             </Header>
 
                 <Divider/>
@@ -98,7 +99,7 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
     );
 }
 
-export default function Studorg() {
+export default function ViewStudorg() {
     const [studorgInfo, setStudorgInfo] = useState<StudorgInfo | undefined>(undefined)
     const params = useParams();
 

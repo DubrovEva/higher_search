@@ -63,7 +63,7 @@ enum Language {
   ZH = 10;
 }
 
-  enum Gender {
+enum Gender {
   FEMALE = 0;
   MALE = 1;
   OTHER_GENDER = 2;

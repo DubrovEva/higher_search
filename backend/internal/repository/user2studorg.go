@@ -17,7 +17,7 @@ func NewUser2Studorg(db *sqlx.DB) *User2Studorg {
 }
 
 func (u *User2Studorg) Add(user2studorg *models.User2StudorgDB) error {
-	if u.CheckUserInStudorg(user2studorg.StudorgID, user2studorg.UserID) {
+	if u.CheckUserInStudorg(user2studorg) {
 		// TODO: логи и завертывание ошибок
 		return fmt.Errorf("failed to add user (%d) to studorg (%d): %w",
 			user2studorg.UserID, user2studorg.StudorgID, models.ErrUserAlreadyAccepted)
@@ -51,8 +51,17 @@ func (u *User2Studorg) Add(user2studorg *models.User2StudorgDB) error {
 	return nil
 }
 
+func (u *User2Studorg) Get(user2studorg *models.User2StudorgDB) (*models.User2StudorgDB, error) {
+	err := u.db.Get(user2studorg, `SELECT * FROM user2studorg WHERE studorgid = $1 AND userid = $2`, user2studorg.StudorgID, user2studorg.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user2studorg from db: %w", err)
+	}
+
+	return user2studorg, nil
+}
+
 func (u *User2Studorg) Update(user2studorg *models.User2StudorgDB) error {
-	if !u.CheckUserInStudorg(user2studorg.StudorgID, user2studorg.UserID) {
+	if !u.CheckUserInStudorg(user2studorg) {
 		// TODO: логи и завертывание ошибок
 		return fmt.Errorf("failed to update user (%d) in studorg (%d): %w",
 			user2studorg.UserID, user2studorg.StudorgID, models.ErrUserNotAccepted)
@@ -78,7 +87,7 @@ func (u *User2Studorg) Update(user2studorg *models.User2StudorgDB) error {
 }
 
 func (u *User2Studorg) Delete(user2studorg *models.User2StudorgDB) error {
-	if !u.CheckUserInStudorg(user2studorg.StudorgID, user2studorg.UserID) {
+	if !u.CheckUserInStudorg(user2studorg) {
 		// TODO: логи и завертывание ошибок
 		return fmt.Errorf("failed to update user (%d) in studorg (%d): %w",
 			user2studorg.UserID, user2studorg.StudorgID, models.ErrUserNotAccepted)
@@ -123,9 +132,8 @@ func (u *User2Studorg) GetUserStudorgsNumber(userID int64) (int64, error) {
 	return number, nil
 }
 
-func (u *User2Studorg) CheckUserInStudorg(studorgID int64, userID int64) bool {
-	var user2studorg models.User2StudorgDB
-	err := u.db.Get(&user2studorg, `SELECT * FROM user2studorg WHERE studorgid = $1 AND userid = $2`, studorgID, userID)
+func (u *User2Studorg) CheckUserInStudorg(user2studorg *models.User2StudorgDB) bool {
+	_, err := u.Get(user2studorg)
 
 	return err == nil
 }

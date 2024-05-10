@@ -1,0 +1,18 @@
+syntax = "proto3";
+package user2studorg;
+option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
+
+import "google/protobuf/timestamp.proto";
+import "models/user.proto";
+import "models/studorg.proto";
+
+message User2Studorg {
+  user.UserID userID = 1;
+  studorg.StudorgID studorgID = 2;
+  studorg.StudorgRole role = 3;
+  google.protobuf.Timestamp admissionTime = 4;
+  string contactInfo = 5;
+  string customRole = 6;
+  string info = 7;
+  bool isContact = 8;
+}
