@@ -27,10 +27,11 @@ import {FixedMenuForAccount} from "~/components/menu";
 import {category, faculty, gender} from "~/components/options";
 import {useParams} from "react-router";
 import Client from "~/client";
-import {AuthInfo, UserID, UserInfo} from "~/proto/models/user";
+import {AuthInfo, User, UserID, UserInfo} from "~/proto/models/user";
 import {UserOrgCards} from "~/components/studorg";
 import {Studorg} from "~/proto/models/studorg";
 import {UserCard} from "~/components/user";
+import {LoadingRightsMessage, NoRightsMessage} from "~/components/messages";
 
 export const meta: MetaFunction = () => {
     return [
@@ -59,20 +60,22 @@ function Organizations() {
     );
 }
 
-function AllPersonalInfo()
-{
-    const [userInfo, setUserInfo] = useState(UserInfo.create())
+async function AllPersonalInfo() {
+    const [user, setUser] = useState(User.create())
     const [saved, saveInfo] = useState(false)
 
-    const params = useParams();
-
-    const request = UserID.create();
-    request.iD = params.userid?.toString()!
-
-    useEffect(() => {
-        Client.getInstance().getUserInfo(request).then(x => setUserInfo(x!))
-    }, [])
-
+    const userResponse = await Client.getInstance().getPersonalInfo()
+    if (userResponse === undefined) {
+        return <LoadingRightsMessage/>
+    }
+    if (userResponse.oneofKind === "err") {
+        return <NoRightsMessage/>
+    }
+    if (userResponse.oneofKind === "user") {
+        setUser(userResponse.user)
+    }
+    // TODO плохой тайпчек
+    
     function handleUpdate(key: keyof UserInfo) {
         return (e: any, data: { value?: boolean | number | string | (boolean | number | string)[] }) => {
             setUserInfo({...userInfo, [key]: data.value})
@@ -86,7 +89,7 @@ function AllPersonalInfo()
     }
 
     return (
-        <Container text className={"main"}  >
+        <Container text className={"main"}>
             <Header size={"huge"}> Личная информация </Header>
             <Divider/>
             <Grid stackable columns={2}>
@@ -94,9 +97,12 @@ function AllPersonalInfo()
                 <GridColumn>
                     <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>
-                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo?.name} onChange={handleUpdate("name")}/>
-                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo?.middleName} onChange={handleUpdate("middleName")}/>
-                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo?.surname} onChange={handleUpdate("surname")} />
+                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo?.name}
+                                       onChange={handleUpdate("name")}/>
+                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo?.middleName}
+                                       onChange={handleUpdate("middleName")}/>
+                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo?.surname}
+                                       onChange={handleUpdate("surname")}/>
                         </FormGroup>
                         <FormGroup>
                             <FormSelect
@@ -131,7 +137,7 @@ function AllPersonalInfo()
                         />
                         <Message
                             success
-                                header='Сохранено'
+                            header='Сохранено'
                         />
                         <FormButton type="submit"> Сохранить </FormButton>
                     </Form>
