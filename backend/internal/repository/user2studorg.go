@@ -26,20 +26,20 @@ func (u *User2Studorg) Add(user2studorg *models.User2StudorgDB) error {
 	_, err := u.db.NamedExec(
 		`INSERT INTO user2studorg (
                           role, 
-                          studorgid, 
-                          userid, 
-                          admissiontime, 
-                          contactinfo, 
-                          customrole, 
+                          studorg_id, 
+                          user_id, 
+                          admission_time, 
+                          contact_info, 
+                          custom_role, 
                           info, 
-                          iscontact) values (:role, 
-                                             :studorgid, 
-                                             :userid, 
-                                             :admissiontime, 
-                                             :contactinfo, 
-                                             :customrole,
+                          is_contact) values (:role, 
+                                             :studorg_id, 
+                                             :user_id, 
+                                             :admission_time, 
+                                             :contact_info, 
+                                             :custom_role,
                                              :info, 
-                                             :iscontact)`,
+                                             :is_contact)`,
 		user2studorg,
 	)
 	if err != nil {
@@ -52,7 +52,7 @@ func (u *User2Studorg) Add(user2studorg *models.User2StudorgDB) error {
 }
 
 func (u *User2Studorg) Get(user2studorg *models.User2StudorgDB) (*models.User2StudorgDB, error) {
-	err := u.db.Get(user2studorg, `SELECT * FROM user2studorg WHERE studorgid = $1 AND userid = $2`, user2studorg.StudorgID, user2studorg.UserID)
+	err := u.db.Get(user2studorg, `SELECT * FROM user2studorg WHERE studorg_id = $1 AND user_id = $2`, user2studorg.StudorgID, user2studorg.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user2studorg from db: %w", err)
 	}
@@ -70,11 +70,11 @@ func (u *User2Studorg) Update(user2studorg *models.User2StudorgDB) error {
 	_, err := u.db.NamedExec(
 		`UPDATE user2studorg 
 				SET role=:role,
-                    contactinfo=:contactinfo, 
-                    customrole=:customrole, 
+                    contact_info=:contact_info, 
+                    custom_role=:custom_role, 
                     info=:info, 
-                    iscontact=:iscontact
-				WHERE studorgid=:studorgid AND userid=:userid`,
+                    is_contact=:is_contact
+				WHERE studorg_id=:studorg_id AND user_id=:user_id`,
 		user2studorg,
 	)
 	if err != nil {
@@ -96,7 +96,7 @@ func (u *User2Studorg) Delete(user2studorg *models.User2StudorgDB) error {
 	// TODO добавить проверку, что удаляют не главу
 
 	_, err := u.db.NamedExec(
-		`DELETE FROM user2studorg WHERE studorgid=:studorgid AND userid=:userid`,
+		`DELETE FROM user2studorg WHERE studorg_id=:studorg_id AND user_id=:user_id`,
 		user2studorg,
 	)
 	if err != nil {
@@ -110,7 +110,7 @@ func (u *User2Studorg) Delete(user2studorg *models.User2StudorgDB) error {
 
 func (u *User2Studorg) GetStudorgUsersNumber(studorgID int64) (int64, error) {
 	var number int64
-	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE studorgid = $1`, studorgID)
+	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE studorg_id = $1`, studorgID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
@@ -122,7 +122,7 @@ func (u *User2Studorg) GetStudorgUsersNumber(studorgID int64) (int64, error) {
 
 func (u *User2Studorg) GetUserStudorgsNumber(userID int64) (int64, error) {
 	var number int64
-	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE userid = $1`, userID)
+	err := u.db.Get(&number, `SELECT COUNT(*) FROM user2studorg WHERE user_id = $1`, userID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок

@@ -17,11 +17,12 @@ message Tags {
 }
 
 enum Campus {
-  MSK = 0;
-  NOV = 1;
-  OTHER_CAMPUS = 2;
+  OTHER_CAMPUS = 0;
+  MSK = 1;
+  NOV = 2;
   PER = 3;
   SPB = 4;
+  ONLINE = 5;
 }
 
 enum Faculty {
@@ -50,8 +51,8 @@ enum Faculty {
 }
 
 enum Language {
-  RU = 0;
-  DE = 1;
+  OTHER_LANGUAGE = 0;
+  RU = 1;
   EN = 2;
   ES = 3;
   FR = 4;
@@ -61,10 +62,11 @@ enum Language {
   KO = 8;
   AR = 9;
   ZH = 10;
+  DE = 11;
 }
 
 enum Gender {
-  FEMALE = 0;
-  MALE = 1;
-  OTHER_GENDER = 2;
+  OTHER_GENDER = 0;
+  FEMALE = 1;
+  MALE = 2;
 }

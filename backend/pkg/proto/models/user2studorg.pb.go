@@ -86,7 +86,7 @@ func (x *User2Studorg) GetRole() StudorgRole {
 	if x != nil {
 		return x.Role
 	}
-	return StudorgRole_HEAD
+	return StudorgRole_OTHER_ROLE
 }
 
 func (x *User2Studorg) GetAdmissionTime() *timestamppb.Timestamp {

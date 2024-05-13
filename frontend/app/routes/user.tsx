@@ -32,6 +32,7 @@ import {UserOrgCards} from "~/components/studorg";
 import {Studorg} from "~/proto/models/studorg";
 import {UserCard} from "~/components/user";
 import {LoadingRightsMessage, NoRightsMessage} from "~/components/messages";
+import {UserResponse} from "~/proto/api/router";
 
 export const meta: MetaFunction = () => {
     return [
@@ -49,6 +50,7 @@ function Organizations() {
     useEffect(() => {
         Client.getInstance().getUserStudorgs().then(result => setStudorgs(result))
     }, [])
+    console.log(studorgs)
 
     return (
         <Container text className={"main"}>
@@ -60,30 +62,44 @@ function Organizations() {
     );
 }
 
-async function AllPersonalInfo() {
-    const [user, setUser] = useState(User.create())
+function AllPersonalInfo() {
+    const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined)
+    const [userResponse, setUserResponse] = useState(UserResponse.create())
     const [saved, saveInfo] = useState(false)
 
-    const userResponse = await Client.getInstance().getPersonalInfo()
+    useEffect(() => {
+        Client.getInstance().getPersonalInfo().then(response => {
+            setUserResponse(response)
+            if (response.response.oneofKind === "user") {
+                setUserInfo(response.response.user.userInfo);
+            }
+        })
+    }, [])
+
+    let userID = UserID.create()
     if (userResponse === undefined) {
         return <LoadingRightsMessage/>
-    }
-    if (userResponse.oneofKind === "err") {
+    } else if (userResponse.response.oneofKind === "err") {
         return <NoRightsMessage/>
+    } else if (userResponse.response.oneofKind === "user") {
+        if (userResponse.response.user.userInfo === undefined) {
+            return <NoRightsMessage/>
+        }
+        userID = userResponse.response.user.iD!
     }
-    if (userResponse.oneofKind === "user") {
-        setUser(userResponse.user)
+
+    if (userInfo === undefined) {
+        return <LoadingRightsMessage/>
     }
-    // TODO плохой тайпчек
-    
-    function handleUpdate(key: keyof UserInfo) {
+
+    const handleUpdate = (key: keyof UserInfo) => {
         return (e: any, data: { value?: boolean | number | string | (boolean | number | string)[] }) => {
             setUserInfo({...userInfo, [key]: data.value})
         }
     }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        await Client.getInstance().updateUserInfo({userInfo: userInfo, iD: request});
+        await Client.getInstance().updateUserInfo({userInfo: userInfo, iD: userID});
         saveInfo(true)
         setTimeout(() => saveInfo(false), 2000)
     }
@@ -93,16 +109,16 @@ async function AllPersonalInfo() {
             <Header size={"huge"}> Личная информация </Header>
             <Divider/>
             <Grid stackable columns={2}>
-                <GridColumn> <UserCard user={{userInfo: userInfo, iD: request}}/> </GridColumn>
+                <GridColumn> <UserCard user={{userInfo: userInfo, iD: userID}}/> </GridColumn>
                 <GridColumn>
                     <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>
-                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo?.name}
-                                       onChange={handleUpdate("name")}/>
-                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo?.middleName}
-                                       onChange={handleUpdate("middleName")}/>
-                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo?.surname}
+                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo.surname}
                                        onChange={handleUpdate("surname")}/>
+                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo.name}
+                                       onChange={handleUpdate("name")}/>
+                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo.middleName}
+                                       onChange={handleUpdate("middleName")}/>
                         </FormGroup>
                         <FormGroup>
                             <FormSelect

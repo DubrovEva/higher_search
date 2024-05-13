@@ -5,7 +5,6 @@ import { User2Studorg } from "../models/user2studorg";
 import { StudorgInfo } from "../models/studorg";
 import { AuthInfo } from "../models/user";
 import { UserInfo } from "../models/user";
-import { UserIDs } from "../models/user";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
@@ -23,11 +22,73 @@ import { Studorg } from "../models/studorg";
 import { Users } from "../models/user";
 import { UserID } from "../models/user";
 import { User } from "../models/user";
+import { Language } from "../models/common";
+import { Campus } from "../models/common";
+import { Faculty } from "../models/common";
+// requests
+
 /**
  * @generated from protobuf message router.WithoutParameters
  */
 export interface WithoutParameters {
 }
+/**
+ * @generated from protobuf message router.AuthorizationRequest
+ */
+export interface AuthorizationRequest {
+    /**
+     * @generated from protobuf field: string email = 1;
+     */
+    email: string;
+    /**
+     * @generated from protobuf field: string password = 2;
+     */
+    password: string;
+}
+/**
+ * @generated from protobuf message router.RegistrationRequest
+ */
+export interface RegistrationRequest {
+    /**
+     * @generated from protobuf field: string email = 1;
+     */
+    email: string;
+    /**
+     * @generated from protobuf field: string password = 2;
+     */
+    password: string;
+    /**
+     * @generated from protobuf field: string name = 3;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string surname = 4;
+     */
+    surname: string;
+}
+/**
+ * @generated from protobuf message router.SearchRequest
+ */
+export interface SearchRequest {
+    /**
+     * @generated from protobuf field: common.Faculty faculty = 1;
+     */
+    faculty: Faculty;
+    /**
+     * @generated from protobuf field: common.Campus campus = 2;
+     */
+    campus: Campus;
+    /**
+     * @generated from protobuf field: common.Language language = 3;
+     */
+    language: Language;
+    /**
+     * @generated from protobuf field: repeated string tags = 4;
+     */
+    tags: string[];
+}
+// responses
+
 /**
  * @generated from protobuf message router.UserResponse
  */
@@ -199,19 +260,6 @@ export interface NumberResponse {
     };
 }
 /**
- * @generated from protobuf message router.AuthorizationRequest
- */
-export interface AuthorizationRequest {
-    /**
-     * @generated from protobuf field: string email = 1;
-     */
-    email: string;
-    /**
-     * @generated from protobuf field: string password = 2;
-     */
-    password: string;
-}
-/**
  * @generated from protobuf message router.SuccessResponse
  */
 export interface SuccessResponse {
@@ -233,27 +281,6 @@ export interface SuccessResponse {
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message router.RegistrationRequest
- */
-export interface RegistrationRequest {
-    /**
-     * @generated from protobuf field: string Email = 1 [json_name = "Email"];
-     */
-    email: string;
-    /**
-     * @generated from protobuf field: string Password = 2 [json_name = "Password"];
-     */
-    password: string;
-    /**
-     * @generated from protobuf field: string Name = 3 [json_name = "Name"];
-     */
-    name: string;
-    /**
-     * @generated from protobuf field: string Surname = 4 [json_name = "Surname"];
-     */
-    surname: string;
 }
 /**
  * @generated from protobuf message router.RoleResponse
@@ -289,6 +316,203 @@ class WithoutParameters$Type extends MessageType<WithoutParameters> {
  * @generated MessageType for protobuf message router.WithoutParameters
  */
 export const WithoutParameters = new WithoutParameters$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuthorizationRequest$Type extends MessageType<AuthorizationRequest> {
+    constructor() {
+        super("router.AuthorizationRequest", [
+            { no: 1, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AuthorizationRequest>): AuthorizationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.email = "";
+        message.password = "";
+        if (value !== undefined)
+            reflectionMergePartial<AuthorizationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthorizationRequest): AuthorizationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string email */ 1:
+                    message.email = reader.string();
+                    break;
+                case /* string password */ 2:
+                    message.password = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AuthorizationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string email = 1; */
+        if (message.email !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.email);
+        /* string password = 2; */
+        if (message.password !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.password);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.AuthorizationRequest
+ */
+export const AuthorizationRequest = new AuthorizationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RegistrationRequest$Type extends MessageType<RegistrationRequest> {
+    constructor() {
+        super("router.RegistrationRequest", [
+            { no: 1, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "surname", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RegistrationRequest>): RegistrationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.email = "";
+        message.password = "";
+        message.name = "";
+        message.surname = "";
+        if (value !== undefined)
+            reflectionMergePartial<RegistrationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegistrationRequest): RegistrationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string email */ 1:
+                    message.email = reader.string();
+                    break;
+                case /* string password */ 2:
+                    message.password = reader.string();
+                    break;
+                case /* string name */ 3:
+                    message.name = reader.string();
+                    break;
+                case /* string surname */ 4:
+                    message.surname = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RegistrationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string email = 1; */
+        if (message.email !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.email);
+        /* string password = 2; */
+        if (message.password !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.password);
+        /* string name = 3; */
+        if (message.name !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.name);
+        /* string surname = 4; */
+        if (message.surname !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.surname);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.RegistrationRequest
+ */
+export const RegistrationRequest = new RegistrationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SearchRequest$Type extends MessageType<SearchRequest> {
+    constructor() {
+        super("router.SearchRequest", [
+            { no: 1, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
+            { no: 2, name: "campus", kind: "enum", T: () => ["common.Campus", Campus] },
+            { no: 3, name: "language", kind: "enum", T: () => ["common.Language", Language] },
+            { no: 4, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SearchRequest>): SearchRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.faculty = 0;
+        message.campus = 0;
+        message.language = 0;
+        message.tags = [];
+        if (value !== undefined)
+            reflectionMergePartial<SearchRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SearchRequest): SearchRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* common.Faculty faculty */ 1:
+                    message.faculty = reader.int32();
+                    break;
+                case /* common.Campus campus */ 2:
+                    message.campus = reader.int32();
+                    break;
+                case /* common.Language language */ 3:
+                    message.language = reader.int32();
+                    break;
+                case /* repeated string tags */ 4:
+                    message.tags.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SearchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* common.Faculty faculty = 1; */
+        if (message.faculty !== 0)
+            writer.tag(1, WireType.Varint).int32(message.faculty);
+        /* common.Campus campus = 2; */
+        if (message.campus !== 0)
+            writer.tag(2, WireType.Varint).int32(message.campus);
+        /* common.Language language = 3; */
+        if (message.language !== 0)
+            writer.tag(3, WireType.Varint).int32(message.language);
+        /* repeated string tags = 4; */
+        for (let i = 0; i < message.tags.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.tags[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.SearchRequest
+ */
+export const SearchRequest = new SearchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserResponse$Type extends MessageType<UserResponse> {
     constructor() {
@@ -757,61 +981,6 @@ class NumberResponse$Type extends MessageType<NumberResponse> {
  */
 export const NumberResponse = new NumberResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class AuthorizationRequest$Type extends MessageType<AuthorizationRequest> {
-    constructor() {
-        super("router.AuthorizationRequest", [
-            { no: 1, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<AuthorizationRequest>): AuthorizationRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.email = "";
-        message.password = "";
-        if (value !== undefined)
-            reflectionMergePartial<AuthorizationRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuthorizationRequest): AuthorizationRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string email */ 1:
-                    message.email = reader.string();
-                    break;
-                case /* string password */ 2:
-                    message.password = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AuthorizationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string email = 1; */
-        if (message.email !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.email);
-        /* string password = 2; */
-        if (message.password !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.password);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message router.AuthorizationRequest
- */
-export const AuthorizationRequest = new AuthorizationRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class SuccessResponse$Type extends MessageType<SuccessResponse> {
     constructor() {
         super("router.SuccessResponse", [
@@ -872,77 +1041,6 @@ class SuccessResponse$Type extends MessageType<SuccessResponse> {
  */
 export const SuccessResponse = new SuccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RegistrationRequest$Type extends MessageType<RegistrationRequest> {
-    constructor() {
-        super("router.RegistrationRequest", [
-            { no: 1, name: "Email", kind: "scalar", jsonName: "Email", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "Password", kind: "scalar", jsonName: "Password", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "Name", kind: "scalar", jsonName: "Name", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "Surname", kind: "scalar", jsonName: "Surname", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<RegistrationRequest>): RegistrationRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.email = "";
-        message.password = "";
-        message.name = "";
-        message.surname = "";
-        if (value !== undefined)
-            reflectionMergePartial<RegistrationRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegistrationRequest): RegistrationRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string Email = 1 [json_name = "Email"];*/ 1:
-                    message.email = reader.string();
-                    break;
-                case /* string Password = 2 [json_name = "Password"];*/ 2:
-                    message.password = reader.string();
-                    break;
-                case /* string Name = 3 [json_name = "Name"];*/ 3:
-                    message.name = reader.string();
-                    break;
-                case /* string Surname = 4 [json_name = "Surname"];*/ 4:
-                    message.surname = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: RegistrationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string Email = 1 [json_name = "Email"]; */
-        if (message.email !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.email);
-        /* string Password = 2 [json_name = "Password"]; */
-        if (message.password !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.password);
-        /* string Name = 3 [json_name = "Name"]; */
-        if (message.name !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* string Surname = 4 [json_name = "Surname"]; */
-        if (message.surname !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.surname);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message router.RegistrationRequest
- */
-export const RegistrationRequest = new RegistrationRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class RoleResponse$Type extends MessageType<RoleResponse> {
     constructor() {
         super("router.RoleResponse", [
@@ -993,20 +1091,21 @@ export const RoleResponse = new RoleResponse$Type();
  * @generated ServiceType for protobuf service router.Router
  */
 export const Router = new ServiceType("router.Router", [
+    { name: "GetPersonalInfo", options: {}, I: WithoutParameters, O: UserResponse },
     { name: "GetUser", options: {}, I: UserID, O: UserResponse },
-    { name: "GetUsers", options: {}, I: UserIDs, O: UsersResponse },
     { name: "InsertUser", options: {}, I: UserInfo, O: UserResponse },
     { name: "UpdateUser", options: {}, I: User, O: UserResponse },
     { name: "AuthorizeUser", options: {}, I: AuthorizationRequest, O: UserIDResponse },
     { name: "IsAuth", options: {}, I: WithoutParameters, O: AuthInfo },
     { name: "Logout", options: {}, I: WithoutParameters, O: SuccessResponse },
     { name: "RegisterUser", options: {}, I: RegistrationRequest, O: UserIDResponse },
-    { name: "GetAllStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
-    { name: "GetStudorgRole", options: {}, I: StudorgID, O: RoleResponse },
-    { name: "GetUserStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
     { name: "GetStudorg", options: {}, I: StudorgID, O: StudorgResponse },
     { name: "InsertStudorg", options: {}, I: StudorgInfo, O: StudorgIDResponse },
     { name: "UpdateStudorg", options: {}, I: Studorg, O: StudorgResponse },
+    { name: "GetAllStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
+    { name: "SearchStudorgs", options: {}, I: SearchRequest, O: StudorgsResponse },
+    { name: "GetStudorgRole", options: {}, I: StudorgID, O: RoleResponse },
+    { name: "GetUserStudorgs", options: {}, I: WithoutParameters, O: StudorgsResponse },
     { name: "AddUserToStudorg", options: {}, I: StudorgID, O: SuccessResponse },
     { name: "DeleteUserFromStudorg", options: {}, I: StudorgID, O: SuccessResponse },
     { name: "UpdateUserInStudorg", options: {}, I: User2Studorg, O: SuccessResponse },

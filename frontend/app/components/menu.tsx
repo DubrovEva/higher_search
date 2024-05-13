@@ -37,7 +37,7 @@ export function FixedMenu(params: {authInfo: AuthInfo}) {
 
 function AccountButton(params: {authInfo: AuthInfo}) {
     const account = async () => {
-        window.location.href = "/user/" + params.authInfo.userID?.iD
+        window.location.href = "/user"
     }
     const login = async () => {
         window.location.href = "/login"

@@ -10,21 +10,27 @@ message StudorgID {
 }
 
 message StudorgInfo {
-  common.Campus campus = 1;
+  string name = 1;
   google.protobuf.Timestamp createdAt = 2;
-  string description = 3;
-  common.Faculty faculty = 4;
-  common.Language language = 5;
-  repeated common.Links links = 6;
-  string logo = 7;
-  string name = 8;
-  string shortDescription = 9;
-  StudorgStatus status = 10;
-  repeated string tags = 11;
+  studorg.StudorgStatus studorgStatus = 3;
+  studorg.ModerationStatus moderationStatus = 4;
+  string moderationComment = 5;
+
+  string shortDescription = 6;
+  string description = 7;
+
+  common.Campus campus = 8;
+  common.Faculty faculty = 9;
+  common.Language language = 10;
+
+  repeated common.Links links = 11;
+  string logo = 12;
+
+  repeated string tags = 13;
   repeated Contact contacts = 14;
 
-  studorg.StudorgRole role = 16;
-  google.protobuf.Timestamp admissionTime = 17;
+  studorg.StudorgRole role = 15;
+  google.protobuf.Timestamp admissionTime = 16;
 }
 
 message Studorg {
@@ -37,15 +43,22 @@ message Studorgs {
 }
 
 enum StudorgStatus {
-  NOT_OFFICIAL = 0;
-  OFFICIAL = 1;
+  OTHER_STUDORG_STATUS = 0;
+  NOT_OFFICIAL = 1;
+  OFFICIAL = 2;
+}
+
+enum ModerationStatus {
+  OTHER_MODERATION_STATUS = 0;
+  NOT_MODERATED = 1;
 }
 
 enum StudorgRole {
-  HEAD = 0;
-  ORGANIZER = 1;
-  PARTICIPANT = 2;
-  UNKNOWN = 3;
+  OTHER_ROLE = 0;
+  HEAD = 1;
+  ORGANIZER = 2;
+  PARTICIPANT = 3;
+  UNKNOWN = 4;
 }
 
 message Contact {

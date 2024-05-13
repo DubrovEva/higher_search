@@ -14,10 +14,7 @@ import {
     FormSelect,
     FormTextArea,
     Header,
-    Icon,
     Message,
-    MessageContent,
-    MessageHeader
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 

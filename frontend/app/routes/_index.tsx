@@ -66,10 +66,10 @@ function Buttons(params: { authInfo: AuthInfo }) {
         window.location.href = "/login"
     }
     const routeToRegistration = () => {
-        window.location.href = "/registration";
+        window.location.href = "/registration"
     }
     const routeToAccount = async () => {
-        window.location.href = `/user/${params.authInfo.userID?.iD}`;
+        window.location.href = `/user`
     }
 
     if (!params.authInfo.isAuth) {

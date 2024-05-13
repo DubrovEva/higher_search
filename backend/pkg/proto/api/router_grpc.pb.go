@@ -23,20 +23,25 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RouterClient interface {
+	// user methods
+	GetPersonalInfo(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUser(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*UserResponse, error)
-	GetUsers(ctx context.Context, in *models.UserIDs, opts ...grpc.CallOption) (*UsersResponse, error)
 	InsertUser(ctx context.Context, in *models.UserInfo, opts ...grpc.CallOption) (*UserResponse, error)
 	UpdateUser(ctx context.Context, in *models.User, opts ...grpc.CallOption) (*UserResponse, error)
+	// authorization methods
 	AuthorizeUser(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*UserIDResponse, error)
 	IsAuth(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*models.AuthInfo, error)
 	Logout(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*SuccessResponse, error)
 	RegisterUser(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*UserIDResponse, error)
-	GetAllStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error)
-	GetStudorgRole(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*RoleResponse, error)
-	GetUserStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error)
+	// studorgs methods
 	GetStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*StudorgResponse, error)
 	InsertStudorg(ctx context.Context, in *models.StudorgInfo, opts ...grpc.CallOption) (*StudorgIDResponse, error)
 	UpdateStudorg(ctx context.Context, in *models.Studorg, opts ...grpc.CallOption) (*StudorgResponse, error)
+	GetAllStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error)
+	SearchStudorgs(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*StudorgsResponse, error)
+	// user2studorg methods
+	GetStudorgRole(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*RoleResponse, error)
+	GetUserStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error)
 	AddUserToStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*SuccessResponse, error)
 	DeleteUserFromStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*SuccessResponse, error)
 	UpdateUserInStudorg(ctx context.Context, in *models.User2Studorg, opts ...grpc.CallOption) (*SuccessResponse, error)
@@ -52,18 +57,18 @@ func NewRouterClient(cc grpc.ClientConnInterface) RouterClient {
 	return &routerClient{cc}
 }
 
-func (c *routerClient) GetUser(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*UserResponse, error) {
+func (c *routerClient) GetPersonalInfo(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*UserResponse, error) {
 	out := new(UserResponse)
-	err := c.cc.Invoke(ctx, "/router.Router/GetUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/router.Router/GetPersonalInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *routerClient) GetUsers(ctx context.Context, in *models.UserIDs, opts ...grpc.CallOption) (*UsersResponse, error) {
-	out := new(UsersResponse)
-	err := c.cc.Invoke(ctx, "/router.Router/GetUsers", in, out, opts...)
+func (c *routerClient) GetUser(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -124,33 +129,6 @@ func (c *routerClient) RegisterUser(ctx context.Context, in *RegistrationRequest
 	return out, nil
 }
 
-func (c *routerClient) GetAllStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error) {
-	out := new(StudorgsResponse)
-	err := c.cc.Invoke(ctx, "/router.Router/GetAllStudorgs", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *routerClient) GetStudorgRole(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*RoleResponse, error) {
-	out := new(RoleResponse)
-	err := c.cc.Invoke(ctx, "/router.Router/GetStudorgRole", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *routerClient) GetUserStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error) {
-	out := new(StudorgsResponse)
-	err := c.cc.Invoke(ctx, "/router.Router/GetUserStudorgs", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *routerClient) GetStudorg(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*StudorgResponse, error) {
 	out := new(StudorgResponse)
 	err := c.cc.Invoke(ctx, "/router.Router/GetStudorg", in, out, opts...)
@@ -172,6 +150,42 @@ func (c *routerClient) InsertStudorg(ctx context.Context, in *models.StudorgInfo
 func (c *routerClient) UpdateStudorg(ctx context.Context, in *models.Studorg, opts ...grpc.CallOption) (*StudorgResponse, error) {
 	out := new(StudorgResponse)
 	err := c.cc.Invoke(ctx, "/router.Router/UpdateStudorg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) GetAllStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error) {
+	out := new(StudorgsResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetAllStudorgs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) SearchStudorgs(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*StudorgsResponse, error) {
+	out := new(StudorgsResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/SearchStudorgs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) GetStudorgRole(ctx context.Context, in *models.StudorgID, opts ...grpc.CallOption) (*RoleResponse, error) {
+	out := new(RoleResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetStudorgRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) GetUserStudorgs(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*StudorgsResponse, error) {
+	out := new(StudorgsResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetUserStudorgs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -227,20 +241,25 @@ func (c *routerClient) GetUserStudorgsNumber(ctx context.Context, in *models.Use
 // All implementations must embed UnimplementedRouterServer
 // for forward compatibility
 type RouterServer interface {
+	// user methods
+	GetPersonalInfo(context.Context, *WithoutParameters) (*UserResponse, error)
 	GetUser(context.Context, *models.UserID) (*UserResponse, error)
-	GetUsers(context.Context, *models.UserIDs) (*UsersResponse, error)
 	InsertUser(context.Context, *models.UserInfo) (*UserResponse, error)
 	UpdateUser(context.Context, *models.User) (*UserResponse, error)
+	// authorization methods
 	AuthorizeUser(context.Context, *AuthorizationRequest) (*UserIDResponse, error)
 	IsAuth(context.Context, *WithoutParameters) (*models.AuthInfo, error)
 	Logout(context.Context, *WithoutParameters) (*SuccessResponse, error)
 	RegisterUser(context.Context, *RegistrationRequest) (*UserIDResponse, error)
-	GetAllStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error)
-	GetStudorgRole(context.Context, *models.StudorgID) (*RoleResponse, error)
-	GetUserStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error)
+	// studorgs methods
 	GetStudorg(context.Context, *models.StudorgID) (*StudorgResponse, error)
 	InsertStudorg(context.Context, *models.StudorgInfo) (*StudorgIDResponse, error)
 	UpdateStudorg(context.Context, *models.Studorg) (*StudorgResponse, error)
+	GetAllStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error)
+	SearchStudorgs(context.Context, *SearchRequest) (*StudorgsResponse, error)
+	// user2studorg methods
+	GetStudorgRole(context.Context, *models.StudorgID) (*RoleResponse, error)
+	GetUserStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error)
 	AddUserToStudorg(context.Context, *models.StudorgID) (*SuccessResponse, error)
 	DeleteUserFromStudorg(context.Context, *models.StudorgID) (*SuccessResponse, error)
 	UpdateUserInStudorg(context.Context, *models.User2Studorg) (*SuccessResponse, error)
@@ -253,11 +272,11 @@ type RouterServer interface {
 type UnimplementedRouterServer struct {
 }
 
+func (UnimplementedRouterServer) GetPersonalInfo(context.Context, *WithoutParameters) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPersonalInfo not implemented")
+}
 func (UnimplementedRouterServer) GetUser(context.Context, *models.UserID) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
-}
-func (UnimplementedRouterServer) GetUsers(context.Context, *models.UserIDs) (*UsersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedRouterServer) InsertUser(context.Context, *models.UserInfo) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertUser not implemented")
@@ -277,15 +296,6 @@ func (UnimplementedRouterServer) Logout(context.Context, *WithoutParameters) (*S
 func (UnimplementedRouterServer) RegisterUser(context.Context, *RegistrationRequest) (*UserIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
 }
-func (UnimplementedRouterServer) GetAllStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllStudorgs not implemented")
-}
-func (UnimplementedRouterServer) GetStudorgRole(context.Context, *models.StudorgID) (*RoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStudorgRole not implemented")
-}
-func (UnimplementedRouterServer) GetUserStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudorgs not implemented")
-}
 func (UnimplementedRouterServer) GetStudorg(context.Context, *models.StudorgID) (*StudorgResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudorg not implemented")
 }
@@ -294,6 +304,18 @@ func (UnimplementedRouterServer) InsertStudorg(context.Context, *models.StudorgI
 }
 func (UnimplementedRouterServer) UpdateStudorg(context.Context, *models.Studorg) (*StudorgResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudorg not implemented")
+}
+func (UnimplementedRouterServer) GetAllStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllStudorgs not implemented")
+}
+func (UnimplementedRouterServer) SearchStudorgs(context.Context, *SearchRequest) (*StudorgsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchStudorgs not implemented")
+}
+func (UnimplementedRouterServer) GetStudorgRole(context.Context, *models.StudorgID) (*RoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudorgRole not implemented")
+}
+func (UnimplementedRouterServer) GetUserStudorgs(context.Context, *WithoutParameters) (*StudorgsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudorgs not implemented")
 }
 func (UnimplementedRouterServer) AddUserToStudorg(context.Context, *models.StudorgID) (*SuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUserToStudorg not implemented")
@@ -323,6 +345,24 @@ func RegisterRouterServer(s grpc.ServiceRegistrar, srv RouterServer) {
 	s.RegisterService(&Router_ServiceDesc, srv)
 }
 
+func _Router_GetPersonalInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WithoutParameters)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetPersonalInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetPersonalInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetPersonalInfo(ctx, req.(*WithoutParameters))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Router_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(models.UserID)
 	if err := dec(in); err != nil {
@@ -337,24 +377,6 @@ func _Router_GetUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RouterServer).GetUser(ctx, req.(*models.UserID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Router_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(models.UserIDs)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RouterServer).GetUsers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/router.Router/GetUsers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).GetUsers(ctx, req.(*models.UserIDs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -467,60 +489,6 @@ func _Router_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Router_GetAllStudorgs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WithoutParameters)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RouterServer).GetAllStudorgs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/router.Router/GetAllStudorgs",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).GetAllStudorgs(ctx, req.(*WithoutParameters))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Router_GetStudorgRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(models.StudorgID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RouterServer).GetStudorgRole(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/router.Router/GetStudorgRole",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).GetStudorgRole(ctx, req.(*models.StudorgID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Router_GetUserStudorgs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WithoutParameters)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RouterServer).GetUserStudorgs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/router.Router/GetUserStudorgs",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).GetUserStudorgs(ctx, req.(*WithoutParameters))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Router_GetStudorg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(models.StudorgID)
 	if err := dec(in); err != nil {
@@ -571,6 +539,78 @@ func _Router_UpdateStudorg_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RouterServer).UpdateStudorg(ctx, req.(*models.Studorg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_GetAllStudorgs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WithoutParameters)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetAllStudorgs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetAllStudorgs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetAllStudorgs(ctx, req.(*WithoutParameters))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_SearchStudorgs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).SearchStudorgs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/SearchStudorgs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).SearchStudorgs(ctx, req.(*SearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_GetStudorgRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(models.StudorgID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetStudorgRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetStudorgRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetStudorgRole(ctx, req.(*models.StudorgID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_GetUserStudorgs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WithoutParameters)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetUserStudorgs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetUserStudorgs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetUserStudorgs(ctx, req.(*WithoutParameters))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -673,12 +713,12 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RouterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetUser",
-			Handler:    _Router_GetUser_Handler,
+			MethodName: "GetPersonalInfo",
+			Handler:    _Router_GetPersonalInfo_Handler,
 		},
 		{
-			MethodName: "GetUsers",
-			Handler:    _Router_GetUsers_Handler,
+			MethodName: "GetUser",
+			Handler:    _Router_GetUser_Handler,
 		},
 		{
 			MethodName: "InsertUser",
@@ -705,18 +745,6 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Router_RegisterUser_Handler,
 		},
 		{
-			MethodName: "GetAllStudorgs",
-			Handler:    _Router_GetAllStudorgs_Handler,
-		},
-		{
-			MethodName: "GetStudorgRole",
-			Handler:    _Router_GetStudorgRole_Handler,
-		},
-		{
-			MethodName: "GetUserStudorgs",
-			Handler:    _Router_GetUserStudorgs_Handler,
-		},
-		{
 			MethodName: "GetStudorg",
 			Handler:    _Router_GetStudorg_Handler,
 		},
@@ -727,6 +755,22 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateStudorg",
 			Handler:    _Router_UpdateStudorg_Handler,
+		},
+		{
+			MethodName: "GetAllStudorgs",
+			Handler:    _Router_GetAllStudorgs_Handler,
+		},
+		{
+			MethodName: "SearchStudorgs",
+			Handler:    _Router_SearchStudorgs_Handler,
+		},
+		{
+			MethodName: "GetStudorgRole",
+			Handler:    _Router_GetStudorgRole_Handler,
+		},
+		{
+			MethodName: "GetUserStudorgs",
+			Handler:    _Router_GetUserStudorgs_Handler,
 		},
 		{
 			MethodName: "AddUserToStudorg",

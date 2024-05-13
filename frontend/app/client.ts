@@ -1,7 +1,7 @@
 import {RouterClient} from "~/proto/api/router_client";
 import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
 import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
-import {AuthorizationRequest, RegistrationRequest, WithoutParameters} from "~/proto/api/router";
+import {AuthorizationRequest, RegistrationRequest, SearchRequest, WithoutParameters} from "~/proto/api/router";
 import {User, UserID} from "~/proto/models/user";
 
 export default class Client {
@@ -50,6 +50,13 @@ export default class Client {
         // todo: обработка ошибок
     }
 
+    async getPersonalInfo() {
+        return await this.router.getPersonalInfo(WithoutParameters.create()).response
+        // throw "unknown response"
+        // todo: обработка ошибок
+    }
+
+
     async updateUserInfo(user: User) {
         const response = await this.router.updateUser(user).response
         if (response.response.oneofKind == "user") {
@@ -65,6 +72,14 @@ export default class Client {
     async getAllStudorgs() {
         const request = WithoutParameters.create()
         const response = await this.router.getAllStudorgs(request).response
+        if (response.response.oneofKind == "studorgs") {
+            return response.response.studorgs.studorgs
+        }
+        // todo: обработка ошибок
+    }
+
+    async searchStudorgs(request: SearchRequest) {
+        const response = await this.router.searchStudorgs(request).response
         if (response.response.oneofKind == "studorgs") {
             return response.response.studorgs.studorgs
         }

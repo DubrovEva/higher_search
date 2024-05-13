@@ -4,6 +4,11 @@ package user;
 option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
 import "google/protobuf/timestamp.proto";
 
+message User {
+  UserID ID = 1;
+  UserInfo user_info = 2;
+}
+
 message UserID {
   int64 ID = 1;
 }
@@ -13,26 +18,25 @@ message UserIDs {
 }
 
 message UserInfo {
-  string avatar = 1;
-  string description = 2;
-  string email = 3;
-  string hash = 4;
-  repeated common.Links links = 5;
-  string middle_name = 6;
-  string name = 7;
-  ProjectRole role = 8;
-  int64 salt = 9;
-  string shortDescription = 10;
-  string surname = 11;
+  string email = 1;
+  string name = 2;
+  string surname = 3;
+  string middle_name = 4;
+  ProjectRole role = 5;
+
+  string hash = 6;
+  string salt = 7;
+
+  string shortDescription = 8;
+  string description = 9;
+
+  string avatar = 10;
+  repeated common.Links links = 11;
+
   common.Faculty faculty = 12;
   common.Gender gender = 13;
   google.protobuf.Timestamp birth = 14;
   string EducationInfo = 15;
-}
-
-message User {
-  UserID ID = 1;
-  UserInfo user_info = 2;
 }
 
 message Users {

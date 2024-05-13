@@ -20,6 +20,7 @@ import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
 import {useParams} from "react-router";
 import {campus, faculty, language} from "~/components/options";
 import {AuthInfo} from "~/proto/models/user";
+import {LoadingMessage} from "~/components/messages";
 
 export const meta: MetaFunction = () => {
     return [
@@ -31,14 +32,6 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: semanticStyles},
     {rel: "stylesheet", href: styles},
 ];
-
-function PageContent(params: { studorgInfo: StudorgInfo, studorgID: StudorgID, authInfo: AuthInfo }) {
-    return (
-        <Container text className={"main"}>
-            <OrganizationInfo studorgInfo={params.studorgInfo} studorgID={params.studorgID} authInfo={params.authInfo}/>
-        </Container>
-    );
-}
 
 function UserInStudorgButton(params: {studorgID: StudorgID}) {
     const [isUserInStudorg, setIsUserInStudorg] = useState(false)
@@ -64,9 +57,10 @@ function UserInStudorgButton(params: {studorgID: StudorgID}) {
 
 function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: StudorgID, authInfo: AuthInfo }) {
     const currentCampus = campus.find(x => x.value === params.studorgInfo.campus)?.text
-    const currentLanguage = "Русский" //TODO: language.find(x => x.value === params.studorgInfo.language)?.text
+    const currentLanguage = language.find(x => x.value === params.studorgInfo.language)?.text
     const currentFaculty = faculty.find(x => x.value === params.studorgInfo.faculty)?.text
 
+    console.log(currentLanguage, params.studorgInfo)
     return (
         <>
             <Segment>
@@ -119,11 +113,14 @@ export default function ViewStudorg() {
         <>
             <SidebarPusher>
                 <FixedMenu authInfo={authInfo}/>
-                {
-                    studorgInfo
-                        ? <PageContent studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
-                        : <span>Loading...</span>
-                }
+                <Container text className={"main"}>
+                    {
+                        studorgInfo
+                            ?            <OrganizationInfo studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
+                        // <PageContent studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
+                        : <LoadingMessage/>
+                    }
+                </Container>
             </SidebarPusher>
 
         </>

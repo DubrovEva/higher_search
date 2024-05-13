@@ -41,7 +41,7 @@ export function UserCard(params: { user: User }) {
             </CardContent>
             <CardContent extra>
 
-                {studorgsNumber && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber!}/></> }
+                {studorgsNumber != null && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber}/></> }
 
             </CardContent>
         </Card>

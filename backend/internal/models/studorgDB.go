@@ -9,31 +9,30 @@ import (
 	"time"
 )
 
-const (
-	timeLayout = "02.01.2006"
-)
-
 type StudorgDB struct {
-	ID int64 `repository:"id"` //TODO: нужен ли тут доп тег??
+	ID int64 `db:"id"`
 	*StudorgInfo
 }
 
 type StudorgInfo struct {
-	Campus           int64
-	CreatedAt        time.Time
-	Description      string
-	Faculty          int64
-	Language         int64
-	Links            string
-	Logo             string
-	Name             string
-	ShortDescription string
-	Status           int64
-	Tags             []string
-	Contacts         []*Contact
+	Name             string    `db:"name"`
+	CreatedAt        time.Time `db:"created_at"`
+	StudorgStatus    int64     `db:"studorg_status"`
+	ModerationStatus int64     `db:"moderation_status"`
 
-	Role          sql.NullInt64
-	AdmissionTime *time.Time
+	ModerationComment sql.NullString `db:"moderation_comment"`
+	ShortDescription  sql.NullString `db:"short_description"`
+	Description       sql.NullString `db:"description"`
+	Campus            sql.NullInt64  `db:"campus"`
+	Faculty           sql.NullInt64  `db:"faculty"`
+	Language          sql.NullInt64  `db:"language"`
+	Links             sql.NullString `db:"links"`
+	Logo              sql.NullString `db:"logo"`
+
+	Tags          []string      `db:"tags"`
+	Contacts      []*Contact    `db:"contacts"`
+	Role          sql.NullInt64 `db:"role"`
+	AdmissionTime *time.Time    `db:"admission_time"`
 }
 
 type Contact struct {
@@ -103,19 +102,25 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 	}
 
 	StudorgInfoDB := StudorgInfo{
-		Campus:           int64(protoInfo.Campus),
-		CreatedAt:        createdAt,
-		Description:      protoInfo.Description,
-		Faculty:          int64(protoInfo.Faculty),
-		Language:         int64(protoInfo.Language),
-		Links:            links.String,
-		Logo:             protoInfo.Logo,
-		Name:             protoInfo.Name,
-		ShortDescription: protoInfo.ShortDescription,
-		Status:           int64(protoInfo.Status),
-		Tags:             protoInfo.Tags,
-		AdmissionTime:    &admissionTime,
-		Role:             ToSqlInt64(int64(protoInfo.Role)),
+		Name:              protoInfo.Name,
+		CreatedAt:         createdAt,
+		StudorgStatus:     int64(protoInfo.StudorgStatus),
+		ModerationStatus:  int64(protoInfo.ModerationStatus),
+		ModerationComment: ToSqlString(protoInfo.ModerationComment),
+
+		ShortDescription: ToSqlString(protoInfo.ShortDescription),
+		Description:      ToSqlString(protoInfo.Description),
+
+		Campus:   ToSqlInt64(int64(protoInfo.Campus)),
+		Faculty:  ToSqlInt64(int64(protoInfo.Faculty)),
+		Language: ToSqlInt64(int64(protoInfo.Language)),
+
+		Links: ToSqlString(links.String),
+		Logo:  ToSqlString(protoInfo.Logo),
+
+		Tags:          protoInfo.Tags,
+		AdmissionTime: &admissionTime,
+		Role:          ToSqlInt64(int64(protoInfo.Role)),
 	}
 	return &StudorgInfoDB, nil
 }
@@ -135,7 +140,7 @@ func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
 }
 
 func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
-	links, err := jsonToLinks(s.Links)
+	links, err := jsonToLinks(s.Links.String)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert json to proto.StudorgInfo: %w", err)
 	}
@@ -154,20 +159,27 @@ func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
 	}
 
 	protoStudorgInfo := proto.StudorgInfo{
-		Campus:           proto.Campus(s.Campus),
-		CreatedAt:        timestamppb.New(s.CreatedAt),
-		Description:      s.Description,
-		Faculty:          proto.Faculty(s.Faculty),
-		Language:         proto.Language(s.Faculty),
-		Links:            links,
-		Logo:             s.Logo,
-		Name:             s.Name,
-		ShortDescription: s.ShortDescription,
-		Status:           proto.StudorgStatus(s.Status),
-		Tags:             s.Tags,
-		Contacts:         protoContacts,
-		Role:             proto.StudorgRole(s.Role.Int64),
-		AdmissionTime:    admissionTime,
+		Name:          s.Name,
+		CreatedAt:     timestamppb.New(s.CreatedAt),
+		StudorgStatus: proto.StudorgStatus(s.StudorgStatus),
+
+		ModerationStatus:  proto.ModerationStatus(s.ModerationStatus),
+		ModerationComment: s.ModerationComment.String,
+
+		ShortDescription: s.ShortDescription.String,
+		Description:      s.Description.String,
+
+		Campus:   proto.Campus(s.Campus.Int64),
+		Faculty:  proto.Faculty(s.Faculty.Int64),
+		Language: proto.Language(s.Language.Int64),
+
+		Links: links,
+		Logo:  s.Logo.String,
+
+		Tags:          s.Tags,
+		Contacts:      protoContacts,
+		Role:          proto.StudorgRole(s.Role.Int64),
+		AdmissionTime: admissionTime,
 	}
 
 	return &protoStudorgInfo, nil

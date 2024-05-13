@@ -11,25 +11,26 @@ import (
 )
 
 type UserDB struct {
-	ID int64 `repository:"id"`
+	ID int64 `db:"id"`
 	*UserInfo
 }
 type UserInfo struct {
-	Avatar           sql.NullString
-	Description      sql.NullString
-	Email            sql.NullString
-	Hash             sql.NullString
-	Links            sql.NullString
-	MiddleName       sql.NullString
-	Name             string
-	Role             int64
-	Salt             int64
-	ShortDescription sql.NullString
-	Surname          string
-	Faculty          sql.NullInt64
-	Gender           sql.NullInt64
-	Birth            *time.Time
-	EducationInfo    sql.NullString
+	Email            string         `db:"email"`
+	Name             string         `db:"name"`
+	Surname          string         `db:"surname"`
+	MiddleName       sql.NullString `db:"middlename"`
+	Role             int64          `db:"role"`
+	Hash             string         `db:"hash"`
+	Salt             string         `db:"salt"`
+	ShortDescription sql.NullString `db:"short_description"`
+	Description      sql.NullString `db:"description"`
+
+	Avatar        sql.NullString `db:"avatar"`
+	Links         sql.NullString `db:"links"`
+	Faculty       sql.NullInt64  `db:"faculty"`
+	Gender        sql.NullInt64  `db:"gender"`
+	Birth         *time.Time     `db:"birth"`
+	EducationInfo sql.NullString `db:"education_info"`
 }
 
 func NewUserDB(user *proto.User) (*UserDB, error) {
@@ -64,7 +65,7 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("field Contacts isn't valid  ")
 	}
-	if protoInfo.Salt == 0 {
+	if protoInfo.Salt == "" {
 		return nil, fmt.Errorf("field Salt is empty")
 	}
 	if protoInfo.Hash == "" {
@@ -75,8 +76,8 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 	userInfoDB := UserInfo{
 		Avatar:           sql.NullString{Valid: true, String: protoInfo.Avatar},
 		Description:      sql.NullString{Valid: true, String: protoInfo.Description},
-		Email:            sql.NullString{Valid: true, String: email},
-		Hash:             sql.NullString{Valid: true, String: protoInfo.Hash},
+		Email:            email,
+		Hash:             protoInfo.Hash,
 		Links:            links,
 		MiddleName:       sql.NullString{Valid: true, String: protoInfo.MiddleName},
 		Name:             protoInfo.Name,
@@ -116,12 +117,12 @@ func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
 	if u.Birth != nil {
 		birth = timestamppb.New(*u.Birth)
 	}
-	links := make([]*proto.Links, 0)
+	links := make([]*proto.Links, 0) // todo
 	protoUserInfo := proto.UserInfo{
 		Avatar:           u.Avatar.String,
 		Description:      u.Description.String,
-		Email:            u.Email.String,
-		Hash:             u.Hash.String,
+		Email:            u.Email,
+		Hash:             u.Hash,
 		Links:            links,
 		MiddleName:       u.MiddleName.String,
 		Name:             u.Name,

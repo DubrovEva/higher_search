@@ -11,9 +11,29 @@ export function LoadingRightsMessage() {
     </Message>
 }
 
+export function LoadingMessage() {
+    return <Message icon>
+        <Icon name='circle notched' loading/>
+        <MessageContent>
+            <MessageHeader>Подождите немного..</MessageHeader>
+            Обрабатываем запрос.
+        </MessageContent>
+    </Message>
+}
+
 export function NoRightsMessage() {
     return <Message negative>
         <MessageHeader> У вас нет доступа к данным </MessageHeader>
         <p> Ваших прав недостаточно для получения доступа</p>
     </Message>
 }
+
+
+export const NoOrganizationsMessage = () => (
+    <Message>
+        <MessageHeader> У вас пока нет студенческих организаций! </MessageHeader>
+        <p>
+            Подобрать себе первую организацию можно через <a href="/search">поиск</a>.
+        </p>
+    </Message>
+)

@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/DubrovEva/higher_search/backend/internal/models"
+	service "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
 	"github.com/jmoiron/sqlx"
 	"log"
 )
@@ -21,7 +22,7 @@ func NewStudorg(db *sqlx.DB) *Studorg {
 
 func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 	studorg := &models.StudorgDB{ID: studorgID}
-	err := s.db.Get(studorg, "SELECT * FROM Studorgs WHERE ID = $1", studorg.ID)
+	err := s.db.Get(studorg, "SELECT * FROM studorgs WHERE id = $1", studorg.ID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
@@ -39,7 +40,29 @@ func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 
 func (s *Studorg) GetAll() ([]models.StudorgDB, error) {
 	var studorgs []models.StudorgDB
-	err := s.db.Select(&studorgs, "SELECT * FROM Studorgs")
+	err := s.db.Select(&studorgs, "SELECT * FROM studorgs")
+	if err != nil {
+		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	for i, studorg := range studorgs {
+		tags, err := s.GetTags(studorg.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get studorg tags: %w", err)
+		}
+		studorgs[i].Tags = tags
+	}
+
+	return studorgs, nil
+}
+
+func (s *Studorg) Search(request *service.SearchRequest) ([]models.StudorgDB, error) {
+	query := models.ProtoRequestToQuery(request)
+
+	var studorgs []models.StudorgDB
+	err := s.db.Select(&studorgs, query)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
@@ -60,20 +83,8 @@ func (s *Studorg) GetAll() ([]models.StudorgDB, error) {
 func (s *Studorg) GetByUser(userID int64) ([]models.StudorgDB, error) {
 	var studorgs []models.StudorgDB
 	err := s.db.Select(&studorgs, `SELECT
-    	ID,
-    	Campus,
-		CreatedAt,
-		Description,
-		Faculty,
-		Language,
-		Links,
-		Logo,
-		Name,
-		ShortDescription,
-		Status,
-		Role,
-		AdmissionTime
-    FROM Studorgs JOIN user2studorg ON studorgs.id = user2studorg.studorgid WHERE user2studorg.userid = $1`, userID)
+    	id, name, created_at, studorg_status, moderation_status, moderation_comment, short_description, description, campus, faculty, language, links, logo, role, admission_time
+    FROM studorgs JOIN user2studorg ON studorgs.id = user2studorg.studorg_id WHERE user2studorg.user_id = $1`, userID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
@@ -96,9 +107,9 @@ func (s *Studorg) Insert(studorgInfo *models.StudorgInfo) (*models.StudorgDB, er
 	studorg := &models.StudorgDB{ID: 0, StudorgInfo: studorgInfo}
 
 	rows, err := s.db.NamedQuery(`
-		INSERT INTO Studorgs (Campus, CreatedAt, Description, Faculty, Language, Links, Logo, Name, ShortDescription, Status)
-		VALUES(:campus, :createdat, :description, :faculty, :language, :links, :logo, :name, :shortdescription, :status)
-		RETURNING ID`, studorg)
+		INSERT INTO Studorgs (name, created_at, studorg_status, moderation_status, moderation_comment, short_description, description, campus, faculty, language, links, logo)
+		VALUES(:name, :created_at, :studorg_status, :moderation_status, :moderation_comment, :short_description, :description, :campus, :faculty, :language, :links, :logo)
+		RETURNING id`, studorg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save studorg to repository: %w", err)
 	}
@@ -119,22 +130,25 @@ func (s *Studorg) Insert(studorgInfo *models.StudorgInfo) (*models.StudorgDB, er
 func (s *Studorg) Update(studorg *models.StudorgDB) error {
 	_, err := s.db.NamedExec(`
 		UPDATE Studorgs
-		SET Campus=:campus,
-			CreatedAt=:createdat,
-			Description=:description,
-			Faculty=:faculty,
-			Language=:language,
-			Links=:links,
-			Logo=:logo,
-			Name=:name,
-			ShortDescription=:shortdescription,
-			Status=:status
+		SET 
+		    name=:name, 
+		    created_at=:created_at, 
+		    studorg_status=:studorg_status, 
+		    moderation_status=:moderation_status, 
+		    moderation_comment=:moderation_comment, 
+		    short_description=:short_description, 
+		    description=:description, 
+		    campus=:campus, 
+		    faculty=:faculty, 
+		    language=:language, 
+		    links=:links, 
+		    logo=:logo
 		WHERE ID = :id`, studorg)
 	if err != nil {
 		return fmt.Errorf("failed to save studorg to repository: %w", err)
 	}
 
-	if err = s.DeleteTags(studorg.ID); err != nil {
+	if err = s.DeleteTags(studorg); err != nil {
 		return fmt.Errorf("failed to delete all old tags in repository: %w", err)
 	}
 
@@ -147,7 +161,7 @@ func (s *Studorg) Update(studorg *models.StudorgDB) error {
 
 func (s *Studorg) GetTags(studorgID int64) ([]string, error) {
 	var tags []string
-	err := s.db.Select(&tags, `SELECT tags.Name FROM tags WHERE tags.ID in (SELECT TagID FROM studorg2tag WHERE StudorgID = $1)`, studorgID)
+	err := s.db.Select(&tags, `SELECT tags.name FROM tags WHERE tags.id IN (SELECT tag_id FROM studorg2tag WHERE studorg_id = $1)`, studorgID)
 
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
@@ -161,20 +175,20 @@ func (s *Studorg) GetTags(studorgID int64) ([]string, error) {
 func (s *Studorg) InsertTags(studorgID int64, tags []string) error {
 	for _, tagName := range tags {
 		_, err := s.db.NamedExec(
-			`INSERT INTO tags (Name) values (:name) ON CONFLICT DO NOTHING`,
+			`INSERT INTO tags (name) values (:name) ON CONFLICT DO NOTHING`,
 			map[string]interface{}{"name": tagName},
 		)
 		if err != nil {
 			log.Printf("failed to save tag %s: %v", tagName, err)
 		}
 		var tagID int64
-		err = s.db.Get(&tagID, "SELECT ID FROM tags WHERE Name = $1", tagName)
+		err = s.db.Get(&tagID, "SELECT id FROM tags WHERE name = $1", tagName)
 		if err != nil {
 			log.Printf("failed to get tagID: %v", err)
 		}
 		_, err = s.db.NamedExec(
-			`INSERT INTO studorg2tag (studorgid, tagid) values (:studorgid, :tagid) ON CONFLICT DO NOTHING`,
-			map[string]interface{}{"studorgid": studorgID, "tagid": tagID},
+			`INSERT INTO studorg2tag (studorg_id, tag_id) values (:studorg_id, :tag_id) ON CONFLICT DO NOTHING`,
+			map[string]interface{}{"studorg_id": studorgID, "tag_id": tagID},
 		)
 		if err != nil {
 			log.Printf("failed to save tag %s to: %v", tagName, err)
@@ -184,8 +198,8 @@ func (s *Studorg) InsertTags(studorgID int64, tags []string) error {
 	return nil
 }
 
-func (s *Studorg) DeleteTags(studorgID int64) error {
-	_, err := s.db.NamedExec(`DELETE FROM studorg2tag WHERE studorgid = :studorgid`, map[string]interface{}{"studorgid": studorgID})
+func (s *Studorg) DeleteTags(studorg *models.StudorgDB) error {
+	_, err := s.db.NamedExec(`DELETE FROM studorg2tag WHERE studorg_id = :id`, studorg)
 
 	return err
 }

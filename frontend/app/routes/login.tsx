@@ -32,7 +32,7 @@ export default function Login() {
     )
     const [noError, setNoError] = useState(true)
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async () => {
         let response: UserID | undefined;
         try {
             response = await Client.getInstance().authorize(authorizationRequest);
@@ -41,7 +41,7 @@ export default function Login() {
         }
         if (response !== undefined) {
             setNoError(true)
-            window.location.href = "/user/" + response.iD
+            window.location.href = "/user"
         } else {
             setNoError(false)
         }

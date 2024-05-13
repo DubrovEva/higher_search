@@ -2,39 +2,65 @@ syntax = "proto3";
 package router;
 option go_package = "github.com/DubrovEva/backend/higher_search/pkg/proto/api";
 
-import "models/user.proto";
+import "models/common.proto";
 import "models/studorg.proto";
+import "models/user.proto";
 import "models/user2studorg.proto";
 
 service Router {
+  // user methods
+  rpc GetPersonalInfo(WithoutParameters) returns (UserResponse);
   rpc GetUser (user.UserID) returns (UserResponse);
-  rpc GetUsers (user.UserIDs) returns (UsersResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (UserResponse);
 
+  // authorization methods
   rpc AuthorizeUser (AuthorizationRequest) returns (UserIDResponse);
   rpc IsAuth (WithoutParameters) returns (user.AuthInfo);
   rpc Logout (WithoutParameters) returns (SuccessResponse);
   rpc RegisterUser (RegistrationRequest) returns (UserIDResponse);
 
-  rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
-  rpc GetStudorgRole (studorg.StudorgID) returns (RoleResponse);
-  rpc GetUserStudorgs (WithoutParameters) returns (StudorgsResponse);
-
+  // studorgs methods
   rpc GetStudorg (studorg.StudorgID) returns (StudorgResponse);
   rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgIDResponse);
   rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
+  rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
+  rpc SearchStudorgs (SearchRequest) returns (StudorgsResponse);
 
+  // user2studorg methods
+  rpc GetStudorgRole (studorg.StudorgID) returns (RoleResponse);
+  rpc GetUserStudorgs (WithoutParameters) returns (StudorgsResponse);
   rpc AddUserToStudorg (studorg.StudorgID) returns (SuccessResponse);
   rpc DeleteUserFromStudorg (studorg.StudorgID) returns (SuccessResponse);
-
   rpc UpdateUserInStudorg (user2studorg.User2Studorg) returns (SuccessResponse);
-
   rpc GetStudorgUsersNumber (studorg.StudorgID) returns (NumberResponse);
   rpc GetUserStudorgsNumber (user.UserID) returns (NumberResponse);
 }
 
+// requests
+
 message WithoutParameters {}
+
+message AuthorizationRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message RegistrationRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+  string surname = 4;
+}
+
+message SearchRequest {
+  common.Faculty faculty = 1;
+  common.Campus campus = 2;
+  common.Language language = 3;
+  repeated string tags = 4;
+}
+
+// responses
 
 message UserResponse {
   oneof response {
@@ -89,23 +115,11 @@ message NumberResponse {
   }
 }
 
-message AuthorizationRequest {
-  string email = 1;
-  string password = 2;
-}
-
 message SuccessResponse {
   oneof response {
     Error err = 1;
     bool success = 2;
   }
-}
-
-message RegistrationRequest {
-  string Email = 1;
-  string Password = 2;
-  string Name = 3;
-  string Surname = 4;
 }
 
 message RoleResponse {

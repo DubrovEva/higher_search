@@ -39,6 +39,7 @@ type StudorgRepo interface {
 	Get(studorgID int64) (*models.StudorgDB, error)
 	GetAll() ([]models.StudorgDB, error)
 	GetByUser(userID int64) ([]models.StudorgDB, error) // TODO
+	Search(request *service.SearchRequest) ([]models.StudorgDB, error)
 }
 
 type User2StudorgRepo interface {
@@ -57,6 +58,31 @@ func NewRouter(user UserRepo, studorg StudorgRepo, user2studorg User2StudorgRepo
 		User2Studorg: user2studorg,
 		JwtManager:   manager,
 	}
+}
+
+// user methods
+
+func (r *Router) GetPersonalInfo(ctx context.Context, _ *service.WithoutParameters) (*service.UserResponse, error) {
+	userID, err := r.validateAuthorization(ctx)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		protoErr := service.Error{Msg: err.Error()}
+		return &service.UserResponse{Response: &service.UserResponse_Err{Err: &protoErr}}, nil
+	}
+
+	userDB, err := r.User.Get(userID.GetID())
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	result, err := userDB.ToProtoUser()
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
 }
 
 func (r *Router) GetUser(_ context.Context, userID *proto.UserID) (*service.UserResponse, error) {
@@ -118,135 +144,7 @@ func (r *Router) UpdateUser(_ context.Context, protoUser *proto.User) (*service.
 	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, err
 }
 
-func (r *Router) GetStudorg(_ context.Context, studorgID *proto.StudorgID) (*service.StudorgResponse, error) {
-	StudorgDB, err := r.Studorg.Get(studorgID.GetID())
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	result, err := StudorgDB.ToProtoStudorg()
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, nil
-}
-
-func (r *Router) GetAllStudorgs(_ context.Context, _ *service.WithoutParameters) (*service.StudorgsResponse, error) {
-	studorgs, err := r.Studorg.GetAll()
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	var result []*proto.Studorg
-	for _, studorgDB := range studorgs {
-		protoStudorg, err := studorgDB.ToProtoStudorg()
-		if err != nil {
-			// TODO: логи и завертывание ошибок
-			return nil, err
-		}
-		result = append(result, protoStudorg)
-	}
-
-	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
-}
-
-func (r *Router) GetUserStudorgs(ctx context.Context, _ *service.WithoutParameters) (*service.StudorgsResponse, error) {
-	userID, err := r.validateAuthorization(ctx)
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, nil
-	}
-
-	studorgs, err := r.Studorg.GetByUser(userID.ID)
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	var result []*proto.Studorg
-	for _, studorgDB := range studorgs {
-		protoStudorg, err := studorgDB.ToProtoStudorg()
-		if err != nil {
-			// TODO: логи и завертывание ошибок
-			return nil, err
-		}
-		result = append(result, protoStudorg)
-	}
-
-	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
-}
-
-func (r *Router) InsertStudorg(ctx context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgIDResponse, error) {
-	userID, err := r.validateAuthorization(ctx)
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, nil
-	}
-
-	studorgInfoDB, err := models.NewStudorgInfoDB(StudorgInfo)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert protoStudorgInfo to dbStudorgInfo: %w", err)
-	}
-
-	studorgDB, err := r.Studorg.Insert(studorgInfoDB)
-	if err != nil {
-		return nil, fmt.Errorf("failed to insert studorg to db: %w", err)
-	}
-
-	// TODO надо выполнять добавление в базу в рамках одной транзакции
-	head := models.NewHead(studorgDB.ID, userID.ID)
-	if err = r.User2Studorg.Add(head); err != nil {
-		return nil, fmt.Errorf("failed to insert head to db: %w", err)
-	}
-
-	result, err := studorgDB.ToProtoStudorg()
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert dbStudorgInfo to protoStudorgInfo: %w", err)
-	}
-
-	return &service.StudorgIDResponse{Response: &service.StudorgIDResponse_StudorgID{StudorgID: result.ID}}, nil
-}
-
-func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (*service.StudorgResponse, error) {
-	StudorgDB, err := models.NewStudorgDB(protoStudorg)
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	if err = r.Studorg.Update(StudorgDB); err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	result, err := StudorgDB.ToProtoStudorg()
-	if err != nil {
-		// TODO: логи и завертывание ошибок
-		return nil, err
-	}
-
-	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, err
-}
-
-func (r *Router) GetStudorgUsersNumber(_ context.Context, studorgID *proto.StudorgID) (*service.NumberResponse, error) {
-	number, err := r.User2Studorg.GetStudorgUsersNumber(studorgID.GetID())
-	if err != nil {
-		return nil, err
-	}
-	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
-}
-
-func (r *Router) GetUserStudorgsNumber(_ context.Context, userID *proto.UserID) (*service.NumberResponse, error) {
-	number, err := r.User2Studorg.GetUserStudorgsNumber(userID.GetID())
-	if err != nil {
-		return nil, err
-	}
-	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
-}
+// authorization methods
 
 func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *service.AuthorizationRequest) (*service.UserIDResponse, error) {
 	userDB, err := r.User.GetByAuthorizationData(authorizationRequest.Email, authorizationRequest.Password)
@@ -271,6 +169,16 @@ func (r *Router) AuthorizeUser(ctx context.Context, authorizationRequest *servic
 	}
 
 	return &service.UserIDResponse{Response: &service.UserIDResponse_UserID{UserID: result.ID}}, nil
+}
+
+func (r *Router) IsAuth(ctx context.Context, _ *service.WithoutParameters) (*proto.AuthInfo, error) {
+	userID, err := r.validateAuthorization(ctx)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return &proto.AuthInfo{IsAuth: false}, nil
+	}
+
+	return &proto.AuthInfo{IsAuth: true, UserID: userID}, nil
 }
 
 func (r *Router) Logout(ctx context.Context, _ *service.WithoutParameters) (*service.SuccessResponse, error) {
@@ -304,18 +212,162 @@ func (r *Router) RegisterUser(ctx context.Context, registrationRequest *service.
 		return nil, fmt.Errorf("failed to send header jwt: %w", err)
 	}
 
-	fmt.Println("success4")
 	return &service.UserIDResponse{Response: &service.UserIDResponse_UserID{UserID: result.ID}}, nil
 }
 
-func (r *Router) IsAuth(ctx context.Context, _ *service.WithoutParameters) (*proto.AuthInfo, error) {
+// studorg methods
+
+func (r *Router) GetStudorg(_ context.Context, studorgID *proto.StudorgID) (*service.StudorgResponse, error) {
+	StudorgDB, err := r.Studorg.Get(studorgID.GetID())
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	result, err := StudorgDB.ToProtoStudorg()
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, nil
+}
+
+func (r *Router) InsertStudorg(ctx context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgIDResponse, error) {
 	userID, err := r.validateAuthorization(ctx)
 	if err != nil {
 		// TODO: логи и завертывание ошибок
-		return &proto.AuthInfo{IsAuth: false}, nil
+		return nil, nil
 	}
 
-	return &proto.AuthInfo{IsAuth: true, UserID: userID}, nil
+	studorgInfoDB, err := models.NewStudorgInfoDB(StudorgInfo)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert protoStudorgInfo to dbStudorgInfo: %w", err)
+	}
+
+	studorgDB, err := r.Studorg.Insert(studorgInfoDB)
+	if err != nil {
+		return nil, fmt.Errorf("failed to insert studorg to db: %w", err)
+	}
+
+	// TODO надо выполнять добавление в базу в рамках одной транзакции
+	head := models.NewHead(studorgDB.ID, userID.ID)
+
+	if err = r.User2Studorg.Add(head); err != nil {
+		return nil, fmt.Errorf("failed to insert head to db: %w", err)
+	}
+
+	result, err := studorgDB.ToProtoStudorg()
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert dbStudorgInfo to protoStudorgInfo: %w", err)
+	}
+
+	return &service.StudorgIDResponse{Response: &service.StudorgIDResponse_StudorgID{StudorgID: result.ID}}, nil
+}
+
+func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (*service.StudorgResponse, error) {
+	StudorgDB, err := models.NewStudorgDB(protoStudorg)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	if err = r.Studorg.Update(StudorgDB); err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	result, err := StudorgDB.ToProtoStudorg()
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, err
+}
+
+func (r *Router) GetAllStudorgs(_ context.Context, _ *service.WithoutParameters) (*service.StudorgsResponse, error) {
+	studorgs, err := r.Studorg.GetAll()
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	var result []*proto.Studorg
+	for _, studorgDB := range studorgs {
+		protoStudorg, err := studorgDB.ToProtoStudorg()
+		if err != nil {
+			// TODO: логи и завертывание ошибок
+			return nil, err
+		}
+		result = append(result, protoStudorg)
+	}
+
+	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
+}
+
+func (r *Router) SearchStudorgs(_ context.Context, request *service.SearchRequest) (*service.StudorgsResponse, error) {
+	studorgs, err := r.Studorg.Search(request)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	var result []*proto.Studorg
+	for _, studorgDB := range studorgs {
+		protoStudorg, err := studorgDB.ToProtoStudorg()
+		if err != nil {
+			// TODO: логи и завертывание ошибок
+			return nil, err
+		}
+		result = append(result, protoStudorg)
+	}
+
+	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
+}
+
+// user2Studorg methods
+
+func (r *Router) GetUserStudorgs(ctx context.Context, _ *service.WithoutParameters) (*service.StudorgsResponse, error) {
+	userID, err := r.validateAuthorization(ctx)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, nil
+	}
+
+	studorgs, err := r.Studorg.GetByUser(userID.ID)
+	if err != nil {
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	var result []*proto.Studorg
+	for _, studorgDB := range studorgs {
+		protoStudorg, err := studorgDB.ToProtoStudorg()
+		if err != nil {
+			// TODO: логи и завертывание ошибок
+			return nil, err
+		}
+		result = append(result, protoStudorg)
+	}
+
+	return &service.StudorgsResponse{Response: &service.StudorgsResponse_Studorgs{Studorgs: &proto.Studorgs{Studorgs: result}}}, nil
+}
+
+func (r *Router) GetStudorgUsersNumber(_ context.Context, studorgID *proto.StudorgID) (*service.NumberResponse, error) {
+	number, err := r.User2Studorg.GetStudorgUsersNumber(studorgID.GetID())
+	if err != nil {
+		return nil, err
+	}
+	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
+}
+
+func (r *Router) GetUserStudorgsNumber(_ context.Context, userID *proto.UserID) (*service.NumberResponse, error) {
+	number, err := r.User2Studorg.GetUserStudorgsNumber(userID.GetID())
+	if err != nil {
+		return nil, err
+	}
+	return &service.NumberResponse{Response: &service.NumberResponse_Number{Number: number}}, nil
 }
 
 func (r *Router) GetStudorgRole(ctx context.Context, studorgID *proto.StudorgID) (*service.RoleResponse, error) {

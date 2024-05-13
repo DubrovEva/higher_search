@@ -1,60 +1,70 @@
 CREATE TABLE users
 (
-    Avatar           VARCHAR,
-    Description      VARCHAR,
-    Email            VARCHAR(255) UNIQUE NOT NULL,
-    Hash             VARCHAR             NOT NULL,
-    ID               SERIAL PRIMARY KEY,
-    Links            JSON,
-    MiddleName       VARCHAR(255),
-    Name             VARCHAR(255)        NOT NULL,
-    Role             INTEGER,
-    Salt             INTEGER             NOT NULL,
-    ShortDescription VARCHAR,
-    Surname          VARCHAR(255)        NOT NULL,
-    Faculty          INTEGER,
-    Gender           INTEGER,
-    Birth            TIMESTAMP,
-    EducationInfo    VARCHAR
+    ID                SERIAL PRIMARY KEY,
+
+    email             VARCHAR(255) UNIQUE NOT NULL,
+    name              VARCHAR(255)        NOT NULL,
+    surname           VARCHAR(255)        NOT NULL,
+    middlename       VARCHAR(255),
+    role              INTEGER             NOT NULL,
+
+    hash              VARCHAR             NOT NULL,
+    salt              VARCHAR             NOT NULL,
+
+    short_description VARCHAR,
+    description       VARCHAR,
+
+    avatar            VARCHAR,
+    links             JSON,
+    faculty           INTEGER,
+    gender            INTEGER,
+    birth             TIMESTAMP,
+    education_info    VARCHAR
 );
 
 CREATE TABLE studorgs
 (
-    Campus           INTEGER,
-    CreatedAt        TIMESTAMP           NOT NULL,
-    Description      VARCHAR,
-    Faculty          INTEGER,
-    ID               SERIAL PRIMARY KEY,
-    Language         INTEGER,
-    Links            JSON,
-    Logo             VARCHAR,
-    Name             VARCHAR(255) UNIQUE NOT NULL,
-    ShortDescription VARCHAR,
-    Status           INTEGER
+    id                 SERIAL PRIMARY KEY,
+    name               VARCHAR(255) UNIQUE NOT NULL,
+    created_at         TIMESTAMP           NOT NULL,
+    studorg_status     INTEGER             NOT NULL,
+
+    moderation_status  INTEGER             NOT NULL,
+    moderation_comment VARCHAR,
+
+    short_description  VARCHAR,
+    description        VARCHAR,
+
+    campus             INTEGER,
+    faculty            INTEGER,
+    language           INTEGER,
+
+    links              JSON,
+    logo               VARCHAR
 );
 
 CREATE TABLE tags
 (
-    ID     SERIAL PRIMARY KEY,
-    Name   VARCHAR(255) UNIQUE NOT NULL,
-    Parent INTEGER REFERENCES tags (ID)
+    id     SERIAL PRIMARY KEY,
+    name   VARCHAR(255) UNIQUE NOT NULL,
+    parent INTEGER REFERENCES tags (id)
 );
 
 CREATE TABLE studorg2tag
 (
-    StudorgID INTEGER NOT NULL REFERENCES studorgs (ID),
-    TagID     INTEGER NOT NULL REFERENCES tags (ID)
+    studorg_id INTEGER NOT NULL REFERENCES studorgs (ID),
+    tag_id     INTEGER NOT NULL REFERENCES tags (ID)
 );
 
 CREATE TABLE user2studorg
 (
-    Role          INTEGER NOT NULL,
-    StudorgID     INTEGER NOT NULL REFERENCES studorgs (ID),
-    UserID        INTEGER NOT NULL REFERENCES users (ID),
+    role           INTEGER NOT NULL,
+    studorg_id     INTEGER NOT NULL REFERENCES studorgs (ID),
+    user_id        INTEGER NOT NULL REFERENCES users (ID),
 
-    AdmissionTime TIMESTAMP,
-    ContactInfo   VARCHAR,
-    CustomRole    VARCHAR,
-    Info          VARCHAR,
-    IsContact     BOOLEAN
+    admission_time TIMESTAMP,
+    contact_info   VARCHAR,
+    custom_role    VARCHAR,
+    info           VARCHAR,
+    is_contact     BOOLEAN
 );

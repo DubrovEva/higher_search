@@ -8,15 +8,15 @@ import (
 )
 
 type User2StudorgDB struct {
-	Role          int64
-	StudorgID     int64
-	UserID        int64
-	AdmissionTime time.Time
+	Role          int64     `db:"role"`
+	StudorgID     int64     `db:"studorg_id"`
+	UserID        int64     `db:"user_id"`
+	AdmissionTime time.Time `db:"admission_time"`
 
-	ContactInfo sql.NullString
-	CustomRole  sql.NullString
-	Info        sql.NullString
-	IsContact   sql.NullBool
+	ContactInfo sql.NullString `db:"contact_info"`
+	CustomRole  sql.NullString `db:"custom_role"`
+	Info        sql.NullString `db:"info"`
+	IsContact   sql.NullBool   `db:"is_contact"`
 }
 
 func NewUser2StudorgDB(protoUser2Studorg *proto.User2Studorg) (*User2StudorgDB, error) {

@@ -23,6 +23,7 @@ import dummy from "../assets/dummy.png?url";
 import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {category} from "~/components/options";
 import Client from "~/client";
+import {NoOrganizationsMessage} from "~/components/messages";
 
 export function OrgCards(params: { studorgs: Studorg[]}) {
     return (
@@ -42,7 +43,7 @@ export function OrgCard(params: { studorgInfo: StudorgInfo, ID: StudorgID}) {
     }, [])
 
     return (
-        <Card href={"/studorg/" + params.ID.iD}>
+        <Card href={"/studorg/" + params.ID.iD} color={"grey"}>
             <CardContent>
                 <Image floated='left' size='tiny' src={dummy}/>
                 <CardHeader> {params.studorgInfo.name} </CardHeader>
@@ -94,6 +95,9 @@ function UserOrgCard(params: {studorg: Studorg}) {
 }
 
 export function UserOrgCards(params: {studorgs: Studorg[]}) {
+    if (params.studorgs.length == 0) {
+        return <NoOrganizationsMessage/>
+    }
     return (
         <CardGroup stackable itemsPerRow={1}>
             {params.studorgs.map(
@@ -126,11 +130,11 @@ function EditButton(params: {role: StudorgRole, studorgID: StudorgID, onDelete: 
 }
 
 function RoleToLabel(params: {role: StudorgRole}) {
-    if (params.role == StudorgRole.PARTICIPANT) {
-        return <Label> Участник </Label>
-    } else if (params.role == StudorgRole.ORGANIZER) {
+    if (params.role == StudorgRole.ORGANIZER) {
         return <Label color="blue"> Организатор </Label>
-    } else {
+    } else if (params.role == StudorgRole.HEAD) {
         return <Label color="green"> Глава </Label>
+    } else {
+        return <Label> Участник </Label>
     }
 }

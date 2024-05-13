@@ -50,17 +50,17 @@ export interface Tags {
  */
 export enum Campus {
     /**
-     * @generated from protobuf enum value: MSK = 0;
+     * @generated from protobuf enum value: OTHER_CAMPUS = 0;
      */
-    MSK = 0,
+    OTHER_CAMPUS = 0,
     /**
-     * @generated from protobuf enum value: NOV = 1;
+     * @generated from protobuf enum value: MSK = 1;
      */
-    NOV = 1,
+    MSK = 1,
     /**
-     * @generated from protobuf enum value: OTHER_CAMPUS = 2;
+     * @generated from protobuf enum value: NOV = 2;
      */
-    OTHER_CAMPUS = 2,
+    NOV = 2,
     /**
      * @generated from protobuf enum value: PER = 3;
      */
@@ -68,7 +68,11 @@ export enum Campus {
     /**
      * @generated from protobuf enum value: SPB = 4;
      */
-    SPB = 4
+    SPB = 4,
+    /**
+     * @generated from protobuf enum value: ONLINE = 5;
+     */
+    ONLINE = 5
 }
 /**
  * @generated from protobuf enum common.Faculty
@@ -168,13 +172,13 @@ export enum Faculty {
  */
 export enum Language {
     /**
-     * @generated from protobuf enum value: RU = 0;
+     * @generated from protobuf enum value: OTHER_LANGUAGE = 0;
      */
-    RU = 0,
+    OTHER_LANGUAGE = 0,
     /**
-     * @generated from protobuf enum value: DE = 1;
+     * @generated from protobuf enum value: RU = 1;
      */
-    DE = 1,
+    RU = 1,
     /**
      * @generated from protobuf enum value: EN = 2;
      */
@@ -210,24 +214,28 @@ export enum Language {
     /**
      * @generated from protobuf enum value: ZH = 10;
      */
-    ZH = 10
+    ZH = 10,
+    /**
+     * @generated from protobuf enum value: DE = 11;
+     */
+    DE = 11
 }
 /**
  * @generated from protobuf enum common.Gender
  */
 export enum Gender {
     /**
-     * @generated from protobuf enum value: FEMALE = 0;
+     * @generated from protobuf enum value: OTHER_GENDER = 0;
      */
-    FEMALE = 0,
+    OTHER_GENDER = 0,
     /**
-     * @generated from protobuf enum value: MALE = 1;
+     * @generated from protobuf enum value: FEMALE = 1;
      */
-    MALE = 1,
+    FEMALE = 1,
     /**
-     * @generated from protobuf enum value: OTHER_GENDER = 2;
+     * @generated from protobuf enum value: MALE = 2;
      */
-    OTHER_GENDER = 2
+    MALE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Links$Type extends MessageType<Links> {
