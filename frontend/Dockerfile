@@ -1,18 +1,49 @@
-FROM node:18-alpine3.17 as build
+# base node image
+FROM node:20-slim as base
 
+# Install all node_modules, including dev dependencies
+FROM base as deps
+
+RUN mkdir /app
 WORKDIR /app
-COPY . /app
 
-RUN npm install
+ADD package.json package-lock.json ./
+RUN npm install --production=false
+
+# Setup production node_modules
+FROM base as production-deps
+
+ENV NODE_ENV production
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=deps /app/node_modules /app/node_modules
+ADD package.json package-lock.json ./
+RUN npm prune --production
+
+# Build the app
+FROM base as build
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=deps /app/node_modules /app/node_modules
+
+ADD . .
 RUN npm run build
 
-FROM busybox
+# Finally, build the production image with minimal footprint
+FROM base
 
-RUN adduser -D static
-USER static
-WORKDIR /home/static
+ENV NODE_ENV production
 
-COPY --from=build /app/dist .
+RUN mkdir /app
+WORKDIR /app
 
-EXPOSE 8080
-CMD ["busybox", "httpd", "-f", "-v", "-p", "8080"]
+COPY --from=production-deps /app/node_modules /app/node_modules
+COPY --from=build /app/build /app/build
+#COPY --from=build /app/public /app/public
+ADD . .
+
+CMD ["npm", "run", "start"]

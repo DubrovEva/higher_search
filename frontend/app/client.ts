@@ -11,7 +11,7 @@ export default class Client {
     private constructor() {
         this.router = new RouterClient(
             new GrpcWebFetchTransport({
-                baseUrl: '/',
+                baseUrl: '/api',
                 fetchInit: {
                     credentials: "same-origin",
                 }

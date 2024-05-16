@@ -2,20 +2,18 @@
 
 Приложение для навигации в студенческих организациях Высшей Школы Экономики.
 
-###  Запуск клиентской части:
-    
-Из директории frontend: ```npm run dev```
-
-###  Запуск серверной части:
+###  Запуск 
 
 Из директории deployments: ```docker compose up --build```  
+Сайт будет запущен на http://localhost/
+
 Удаление базы данных:   
 ```
 docker compose down
 docker volume rm deployments_pg_data
 ```
 
-\
+
 Тестирование gRPC запросов: ```evans -r --port 8080 --web repl ```
 (для того, чтобы не вводить repetead параметры - `CTRL + D` )
 
