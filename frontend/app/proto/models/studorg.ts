@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { User } from "./user";
-import { Links } from "./common";
+import { Link } from "./common";
 import { Language } from "./common";
 import { Faculty } from "./common";
 import { Campus } from "./common";
@@ -70,9 +70,9 @@ export interface StudorgInfo {
      */
     language: Language;
     /**
-     * @generated from protobuf field: repeated common.Links links = 11;
+     * @generated from protobuf field: repeated common.Link links = 11;
      */
-    links: Links[];
+    links: Link[];
     /**
      * @generated from protobuf field: string logo = 12;
      */
@@ -157,7 +157,15 @@ export enum ModerationStatus {
     /**
      * @generated from protobuf enum value: NOT_MODERATED = 1;
      */
-    NOT_MODERATED = 1
+    NOT_MODERATED = 1,
+    /**
+     * @generated from protobuf enum value: HIDDEN = 2;
+     */
+    HIDDEN = 2,
+    /**
+     * @generated from protobuf enum value: APPROVED = 3;
+     */
+    APPROVED = 3
 }
 /**
  * @generated from protobuf enum studorg.StudorgRole
@@ -245,7 +253,7 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
             { no: 8, name: "campus", kind: "enum", T: () => ["common.Campus", Campus] },
             { no: 9, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
             { no: 10, name: "language", kind: "enum", T: () => ["common.Language", Language] },
-            { no: 11, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Links },
+            { no: 11, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Link },
             { no: 12, name: "logo", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 13, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 14, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact },
@@ -308,8 +316,8 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
                 case /* common.Language language */ 10:
                     message.language = reader.int32();
                     break;
-                case /* repeated common.Links links */ 11:
-                    message.links.push(Links.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated common.Link links */ 11:
+                    message.links.push(Link.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* string logo */ 12:
                     message.logo = reader.string();
@@ -368,9 +376,9 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         /* common.Language language = 10; */
         if (message.language !== 0)
             writer.tag(10, WireType.Varint).int32(message.language);
-        /* repeated common.Links links = 11; */
+        /* repeated common.Link links = 11; */
         for (let i = 0; i < message.links.length; i++)
-            Links.internalBinaryWrite(message.links[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            Link.internalBinaryWrite(message.links[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* string logo = 12; */
         if (message.logo !== "")
             writer.tag(12, WireType.LengthDelimited).string(message.logo);

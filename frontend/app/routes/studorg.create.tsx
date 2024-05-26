@@ -11,7 +11,6 @@ import {
     FormDropdown,
     FormGroup,
     FormInput,
-    FormSelect,
     FormTextArea,
     Header
 } from "semantic-ui-react";
@@ -19,9 +18,13 @@ import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {campus, category, faculty, language} from "~/components/options";
+import {category} from "~/components/options";
 import {StudorgInfo} from "~/proto/models/studorg";
 import {AuthInfo} from "~/proto/models/user";
+import {NoRightsMessage} from "~/components/messages";
+import {FacultyForm} from "~/components/studorg/faculty";
+import {LanguageForm} from "~/components/studorg/language";
+import {CampusForm} from "~/components/studorg/campus";
 
 export const meta: MetaFunction = () => {
     return [
@@ -35,7 +38,7 @@ export const links: LinksFunction = () => [
 ];
 
 type Filter<T, F> = {
-        [K in keyof T as T[K] extends F ? K : never]: T[K] & F
+    [K in keyof T as T[K] extends F ? K : never]: T[K] & F
 };
 
 function StudorgInfoForm() {
@@ -69,29 +72,9 @@ function StudorgInfoForm() {
         <Form onSubmit={handleSubmit}>
             <FormInput fluid label="Название" placeholder='Название' required {...editable('name')}/>
             <FormGroup widths='equal'>
-                <FormSelect
-                    fluid
-                    label="Кампус"
-                    width={7}
-                    options={campus}
-                    {...editable('campus')}
-                    placeholder='Кампус'
-                />
-                <FormSelect
-                    fluid
-                    label="Факультет"
-                    options={faculty}
-                    {...editable('faculty')}
-                    placeholder='Факультет'
-                />
-                <FormSelect
-                    fluid
-                    label="Язык"
-                    options={language}
-                    {...editable('language')}
-                    placeholder='Язык'
-                    width={6}
-                />
+                <CampusForm value={studorgInfo.campus} onChange={handleUpdate("campus")}/>
+                <FacultyForm value={studorgInfo.faculty} onChange={handleUpdate("faculty")}/>
+                <LanguageForm value={studorgInfo.language} onChange={handleUpdate("language")}/>
             </FormGroup>
             <FormGroup>
             </FormGroup>
@@ -104,13 +87,13 @@ function StudorgInfoForm() {
                           {...editable('description')}/>
 
             <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection options={category}
-                value={studorgInfo.tags}
-                onChange={handleUpdate("tags")}
+                          value={studorgInfo.tags}
+                          onChange={handleUpdate("tags")}
             />
 
             <FormGroup widths='equal'>
             </FormGroup>
-            <FormInput fluid label='Photo' type={"file"}/>
+            {/*<FormInput fluid label='Photo' type={"file"}/>*/}
             <FormButton>Создать</FormButton>
         </Form>
     );
@@ -131,6 +114,15 @@ export default function CreateStudorg() {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
 
+    if (!authInfo.isAuth) {
+        return <>
+            <FixedMenu authInfo={authInfo}/>
+            <Container text className={"main"}>
+                <NoRightsMessage/>
+            </Container>
+            <CustomFooter/>
+        </>
+    }
 
     return (
         <>

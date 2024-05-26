@@ -4,8 +4,11 @@ import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/account.css?url";
 
 import {
+    Button,
+    ButtonGroup,
     Container,
     Divider,
+    Form,
     FormButton,
     FormGroup,
     FormInput,
@@ -14,25 +17,22 @@ import {
     Grid,
     GridColumn,
     Header,
-    Icon,
-    Image,
-    Form,
-    Label,
-    CardGroup, Message, FormDropdown
+    Icon, Segment,
 } from "semantic-ui-react";
-import React, {FormEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenuForAccount} from "~/components/menu";
-import {category, faculty, gender} from "~/components/options";
-import {useParams} from "react-router";
+import {gender} from "~/components/options";
 import Client from "~/client";
-import {AuthInfo, User, UserID, UserInfo} from "~/proto/models/user";
-import {UserOrgCards} from "~/components/studorg";
+import {AuthInfo, UserID, UserInfo} from "~/proto/models/user";
+import {UserOrgCards} from "~/components/studorg/studorg";
 import {Studorg} from "~/proto/models/studorg";
 import {UserCard} from "~/components/user";
-import {LoadingRightsMessage, NoRightsMessage} from "~/components/messages";
-import {UserResponse} from "~/proto/api/router";
+import {LoadingMessage, NoRightsMessage, SavedMessage} from "~/components/messages";
+import {FacultyForm} from "~/components/studorg/faculty";
+import {Link} from "~/proto/models/common";
+import {LinkForm, LinksForm} from "~/components/studorg/links";
 
 export const meta: MetaFunction = () => {
     return [
@@ -50,7 +50,6 @@ function Organizations() {
     useEffect(() => {
         Client.getInstance().getUserStudorgs().then(result => setStudorgs(result))
     }, [])
-    console.log(studorgs)
 
     return (
         <Container text className={"main"}>
@@ -62,44 +61,17 @@ function Organizations() {
     );
 }
 
-function AllPersonalInfo() {
-    const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined)
-    const [userResponse, setUserResponse] = useState(UserResponse.create())
+function PersonalInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInfo: any }) {
     const [saved, saveInfo] = useState(false)
-
-    useEffect(() => {
-        Client.getInstance().getPersonalInfo().then(response => {
-            setUserResponse(response)
-            if (response.response.oneofKind === "user") {
-                setUserInfo(response.response.user.userInfo);
-            }
-        })
-    }, [])
-
-    let userID = UserID.create()
-    if (userResponse === undefined) {
-        return <LoadingRightsMessage/>
-    } else if (userResponse.response.oneofKind === "err") {
-        return <NoRightsMessage/>
-    } else if (userResponse.response.oneofKind === "user") {
-        if (userResponse.response.user.userInfo === undefined) {
-            return <NoRightsMessage/>
-        }
-        userID = userResponse.response.user.iD!
-    }
-
-    if (userInfo === undefined) {
-        return <LoadingRightsMessage/>
-    }
 
     const handleUpdate = (key: keyof UserInfo) => {
         return (e: any, data: { value?: boolean | number | string | (boolean | number | string)[] }) => {
-            setUserInfo({...userInfo, [key]: data.value})
+            params.updateUserInfo({...params.userInfo, [key]: data.value})
         }
     }
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        await Client.getInstance().updateUserInfo({userInfo: userInfo, iD: userID});
+    const handleSubmit = async () => {
+        await Client.getInstance().updateUserInfo({userInfo: params.userInfo, iD: params.userID});
         saveInfo(true)
         setTimeout(() => saveInfo(false), 2000)
     }
@@ -109,15 +81,15 @@ function AllPersonalInfo() {
             <Header size={"huge"}> Личная информация </Header>
             <Divider/>
             <Grid stackable columns={2}>
-                <GridColumn> <UserCard user={{userInfo: userInfo, iD: userID}}/> </GridColumn>
+                <GridColumn> <UserCard user={{userInfo: params.userInfo, iD: params.userID}}/> </GridColumn>
                 <GridColumn>
                     <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>
-                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={userInfo.surname}
+                            <FormInput fluid label="Фамилия" placeholder='Фамилия' value={params.userInfo.surname}
                                        onChange={handleUpdate("surname")}/>
-                            <FormInput fluid label="Имя" placeholder='Имя' value={userInfo.name}
+                            <FormInput fluid label="Имя" placeholder='Имя' value={params.userInfo.name}
                                        onChange={handleUpdate("name")}/>
-                            <FormInput fluid label="Отчество" placeholder='Отчество' value={userInfo.middleName}
+                            <FormInput fluid label="Отчество" placeholder='Отчество' value={params.userInfo.middleName}
                                        onChange={handleUpdate("middleName")}/>
                         </FormGroup>
                         <FormGroup>
@@ -126,41 +98,104 @@ function AllPersonalInfo() {
                                 label="Пол"
                                 options={gender}
                                 placeholder='Пол'
-                                value={userInfo?.gender}
+                                value={params.userInfo.gender}
                                 onChange={handleUpdate("gender")}
                             />
-                            <FormSelect
-                                fluid
-                                options={faculty}
-                                label='Факультет'
-                                placeholder='Факультет'
-                                width={12}
-                                value={userInfo?.faculty}
-                                onChange={handleUpdate("faculty")}
-                            />
+
+                            <FacultyForm value={params.userInfo.faculty} onChange={handleUpdate("faculty")}/>
                         </FormGroup>
                         <FormTextArea
                             label='Информация об обучении'
                             placeholder='Курс, учебная программа, группа и прочее'
-                            value={userInfo?.educationInfo}
+                            value={params.userInfo.educationInfo}
                             onChange={handleUpdate("educationInfo")}
                         />
                         <FormTextArea
                             label='Описание'
                             placeholder='Расскажите о себе'
-                            value={userInfo?.description}
+                            value={params.userInfo.description}
                             onChange={handleUpdate("description")}
                         />
-                        <Message
-                            success
-                            header='Сохранено'
-                        />
+
+                        <SavedMessage/>
                         <FormButton type="submit"> Сохранить </FormButton>
                     </Form>
                 </GridColumn>
             </Grid>
         </Container>
     );
+}
+
+function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInfo: any }) {
+    const [saved, saveInfo] = useState(false)
+    const [links, setLinks] = useState<Link[] | undefined>(undefined)
+
+    if (links === undefined && params.userInfo.links.length !== 0) {
+        setLinks(params.userInfo.links)
+    }
+
+    console.log("links", links)
+    console.log("userInfo.links", params.userInfo.links)
+
+    const addLink = (e: { preventDefault: () => void; }) => {
+        e.preventDefault()
+        setLinks(links!.concat({id: crypto.randomUUID()} as Link))
+    }
+
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        params.userInfo.links = links!
+        params.updateUserInfo(params.userInfo)
+
+        await Client.getInstance().updateUserInfo({userInfo: params.userInfo, iD: params.userID});
+        saveInfo(true)
+        setTimeout(() => saveInfo(false), 2000)
+    }
+
+    return (
+        <Container text className={"main"}>
+            <Divider horizontal><Header as='h2'><Icon name='headphones'/>Контактная информация</Header></Divider>
+
+            <Form success={saved}>
+                <Segment>
+                    <Header as={"h5"}> Контакты для связи </Header>
+
+                    {links && links.map((link) => <LinkForm id={link.id} links={links} setLinks={setLinks}/>)}
+
+                    <Button onClick={addLink} icon={"plus"}> Добавить </Button>
+                    <Button onClick={handleSubmit} > Сохранить </Button>
+                    <SavedMessage/>
+                </Segment>
+            </Form>
+
+        </Container>
+    )
+}
+
+function PageContent(params: {userID: UserID}) {
+    const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined)
+
+    useEffect(() => {
+        Client.getInstance().getUserInfo(params.userID).then(response => {
+            setUserInfo(response)
+        })
+    }, [])
+
+    if (userInfo === undefined) {
+        return <LoadingMessage/>
+    }
+    console.log("userInfo", userInfo)
+
+    const save = (e: { preventDefault: () => void; }) => {
+
+    }
+
+    return (
+        <>
+            <PersonalInfo userInfo={userInfo} userID={params.userID} updateUserInfo={setUserInfo}/>
+            <ContactInfo userInfo={userInfo} userID={params.userID} updateUserInfo={setUserInfo}/>
+            <Organizations/>
+        </>
+    )
 }
 
 export default function ViewUser() {
@@ -173,8 +208,7 @@ export default function ViewUser() {
         <>
             <FixedMenuForAccount authInfo={authInfo}/>
 
-            <AllPersonalInfo/>
-            <Organizations/>
+            {authInfo.isAuth ? <PageContent userID={authInfo.userID!}/> : <NoRightsMessage/>}
 
             <CustomFooter/>
         </>

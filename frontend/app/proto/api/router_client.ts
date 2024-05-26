@@ -4,8 +4,9 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { Router } from "./router";
+import type { Participant } from "../models/participant";
+import type { ParticipantsResponse } from "./router";
 import type { NumberResponse } from "./router";
-import type { User2Studorg } from "../models/user2studorg";
 import type { RoleResponse } from "./router";
 import type { SearchRequest } from "./router";
 import type { StudorgsResponse } from "./router";
@@ -15,10 +16,10 @@ import type { StudorgInfo } from "../models/studorg";
 import type { StudorgResponse } from "./router";
 import type { StudorgID } from "../models/studorg";
 import type { RegistrationRequest } from "./router";
-import type { SuccessResponse } from "./router";
 import type { AuthInfo } from "../models/user";
 import type { UserIDResponse } from "./router";
 import type { AuthorizationRequest } from "./router";
+import type { SuccessResponse } from "./router";
 import type { User } from "../models/user";
 import type { UserInfo } from "../models/user";
 import type { UserID } from "../models/user";
@@ -46,9 +47,9 @@ export interface IRouterClient {
      */
     insertUser(input: UserInfo, options?: RpcOptions): UnaryCall<UserInfo, UserResponse>;
     /**
-     * @generated from protobuf rpc: UpdateUser(user.User) returns (router.UserResponse);
+     * @generated from protobuf rpc: UpdateUser(user.User) returns (router.SuccessResponse);
      */
-    updateUser(input: User, options?: RpcOptions): UnaryCall<User, UserResponse>;
+    updateUser(input: User, options?: RpcOptions): UnaryCall<User, SuccessResponse>;
     /**
      * authorization methods
      *
@@ -74,13 +75,13 @@ export interface IRouterClient {
      */
     getStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, StudorgResponse>;
     /**
-     * @generated from protobuf rpc: InsertStudorg(studorg.StudorgInfo) returns (router.StudorgIDResponse);
+     * @generated from protobuf rpc: CreateStudorg(studorg.StudorgInfo) returns (router.StudorgIDResponse);
      */
-    insertStudorg(input: StudorgInfo, options?: RpcOptions): UnaryCall<StudorgInfo, StudorgIDResponse>;
+    createStudorg(input: StudorgInfo, options?: RpcOptions): UnaryCall<StudorgInfo, StudorgIDResponse>;
     /**
-     * @generated from protobuf rpc: UpdateStudorg(studorg.Studorg) returns (router.StudorgResponse);
+     * @generated from protobuf rpc: UpdateStudorg(studorg.Studorg) returns (router.SuccessResponse);
      */
-    updateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, StudorgResponse>;
+    updateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, SuccessResponse>;
     /**
      * @generated from protobuf rpc: GetAllStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
      */
@@ -92,33 +93,47 @@ export interface IRouterClient {
     /**
      * user2studorg methods
      *
-     * @generated from protobuf rpc: GetStudorgRole(studorg.StudorgID) returns (router.RoleResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgRole(studorg.StudorgID) returns (router.RoleResponse);
      */
-    getStudorgRole(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, RoleResponse>;
+    getPersonalStudorgRole(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, RoleResponse>;
     /**
-     * @generated from protobuf rpc: GetUserStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
      */
-    getUserStudorgs(input: WithoutParameters, options?: RpcOptions): UnaryCall<WithoutParameters, StudorgsResponse>;
+    getPersonalStudorgs(input: WithoutParameters, options?: RpcOptions): UnaryCall<WithoutParameters, StudorgsResponse>;
     /**
-     * @generated from protobuf rpc: AddUserToStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgsNumber(user.UserID) returns (router.NumberResponse);
      */
-    addUserToStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse>;
+    getPersonalStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse>;
     /**
-     * @generated from protobuf rpc: DeleteUserFromStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetParticipants(studorg.StudorgID) returns (router.ParticipantsResponse);
      */
-    deleteUserFromStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse>;
+    getParticipants(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, ParticipantsResponse>;
     /**
-     * @generated from protobuf rpc: UpdateUserInStudorg(user2studorg.User2Studorg) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetOrganizers(studorg.StudorgID) returns (router.ParticipantsResponse);
      */
-    updateUserInStudorg(input: User2Studorg, options?: RpcOptions): UnaryCall<User2Studorg, SuccessResponse>;
+    getOrganizers(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, ParticipantsResponse>;
     /**
-     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.NumberResponse);
+     * @generated from protobuf rpc: GetParticipantsNumber(studorg.StudorgID) returns (router.NumberResponse);
      */
-    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse>;
+    getParticipantsNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse>;
     /**
-     * @generated from protobuf rpc: GetUserStudorgsNumber(user.UserID) returns (router.NumberResponse);
+     * @generated from protobuf rpc: AddToStudorg(studorg.StudorgID) returns (router.SuccessResponse);
      */
-    getUserStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse>;
+    addToStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteFromStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     */
+    deleteFromStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateParticipant(participant.Participant) returns (router.SuccessResponse);
+     */
+    updateParticipant(input: Participant, options?: RpcOptions): UnaryCall<Participant, SuccessResponse>;
+    // moderation methods
+
+    /**
+     * @generated from protobuf rpc: ModerateStudorg(studorg.Studorg) returns (router.SuccessResponse);
+     */
+    moderateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, SuccessResponse>;
 }
 /**
  * @generated from protobuf service router.Router
@@ -153,11 +168,11 @@ export class RouterClient implements IRouterClient, ServiceInfo {
         return stackIntercept<UserInfo, UserResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: UpdateUser(user.User) returns (router.UserResponse);
+     * @generated from protobuf rpc: UpdateUser(user.User) returns (router.SuccessResponse);
      */
-    updateUser(input: User, options?: RpcOptions): UnaryCall<User, UserResponse> {
+    updateUser(input: User, options?: RpcOptions): UnaryCall<User, SuccessResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<User, UserResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<User, SuccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * authorization methods
@@ -199,18 +214,18 @@ export class RouterClient implements IRouterClient, ServiceInfo {
         return stackIntercept<StudorgID, StudorgResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: InsertStudorg(studorg.StudorgInfo) returns (router.StudorgIDResponse);
+     * @generated from protobuf rpc: CreateStudorg(studorg.StudorgInfo) returns (router.StudorgIDResponse);
      */
-    insertStudorg(input: StudorgInfo, options?: RpcOptions): UnaryCall<StudorgInfo, StudorgIDResponse> {
+    createStudorg(input: StudorgInfo, options?: RpcOptions): UnaryCall<StudorgInfo, StudorgIDResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<StudorgInfo, StudorgIDResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: UpdateStudorg(studorg.Studorg) returns (router.StudorgResponse);
+     * @generated from protobuf rpc: UpdateStudorg(studorg.Studorg) returns (router.SuccessResponse);
      */
-    updateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, StudorgResponse> {
+    updateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, SuccessResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<Studorg, StudorgResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<Studorg, SuccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetAllStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
@@ -229,52 +244,75 @@ export class RouterClient implements IRouterClient, ServiceInfo {
     /**
      * user2studorg methods
      *
-     * @generated from protobuf rpc: GetStudorgRole(studorg.StudorgID) returns (router.RoleResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgRole(studorg.StudorgID) returns (router.RoleResponse);
      */
-    getStudorgRole(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, RoleResponse> {
+    getPersonalStudorgRole(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, RoleResponse> {
         const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<StudorgID, RoleResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetUserStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgs(router.WithoutParameters) returns (router.StudorgsResponse);
      */
-    getUserStudorgs(input: WithoutParameters, options?: RpcOptions): UnaryCall<WithoutParameters, StudorgsResponse> {
+    getPersonalStudorgs(input: WithoutParameters, options?: RpcOptions): UnaryCall<WithoutParameters, StudorgsResponse> {
         const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<WithoutParameters, StudorgsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: AddUserToStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetPersonalStudorgsNumber(user.UserID) returns (router.NumberResponse);
      */
-    addUserToStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse> {
+    getPersonalStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse> {
         const method = this.methods[15], opt = this._transport.mergeOptions(options);
-        return stackIntercept<StudorgID, SuccessResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<UserID, NumberResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: DeleteUserFromStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetParticipants(studorg.StudorgID) returns (router.ParticipantsResponse);
      */
-    deleteUserFromStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse> {
+    getParticipants(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, ParticipantsResponse> {
         const method = this.methods[16], opt = this._transport.mergeOptions(options);
-        return stackIntercept<StudorgID, SuccessResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<StudorgID, ParticipantsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: UpdateUserInStudorg(user2studorg.User2Studorg) returns (router.SuccessResponse);
+     * @generated from protobuf rpc: GetOrganizers(studorg.StudorgID) returns (router.ParticipantsResponse);
      */
-    updateUserInStudorg(input: User2Studorg, options?: RpcOptions): UnaryCall<User2Studorg, SuccessResponse> {
+    getOrganizers(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, ParticipantsResponse> {
         const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<User2Studorg, SuccessResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<StudorgID, ParticipantsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetStudorgUsersNumber(studorg.StudorgID) returns (router.NumberResponse);
+     * @generated from protobuf rpc: GetParticipantsNumber(studorg.StudorgID) returns (router.NumberResponse);
      */
-    getStudorgUsersNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse> {
+    getParticipantsNumber(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, NumberResponse> {
         const method = this.methods[18], opt = this._transport.mergeOptions(options);
         return stackIntercept<StudorgID, NumberResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetUserStudorgsNumber(user.UserID) returns (router.NumberResponse);
+     * @generated from protobuf rpc: AddToStudorg(studorg.StudorgID) returns (router.SuccessResponse);
      */
-    getUserStudorgsNumber(input: UserID, options?: RpcOptions): UnaryCall<UserID, NumberResponse> {
+    addToStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse> {
         const method = this.methods[19], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UserID, NumberResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<StudorgID, SuccessResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteFromStudorg(studorg.StudorgID) returns (router.SuccessResponse);
+     */
+    deleteFromStudorg(input: StudorgID, options?: RpcOptions): UnaryCall<StudorgID, SuccessResponse> {
+        const method = this.methods[20], opt = this._transport.mergeOptions(options);
+        return stackIntercept<StudorgID, SuccessResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpdateParticipant(participant.Participant) returns (router.SuccessResponse);
+     */
+    updateParticipant(input: Participant, options?: RpcOptions): UnaryCall<Participant, SuccessResponse> {
+        const method = this.methods[21], opt = this._transport.mergeOptions(options);
+        return stackIntercept<Participant, SuccessResponse>("unary", this._transport, method, opt, input);
+    }
+    // moderation methods
+
+    /**
+     * @generated from protobuf rpc: ModerateStudorg(studorg.Studorg) returns (router.SuccessResponse);
+     */
+    moderateStudorg(input: Studorg, options?: RpcOptions): UnaryCall<Studorg, SuccessResponse> {
+        const method = this.methods[22], opt = this._transport.mergeOptions(options);
+        return stackIntercept<Studorg, SuccessResponse>("unary", this._transport, method, opt, input);
     }
 }

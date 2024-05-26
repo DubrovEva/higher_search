@@ -1,0 +1,9 @@
+syntax = "proto3";
+package errors;
+option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
+
+
+enum ErrorCode {
+  UNKNOWN_ERROR = 0;
+  AUTH_FAILED = 1;
+}

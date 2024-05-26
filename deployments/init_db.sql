@@ -6,7 +6,7 @@ CREATE TABLE users
     name              VARCHAR(255)        NOT NULL,
     surname           VARCHAR(255)        NOT NULL,
     middlename        VARCHAR(255),
-    role              INTEGER             NOT NULL,
+    project_role      INTEGER             NOT NULL,
 
     hash              VARCHAR             NOT NULL,
     salt              VARCHAR             NOT NULL,
@@ -25,6 +25,7 @@ CREATE TABLE users
 CREATE TABLE studorgs
 (
     id                 SERIAL PRIMARY KEY,
+
     name               VARCHAR(255) UNIQUE NOT NULL,
     created_at         TIMESTAMP           NOT NULL,
     studorg_status     INTEGER             NOT NULL,
@@ -46,6 +47,7 @@ CREATE TABLE studorgs
 CREATE TABLE tags
 (
     id     SERIAL PRIMARY KEY,
+
     name   VARCHAR(255) UNIQUE NOT NULL,
     parent INTEGER REFERENCES tags (id)
 );
@@ -58,9 +60,9 @@ CREATE TABLE studorg2tag
 
 CREATE TABLE user2studorg
 (
-    role           INTEGER NOT NULL,
-    studorg_id     INTEGER NOT NULL REFERENCES studorgs (ID),
     user_id        INTEGER NOT NULL REFERENCES users (ID),
+    studorg_id     INTEGER NOT NULL REFERENCES studorgs (ID),
+    role           INTEGER NOT NULL,
 
     admission_time TIMESTAMP,
     contact_info   VARCHAR,

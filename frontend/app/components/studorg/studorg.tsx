@@ -19,13 +19,17 @@ import {
     Label
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
-import dummy from "../assets/dummy.png?url";
+import dummy from "../../assets/dummy.png?url";
 import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {category} from "~/components/options";
 import Client from "~/client";
-import {NoOrganizationsMessage} from "~/components/messages";
+import {NoOrganizationsMessage, NoOrgsMessage} from "~/components/messages";
 
 export function OrgCards(params: { studorgs: Studorg[]}) {
+    if (params.studorgs.length == 0) {
+        return <NoOrgsMessage/>
+    }
+
     return (
         <CardGroup stackable itemsPerRow={1}>
             {params.studorgs.map(
@@ -45,7 +49,7 @@ export function OrgCard(params: { studorgInfo: StudorgInfo, ID: StudorgID}) {
     return (
         <Card href={"/studorg/" + params.ID.iD} color={"grey"}>
             <CardContent>
-                <Image floated='left' size='tiny' src={dummy}/>
+                <Image floated='left' rounded size='tiny' src={dummy}/>
                 <CardHeader> {params.studorgInfo.name} </CardHeader>
 
                 {params.studorgInfo.createdAt && <CardMeta> C <AdmissionTime seconds={+params.studorgInfo?.createdAt?.seconds}/> </CardMeta> }
@@ -80,6 +84,7 @@ function UserOrgCard(params: {studorg: Studorg}) {
     return !isDeleted && <Card color={"grey"} href={"/studorg/" + params.studorg.iD?.iD}>
         <CardContent>
             <Image
+                rounded
                 floated='left'
                 size='tiny'
                 src={dummy}

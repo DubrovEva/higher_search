@@ -11,21 +11,21 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @generated from protobuf message common.Links
+ * @generated from protobuf message common.Link
  */
-export interface Links {
+export interface Link {
     /**
-     * @generated from protobuf field: string kind = 1;
+     * @generated from protobuf field: string name = 1;
      */
-    kind: string;
+    name: string;
     /**
      * @generated from protobuf field: string value = 2;
      */
     value: string;
     /**
-     * @generated from protobuf field: string description = 3;
+     * @generated from protobuf field: string id = 3;
      */
-    description: string;
+    id: string;
 }
 /**
  * @generated from protobuf message common.Tag
@@ -238,36 +238,36 @@ export enum Gender {
     MALE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class Links$Type extends MessageType<Links> {
+class Link$Type extends MessageType<Link> {
     constructor() {
-        super("common.Links", [
-            { no: 1, name: "kind", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+        super("common.Link", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<Links>): Links {
+    create(value?: PartialMessage<Link>): Link {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.kind = "";
+        message.name = "";
         message.value = "";
-        message.description = "";
+        message.id = "";
         if (value !== undefined)
-            reflectionMergePartial<Links>(this, message, value);
+            reflectionMergePartial<Link>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Links): Links {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Link): Link {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string kind */ 1:
-                    message.kind = reader.string();
+                case /* string name */ 1:
+                    message.name = reader.string();
                     break;
                 case /* string value */ 2:
                     message.value = reader.string();
                     break;
-                case /* string description */ 3:
-                    message.description = reader.string();
+                case /* string id */ 3:
+                    message.id = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -280,16 +280,16 @@ class Links$Type extends MessageType<Links> {
         }
         return message;
     }
-    internalBinaryWrite(message: Links, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string kind = 1; */
-        if (message.kind !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.kind);
+    internalBinaryWrite(message: Link, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
         /* string value = 2; */
         if (message.value !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.value);
-        /* string description = 3; */
-        if (message.description !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* string id = 3; */
+        if (message.id !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -297,9 +297,9 @@ class Links$Type extends MessageType<Links> {
     }
 }
 /**
- * @generated MessageType for protobuf message common.Links
+ * @generated MessageType for protobuf message common.Link
  */
-export const Links = new Links$Type();
+export const Link = new Link$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Tag$Type extends MessageType<Tag> {
     constructor() {

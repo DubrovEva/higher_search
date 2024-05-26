@@ -5,14 +5,15 @@ option go_package = "github.com/DubrovEva/backend/higher_search/pkg/proto/api";
 import "models/common.proto";
 import "models/studorg.proto";
 import "models/user.proto";
-import "models/user2studorg.proto";
+import "models/errors.proto";
+import "models/participant.proto";
 
 service Router {
   // user methods
   rpc GetPersonalInfo(WithoutParameters) returns (UserResponse);
   rpc GetUser (user.UserID) returns (UserResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
-  rpc UpdateUser (user.User) returns (UserResponse);
+  rpc UpdateUser (user.User) returns (SuccessResponse);
 
   // authorization methods
   rpc AuthorizeUser (AuthorizationRequest) returns (UserIDResponse);
@@ -22,19 +23,28 @@ service Router {
 
   // studorgs methods
   rpc GetStudorg (studorg.StudorgID) returns (StudorgResponse);
-  rpc InsertStudorg (studorg.StudorgInfo) returns (StudorgIDResponse);
-  rpc UpdateStudorg (studorg.Studorg) returns (StudorgResponse);
+  rpc CreateStudorg (studorg.StudorgInfo) returns (StudorgIDResponse);
+  rpc UpdateStudorg (studorg.Studorg) returns (SuccessResponse);
   rpc GetAllStudorgs (WithoutParameters) returns (StudorgsResponse);
   rpc SearchStudorgs (SearchRequest) returns (StudorgsResponse);
 
   // user2studorg methods
-  rpc GetStudorgRole (studorg.StudorgID) returns (RoleResponse);
-  rpc GetUserStudorgs (WithoutParameters) returns (StudorgsResponse);
-  rpc AddUserToStudorg (studorg.StudorgID) returns (SuccessResponse);
-  rpc DeleteUserFromStudorg (studorg.StudorgID) returns (SuccessResponse);
-  rpc UpdateUserInStudorg (user2studorg.User2Studorg) returns (SuccessResponse);
-  rpc GetStudorgUsersNumber (studorg.StudorgID) returns (NumberResponse);
-  rpc GetUserStudorgsNumber (user.UserID) returns (NumberResponse);
+  rpc GetPersonalStudorgRole (studorg.StudorgID) returns (RoleResponse);
+  rpc GetPersonalStudorgs (WithoutParameters) returns (StudorgsResponse);
+  rpc GetPersonalStudorgsNumber (user.UserID) returns (NumberResponse);
+
+  rpc GetParticipants (studorg.StudorgID) returns (ParticipantsResponse);
+  rpc GetOrganizers (studorg.StudorgID) returns (ParticipantsResponse);
+  rpc GetParticipantsNumber (studorg.StudorgID) returns (NumberResponse);
+
+  rpc AddToStudorg (studorg.StudorgID) returns (SuccessResponse);
+  rpc DeleteFromStudorg (studorg.StudorgID) returns (SuccessResponse);
+
+  rpc UpdateParticipant (participant.Participant) returns (SuccessResponse);
+
+  // moderation methods
+
+  rpc ModerateStudorg (studorg.Studorg) returns (SuccessResponse);
 }
 
 // requests
@@ -76,10 +86,17 @@ message UserIDResponse {
   }
 }
 
-message UsersResponse {
+message ParticipantResponse {
   oneof response {
     Error err = 1;
-    user.Users users = 2;
+    participant.Participant participant = 2;
+  }
+}
+
+message ParticipantsResponse {
+  oneof response {
+    Error err = 1;
+    participant.Participants participants = 2;
   }
 }
 
@@ -106,6 +123,7 @@ message StudorgsResponse {
 
 message Error {
   string msg = 1;
+  errors.ErrorCode code = 2;
 }
 
 message NumberResponse {

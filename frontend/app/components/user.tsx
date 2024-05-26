@@ -1,12 +1,12 @@
 import {User} from "~/proto/models/user";
-import {faculty} from "~/components/options";
-import {Card, CardContent, CardDescription, CardHeader, CardMeta, Icon, Image} from "semantic-ui-react";
+import {Button, Card, CardContent, CardDescription, CardHeader, CardMeta, Dimmer, Icon, Image} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import Client from "~/client";
 import dummy from "../assets/dummy.png?url";
+import {faculty} from "~/components/studorg/faculty";
 
 
-export function OrganizationsNumber(params: {number: number}) {
+export function OrganizationsNumber(params: { number: number }) {
     if (params.number % 10 == 1) {
         return params.number + " студенческая организация"
     } else if (params.number % 10 == 2 || params.number % 10 == 3 || params.number % 10 == 4) {
@@ -29,20 +29,21 @@ export function UserCard(params: { user: User }) {
 
     return (
         <Card>
-            <Image src={dummy} wrapped ui={false} />
+            <Image src={dummy} wrapped ui={false}/>
             <CardContent>
-                <CardHeader> {params.user.userInfo!.name} {params.user.userInfo!.surname} </CardHeader>
+                <CardHeader> {params.user.userInfo!.name} {params.user.userInfo!.surname}
+                </CardHeader>
                 <CardMeta>
-                    <span className='date'> {currentFaculty? currentFaculty + "," : ""} {params.user.userInfo!.educationInfo}</span>
+                    <span className='date'>
+                        {currentFaculty ? currentFaculty + "," : ""} {params.user.userInfo!.educationInfo}
+                    </span>
                 </CardMeta>
                 <CardDescription>
                     {params.user.userInfo!.description}
                 </CardDescription>
             </CardContent>
             <CardContent extra>
-
-                {studorgsNumber != null && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber}/></> }
-
+                {studorgsNumber != null && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber}/></>}
             </CardContent>
         </Card>
     );

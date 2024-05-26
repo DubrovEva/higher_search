@@ -13,20 +13,25 @@ type Claims struct {
 	UserID int64 `json:"user_id"`
 }
 
-func linksToJson(links []*proto.Links) (sql.NullString, error) {
+func linksToJson(links []*proto.Link) (sql.NullString, error) {
 	linksJson, err := json.Marshal(&links)
 	if err != nil {
 		return sql.NullString{}, fmt.Errorf("failed to convert links model to json")
 	}
+
 	return sql.NullString{Valid: true, String: string(linksJson)}, nil
 }
 
-func jsonToLinks(contacts string) ([]*proto.Links, error) {
-	var protoLinks []*proto.Links
-	err := json.Unmarshal([]byte(contacts), &protoLinks)
+func jsonToLinks(links string) ([]*proto.Link, error) {
+	if links == "" {
+		return nil, nil
+	}
+	var protoLinks []*proto.Link
+	err := json.Unmarshal([]byte(links), &protoLinks)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert json to links model")
 	}
+
 	return protoLinks, nil
 }
 

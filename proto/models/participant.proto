@@ -1,0 +1,27 @@
+syntax = "proto3";
+package participant;
+option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
+
+import "google/protobuf/timestamp.proto";
+import "models/user.proto";
+import "models/studorg.proto";
+
+message Participant {
+  string id = 1;
+
+  user.UserID userID = 2;
+  studorg.StudorgID studorgID = 3;
+
+  user.UserInfo userInfo = 4;
+
+  studorg.StudorgRole role = 5;
+  google.protobuf.Timestamp admissionTime = 6;
+  string contactInfo = 7;
+  string customRole = 8;
+  string info = 9;
+  bool isContact = 10;
+}
+
+message Participants {
+  repeated Participant participants = 1;
+}

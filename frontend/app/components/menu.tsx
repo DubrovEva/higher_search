@@ -7,9 +7,8 @@ import {
     Menu,
     MenuItem, MenuMenu, Sidebar
 } from "semantic-ui-react";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import hs_logo from "../assets/logo.png?url";
-import {useNavigate} from "react-router-dom";
 import Client from "~/client";
 import {AuthInfo} from "~/proto/models/user";
 

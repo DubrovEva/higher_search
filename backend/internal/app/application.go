@@ -26,7 +26,7 @@ type Application struct {
 	db         *sqlx.DB
 	hs         *http.Server
 	wg         *sync.WaitGroup
-	jwtManager *api.JWTManager
+	jwtManager *api.JWTManagerImpl
 
 	repoUser         *repo.User
 	repoStudorg      *repo.Studorg
@@ -99,7 +99,7 @@ func (a *Application) initRepository() {
 }
 
 func (a *Application) initServer() error {
-	a.jwtManager = api.NewJWTManager(a.cfg.JWTToken)
+	a.jwtManager = api.NewJWTManagerImpl(a.cfg.JWTToken)
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(NewInterceptor()))
 	reflection.Register(grpcServer)

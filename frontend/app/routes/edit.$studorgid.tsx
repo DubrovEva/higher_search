@@ -5,26 +5,35 @@ import styles from "~/styles/account.css?url";
 import Client from "~/client";
 
 import {
+    CardGroup,
     Container,
     Form,
     FormButton,
     FormDropdown,
     FormGroup,
     FormInput,
-    FormSelect,
     FormTextArea,
     Header,
-    Message,
+    Menu,
+    MenuItem,
+    Segment,
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {campus, category, faculty, language} from "~/components/options";
+import {category} from "~/components/options";
 import {StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
+import {Link} from "~/proto/models/common";
 import {AuthInfo} from "~/proto/models/user";
 import {useParams} from "react-router";
-import {LoadingRightsMessage, NoRightsMessage} from "~/components/messages";
+import {LoadingMessage, NoRightsMessage, SavedMessage} from "~/components/messages";
+import {LinksForm} from "~/components/studorg/links";
+import {FacultyForm} from "~/components/studorg/faculty";
+import {LanguageForm} from "~/components/studorg/language";
+import {CampusForm} from "~/components/studorg/campus";
+import {Participant} from "~/proto/models/participant";
+import {ParticipantCard} from "~/components/studorg/participant";
 
 export const meta: MetaFunction = () => {
     return [
@@ -41,31 +50,30 @@ type Filter<T, F> = {
     [K in keyof T as T[K] extends F ? K : never]: T[K] & F
 };
 
-function StudorgInfoForm() {
-    const [studorgInfo, setStudorgInfo] = useState(
-        StudorgInfo.create()
+function StudorgInfoForm(params: { studorgID: StudorgID }) {
+    const [studorgInfo, setStudorgInfo] = useState<StudorgInfo | undefined>(
+        undefined
     )
     const [saved, saveInfo] = useState(false)
 
-    const params = useParams();
-    const studorgID = StudorgID.create();
-    studorgID.iD = params.studorgid?.toString()!
-
-    const [isOrg, setOrg] = useState<boolean | undefined>(undefined)
-    useEffect(() => {
-        Client.getInstance().getStudorgRole(studorgID).then(role => setOrg(role == StudorgRole.ORGANIZER || role == StudorgRole.HEAD))
-    }, [])
+    const [links, setLinks] = useState<Link[] | undefined>(undefined)
 
     useEffect(() => {
-        Client.getInstance().getStudorgInfo(studorgID).then(x => x ? setStudorgInfo(x) : undefined)
+            Client.getInstance().getStudorgInfo(params.studorgID).then(x => x ? setStudorgInfo(x) : undefined)
     }, [])
 
-    if (isOrg == undefined)
-        return <LoadingRightsMessage/>
-    if (!isOrg) return <NoRightsMessage/>
+    if (studorgInfo === undefined) {
+        return <LoadingMessage/>
+    }
 
-    const handleSubmit = async () => {
-        await Client.getInstance().updateStudorg({studorgInfo: studorgInfo, iD: studorgID})
+    if (links === undefined && studorgInfo.links) {
+        setLinks(studorgInfo.links)
+    }
+
+    const updateInfo = async () => {
+        studorgInfo.links = links!
+
+        await Client.getInstance().updateStudorg({studorgInfo: studorgInfo, iD: params.studorgID})
         saveInfo(true)
         setTimeout(() => saveInfo(false), 2000)
         // TODO: обработка ошибок??
@@ -73,7 +81,7 @@ function StudorgInfoForm() {
 
     function handleUpdate(key: keyof StudorgInfo) {
         return (e: any, data: { value?: boolean | number | string | (boolean | number | string)[] }) => {
-            setStudorgInfo({...studorgInfo, [key]: data.value})
+            setStudorgInfo({...studorgInfo!, [key]: data.value})
         }
     }
 
@@ -86,34 +94,15 @@ function StudorgInfoForm() {
     }
 
     return (
-        <Form onSubmit={handleSubmit} success={saved}>
+        <Form onSubmit={updateInfo} success={saved}>
             <FormInput fluid label="Название" placeholder='Название' required {...editable('name')}/>
             <FormGroup widths='equal'>
-                <FormSelect
-                    fluid
-                    label="Кампус"
-                    width={7}
-                    options={campus}
-                    {...editable('campus')}
-                    placeholder='Кампус'
-                />
-                <FormSelect
-                    fluid
-                    label="Факультет"
-                    options={faculty}
-                    {...editable('faculty')}
-                    placeholder='Факультет'
-                />
-                <FormSelect
-                    fluid
-                    label="Язык"
-                    options={language}
-                    {...editable('language')}
-                    placeholder='Язык'
-                    width={6}
-                />
-            </FormGroup>
-            <FormGroup>
+                <CampusForm value={studorgInfo.campus} onChange={handleUpdate("campus")}/>
+
+                <FacultyForm value={studorgInfo.faculty} onChange={handleUpdate("faculty")}/>
+
+                <LanguageForm value={studorgInfo.language} onChange={handleUpdate("language")}/>
+
             </FormGroup>
             <FormTextArea label='Краткое описание'
                           placeholder='Опиши организацию в 2-3 предложениях. Это короткое превью, которое будет отображаться в поиске.'
@@ -123,29 +112,136 @@ function StudorgInfoForm() {
                           placeholder='Полное описание организации, будет отображено на отдельной странице.'
                           {...editable('description')}/>
 
+            <LinksForm links={links!} setLinks={setLinks}/>
+
             <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection options={category}
                           value={studorgInfo.tags}
                           onChange={handleUpdate("tags")}
             />
 
-            <FormGroup widths='equal'>
-            </FormGroup>
-            <FormInput fluid label='Photo' type={"file"}/>
-            <Message
-                success
-                header='Сохранено'
-            />
-            <FormButton>Сохранить</FormButton>
+            {/*<FormInput fluid label='Photo' type={"file"}/>*/}
+            <SavedMessage/>
+
+            <FormButton onSubmit={updateInfo}>Сохранить</FormButton>
         </Form>
     );
 }
 
-function AllInfo() {
+function Participants(params: { studorgID: StudorgID }) {
+    const [users, setUsers] = useState<Participant[] | undefined>(undefined)
+
+    useEffect(() => {
+        Client.getInstance().getParticipants(params.studorgID).then(response => {
+            if (response !== undefined) {
+                setUsers(response.participants)
+            }
+        })
+    }, [])
+
+    if (users === undefined) {
+        return <></>
+    }
+
     return (
-        <Container text className={"main"}>
+        <CardGroup itemsPerRow={2}>
+            {users.map(participant =>
+                <ParticipantCard participant={participant}/>
+            )}
+        </CardGroup>
+    )
+}
+
+function Organizers(params: { studorgID: StudorgID }) {
+    const [users, setUsers] = useState<Participant[] | undefined>(undefined)
+
+    useEffect(() => {
+        Client.getInstance().getOrganizers(params.studorgID).then(response => {
+            if (response !== undefined) {
+                setUsers(response.participants)
+            }
+        })
+    }, [])
+
+    if (users === undefined) {
+        return <></>
+    }
+
+    return (
+        <CardGroup itemsPerRow={2}>
+            {users.map(participant =>
+                <ParticipantCard participant={participant}/>
+            )}
+        </CardGroup>
+    )
+}
+
+
+function AllInfo(params: { studorgID: StudorgID }) {
+    const [state, setState] = useState("info")
+
+    const [isOrg, setIsOrg] = useState<boolean | undefined>(undefined)
+    useEffect(() => {
+        Client.getInstance().getStudorgRole(params.studorgID).then(role => setIsOrg(role == StudorgRole.ORGANIZER || role == StudorgRole.HEAD))
+    }, [])
+
+    const [active, setActive] = useState(false)
+
+    if (isOrg === undefined) {
+        return <LoadingMessage/>
+    }
+    if (!isOrg) {
+        return <NoRightsMessage/>
+    }
+
+
+    const selectInfo = () => {
+        setState("info")
+    }
+
+    const selectParticipants = () => {
+        setState("participants")
+    }
+
+    const selectOrganizers = () => {
+        setState("organizers")
+    }
+
+    const handleClick = async () => {
+        setActive(!active)
+    }
+
+    return (
+        <>
             <Header size={"huge"}> Редактирование студенческой организации </Header>
-            <StudorgInfoForm/>
-        </Container>
+
+            <Menu attached='top' tabular>
+                <MenuItem
+                    name='Информация'
+                    active={state === "info"}
+                    onClick={selectInfo}
+                />
+                <MenuItem
+                    name="Участники"
+                    active={state === "participants"}
+                    onClick={selectParticipants}
+                />
+                <MenuItem
+                    name="Организаторы"
+                    active={state === "organizers"}
+                    onClick={selectOrganizers}
+                />
+            </Menu>
+
+            <Segment attached='bottom'>
+
+                {state === "info" ? <StudorgInfoForm studorgID={params.studorgID}/> :
+                    state === "participants" ?
+                        <Participants studorgID={params.studorgID}/> :
+                        <Organizers studorgID={params.studorgID}/>
+                }
+
+            </Segment>
+        </>
     );
 }
 
@@ -155,11 +251,22 @@ export default function EditStudorg() {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
 
+    const params = useParams();
+    const studorgID = StudorgID.create();
+    if (params.studorgid === undefined) {
+        // todo: redirect to 404
+        return <LoadingMessage/>
+    }
+    studorgID.iD = params.studorgid.toString()
+
+
     return (
         <>
             <FixedMenu authInfo={authInfo}/>
 
-            <AllInfo/>
+            <Container text className={"main"}>
+                <AllInfo studorgID={studorgID}/>
+            </Container>
 
             <CustomFooter/>
         </>

@@ -21,6 +21,15 @@ export function LoadingMessage() {
     </Message>
 }
 
+export function NoOrgsMessage() {
+    return <Message negative>
+        <MessageContent>
+            <MessageHeader> Подходящих организаций не найдено </MessageHeader>
+            Попробуйте изменить параметры поиска.
+        </MessageContent>
+    </Message>
+}
+
 export function NoRightsMessage() {
     return <Message negative>
         <MessageHeader> У вас нет доступа к данным </MessageHeader>
@@ -36,4 +45,11 @@ export const NoOrganizationsMessage = () => (
             Подобрать себе первую организацию можно через <a href="/search">поиск</a>.
         </p>
     </Message>
+)
+
+export const SavedMessage = () => (
+    <Message
+        success
+        header='Сохранено'
+    />
 )

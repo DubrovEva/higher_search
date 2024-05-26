@@ -22,7 +22,7 @@ message UserInfo {
   string name = 2;
   string surname = 3;
   string middle_name = 4;
-  ProjectRole role = 5;
+  ProjectRole project_role = 5;
 
   string hash = 6;
   string salt = 7;
@@ -31,7 +31,7 @@ message UserInfo {
   string description = 9;
 
   string avatar = 10;
-  repeated common.Links links = 11;
+  repeated common.Link links = 11;
 
   common.Faculty faculty = 12;
   common.Gender gender = 13;
@@ -51,5 +51,6 @@ enum ProjectRole {
 
 message AuthInfo {
   bool isAuth = 1;
-  UserID userID = 2;
+  bool ableToModerate = 2;
+  UserID userID = 3;
 }

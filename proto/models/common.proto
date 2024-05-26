@@ -2,10 +2,10 @@ syntax = "proto3";
 package common;
 option go_package = "github.com/DubrovEva/higher_search/backend/pkg/proto/models";
 
-message Links {
-  string kind = 1;
+message Link {
+  string name = 1;
   string value = 2;
-  string description = 3;
+  string id = 3;
 }
 
 message Tag {

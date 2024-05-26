@@ -10,10 +10,10 @@ export function CustomFooter() {
                     <div className="three wide column">
                         <h4 className="ui inverted header">Общее</h4>
                         <div className="ui inverted link list">
-                            <a href="#" className="item">FAQ</a>
-                            <a href="#" className="item">Правила</a>
-                            <a href="#" className="item">Контакты</a>
-                            <a href="#" className="item">Модераторы</a>
+                            <a href="/faq" className="item">FAQ</a>
+                            <a href="/rules" className="item">Правила</a>
+                            <a href="/contacts" className="item">Контакты</a>
+                            <a href="/moderators" className="item">Модераторы</a>
                         </div>
                     </div>
                     <div className="three wide column">

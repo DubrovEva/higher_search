@@ -2,41 +2,28 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/account.css?url";
-import dummy from "../assets/dummy.png?url";
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardMeta,
     Container,
-    Divider,
     FormButton,
     FormGroup,
-    FormInput,
-    FormSelect,
-    FormTextArea,
-    Grid,
-    GridColumn,
     Header,
-    Icon,
-    Image,
-    Form,
-    Label,
-    CardGroup, GridRow, FormDropdown, Segment
+    Form, FormDropdown, Segment
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {faculty, gender, year, campus, language, category} from "~/components/options";
-import {AuthInfo, UserID} from "~/proto/models/user";
+import {category} from "~/components/options";
+import {AuthInfo} from "~/proto/models/user";
 import Client from "~/client";
 import {SearchRequest} from "~/proto/api/router";
-import {Studorg, StudorgInfo, Studorgs} from "~/proto/models/studorg";
-import {OrgCards} from "~/components/studorg";
+import {Studorg,} from "~/proto/models/studorg";
+import {OrgCards} from "~/components/studorg/studorg";
 import {LoadingMessage} from "~/components/messages";
+import {FacultyForm} from "~/components/studorg/faculty";
+import {LanguageForm} from "~/components/studorg/language";
+import {CampusForm} from "~/components/studorg/campus";
 
 export const meta: MetaFunction = () => {
     return [
@@ -49,19 +36,13 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: styles},
 ];
 
-function StudorgInfoForm(params: {setStudorgs: (studorgs: Studorg[] | undefined ) => void}) {
+function SearchParams() {
+    const [studorgs, setStudorgs] = useState(null as Studorg[] | undefined | null)
     const [searchRequest, setSearchRequest] = useState(SearchRequest.create())
 
     const handleSubmit = async () => {
         const response = await Client.getInstance().searchStudorgs(searchRequest);
-        params.setStudorgs(response)
-        // let response: Studorg[] | undefined;
-        // try {
-        //     response = await Client.getInstance().searchStudorgs(searchRequest);
-        // } catch {
-        //     response = undefined
-        // }
-        // params.setStudorgs(response)
+        setStudorgs(response)
     }
 
     function handleUpdate(key: keyof SearchRequest) {
@@ -70,36 +51,20 @@ function StudorgInfoForm(params: {setStudorgs: (studorgs: Studorg[] | undefined 
         }
     }
 
-
     return (
-        <Segment secondary>
+        <>
+            <Segment secondary>
             <Header size={"huge"}> Поиск студенческой организации </Header>
         <Form onSubmit={handleSubmit}>
-            <FormSelect
-                fluid
-                options={faculty}
-                label={"Факультет"}
-                placeholder='Факультет'
-                value={searchRequest.faculty}
-                onChange={handleUpdate("faculty")}
-            />
+
             <FormGroup widths="equal">
-                <FormSelect
-                    fluid
-                    label={"Кампус"}
-                    options={campus}
-                    placeholder='Кампус'
-                    value={searchRequest.campus}
-                    onChange={handleUpdate("campus")}
-                />
-                <FormSelect
-                    fluid
-                    label={"Основной язык"}
-                    options={language}
-                    placeholder='Основной язык'
-                    value={searchRequest.language}
-                    onChange={handleUpdate("language")}
-                />
+
+                <CampusForm value={searchRequest.campus} onChange={handleUpdate("campus")}/>
+
+                <FacultyForm value={searchRequest.faculty} onChange={handleUpdate("faculty")}/>
+
+                <LanguageForm value={searchRequest.language} onChange={handleUpdate("language")}/>
+
 
             </FormGroup>
             <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection
@@ -111,24 +76,25 @@ function StudorgInfoForm(params: {setStudorgs: (studorgs: Studorg[] | undefined 
             <FormButton> Искать </FormButton>
         </Form>
         </Segment>
+            <Result studorgs={studorgs}/>
+        </>
     );
 }
 
-function AllInfo() {
-    const [studorgs, setStudorgs] = useState([] as Studorg[] | undefined)
+function Result(params: {studorgs: Studorg[] | undefined | null}) {
+    if (params.studorgs === undefined) {
+        return <LoadingMessage/>
+    }
+    if (params.studorgs === null) {
+        return <></>
+    }
 
     return (
-        <Container text className={"main"}  >
-            {/*<Divider/>*/}
-            <StudorgInfoForm setStudorgs={setStudorgs}/>
+        <Segment basic>
+            <OrgCards studorgs={params.studorgs}/>
+        </Segment>
+    )
 
-            {studorgs !== undefined ?
-                <Segment basic>
-                    <OrgCards studorgs={studorgs}/>
-                </Segment> : <LoadingMessage/>
-            }
-        </Container>
-    );
 }
 
 export default function Search() {
@@ -141,7 +107,9 @@ export default function Search() {
         <>
             <FixedMenu authInfo={authInfo}/>
 
-            <AllInfo/>
+            <Container text className={"main"}  >
+                <SearchParams/>
+            </Container>
 
             <CustomFooter/>
         </>

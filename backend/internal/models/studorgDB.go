@@ -30,7 +30,7 @@ type StudorgInfo struct {
 	Logo              sql.NullString `db:"logo"`
 
 	Tags          []string      `db:"tags"`
-	Contacts      []*Contact    `db:"contacts"`
+	Contacts      []*Contact    `db:"contacts.tsx"`
 	Role          sql.NullInt64 `db:"role"`
 	AdmissionTime *time.Time    `db:"admission_time"`
 }
@@ -183,4 +183,19 @@ func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
 	}
 
 	return &protoStudorgInfo, nil
+}
+
+func ListStudorgsToProto(studorgs []StudorgDB) (*proto.Studorgs, error) {
+	var result []*proto.Studorg
+	for _, studorgDB := range studorgs {
+		protoStudorg, err := studorgDB.ToProtoStudorg()
+		if err != nil {
+			msgError := "failed to convert StudorgDB (studorgID = %d) to proto.Studorg: %w"
+			return nil, fmt.Errorf(msgError, studorgDB.ID, err)
+		}
+
+		result = append(result, protoStudorg)
+	}
+
+	return &proto.Studorgs{Studorgs: result}, nil
 }

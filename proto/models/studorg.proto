@@ -23,7 +23,7 @@ message StudorgInfo {
   common.Faculty faculty = 9;
   common.Language language = 10;
 
-  repeated common.Links links = 11;
+  repeated common.Link links = 11;
   string logo = 12;
 
   repeated string tags = 13;
@@ -51,6 +51,8 @@ enum StudorgStatus {
 enum ModerationStatus {
   OTHER_MODERATION_STATUS = 0;
   NOT_MODERATED = 1;
+  HIDDEN = 2;
+  APPROVED = 3;
 }
 
 enum StudorgRole {

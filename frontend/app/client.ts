@@ -3,6 +3,7 @@ import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
 import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {AuthorizationRequest, RegistrationRequest, SearchRequest, WithoutParameters} from "~/proto/api/router";
 import {User, UserID} from "~/proto/models/user";
+import {Participant} from "~/proto/models/participant";
 
 export default class Client {
     private static instance?: Client;
@@ -52,15 +53,12 @@ export default class Client {
 
     async getPersonalInfo() {
         return await this.router.getPersonalInfo(WithoutParameters.create()).response
-        // throw "unknown response"
-        // todo: обработка ошибок
     }
-
 
     async updateUserInfo(user: User) {
         const response = await this.router.updateUser(user).response
-        if (response.response.oneofKind == "user") {
-            return response.response.user
+        if (response.response.oneofKind == "success") {
+            return true
         }
         // if (response.response.oneofKind == "err") {
         //     throw response.response.err
@@ -88,7 +86,7 @@ export default class Client {
 
     async getUserStudorgs() {
         const request = WithoutParameters.create()
-        const response = await this.router.getUserStudorgs(request).response
+        const response = await this.router.getPersonalStudorgs(request).response
         if (response.response.oneofKind == "studorgs") {
             return response.response.studorgs.studorgs
         } else {
@@ -103,7 +101,7 @@ export default class Client {
     }
 
     async createStudorg(studorgInfo: StudorgInfo) {
-        const response = await this.router.insertStudorg(studorgInfo).response
+        const response = await this.router.createStudorg(studorgInfo).response
         if (response.response.oneofKind == "studorgID") {
             return response.response.studorgID
         }
@@ -112,14 +110,14 @@ export default class Client {
 
     async updateStudorg(studorg: Studorg) {
         const response = await this.router.updateStudorg(studorg).response
-        if (response.response.oneofKind == "studorg") {
-            return response.response.studorg.studorgInfo
+        if (response.response.oneofKind == "success") {
+            return true
         }
         // todo: обработка ошибок
     }
 
     async usersNumber(studorgID: StudorgID) {
-        const response = await this.router.getStudorgUsersNumber(studorgID).response
+        const response = await this.router.getParticipantsNumber(studorgID).response
 
         if (response.response.oneofKind == "number") {
             return response.response.number
@@ -127,8 +125,33 @@ export default class Client {
         // todo: обработка ошибок
     }
 
+    async getParticipants(studorgID: StudorgID) {
+        const response = await this.router.getParticipants(studorgID).response
+
+        if (response.response.oneofKind == "participants") {
+            return response.response.participants
+        }
+        // todo: обработка ошибок
+    }
+
+    async updateParticipant(participant: Participant) {
+        const response = await this.router.updateParticipant(participant).response
+
+        return response.response.oneofKind == "success";
+        // todo: обработка ошибок
+    }
+
+    async getOrganizers(studorgID: StudorgID) {
+        const response = await this.router.getOrganizers(studorgID).response
+
+        if (response.response.oneofKind == "participants") {
+            return response.response.participants
+        }
+        // todo: обработка ошибок
+    }
+
     async studorgsNumber(userID: UserID) {
-        const response = await this.router.getUserStudorgsNumber(userID).response
+        const response = await this.router.getPersonalStudorgsNumber(userID).response
 
         if (response.response.oneofKind == "number") {
             return +response.response.number
@@ -165,7 +188,7 @@ export default class Client {
     }
 
     async addUserToStudorg(studorgID: StudorgID) {
-        const response = await this.router.addUserToStudorg(studorgID).response
+        const response = await this.router.addToStudorg(studorgID).response
 
         return response.response.oneofKind == "success";
 
@@ -173,7 +196,7 @@ export default class Client {
     }
 
     async deleteUserFromStudorg(studorgID: StudorgID) {
-        const response = await this.router.deleteUserFromStudorg(studorgID).response
+        const response = await this.router.deleteFromStudorg(studorgID).response
 
         return response.response.oneofKind == "success";
 
@@ -181,14 +204,14 @@ export default class Client {
     }
 
     async checkUserInStudorg(studorgID: StudorgID) {
-        const response = await this.router.getStudorgRole(studorgID).response
+        const response = await this.router.getPersonalStudorgRole(studorgID).response
         return response.role != StudorgRole.UNKNOWN;
 
         // todo: обработка ошибок
     }
 
     async getStudorgRole(studorgID: StudorgID) {
-        const response = await this.router.getStudorgRole(studorgID).response
+        const response = await this.router.getPersonalStudorgRole(studorgID).response
         return response.role
 
         // todo: обработка ошибок

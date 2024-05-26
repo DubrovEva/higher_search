@@ -19,7 +19,7 @@ type UserInfo struct {
 	Name             string         `db:"name"`
 	Surname          string         `db:"surname"`
 	MiddleName       sql.NullString `db:"middlename"`
-	Role             int64          `db:"role"`
+	ProjectRole      int64          `db:"project_role"`
 	Hash             string         `db:"hash"`
 	Salt             string         `db:"salt"`
 	ShortDescription sql.NullString `db:"short_description"`
@@ -81,7 +81,7 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 		Links:            links,
 		MiddleName:       sql.NullString{Valid: true, String: protoInfo.MiddleName},
 		Name:             protoInfo.Name,
-		Role:             int64(protoInfo.Role),
+		ProjectRole:      int64(protoInfo.ProjectRole),
 		Salt:             protoInfo.Salt,
 		ShortDescription: sql.NullString{Valid: true, String: protoInfo.ShortDescription},
 		Surname:          protoInfo.Surname,
@@ -94,7 +94,7 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 }
 
 func (u *UserDB) ToProtoUser() (*proto.User, error) {
-	protoUserInfo, err := u.ToProtoUserInfo()
+	protoUserInfo, err := u.ToProto()
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert UserDB to proto.User: %w", err)
 	}
@@ -107,17 +107,24 @@ func (u *UserDB) ToProtoUser() (*proto.User, error) {
 	return &protoUser, nil
 }
 
-func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
-	//TODO
-	//links, err := jsonToLinks(u.Links)
-	//if err != nil {
-	//	return nil, fmt.Errorf("failed to convert UserInfo links to proto.UserInfo links: %w", err)
-	//}
+func (u *UserDB) AbleToModerate() bool {
+	if u == nil || u.UserInfo == nil {
+		return false
+	}
+
+	return u.ProjectRole == int64(proto.ProjectRole_MODERATOR) || u.ProjectRole == int64(proto.ProjectRole_DEVELOPER)
+}
+
+func (u *UserInfo) ToProto() (*proto.UserInfo, error) {
+	links, err := jsonToLinks(u.Links.String)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert UserInfo links to proto.UserInfo links: %w", err)
+	}
 	var birth *timestamppb.Timestamp
 	if u.Birth != nil {
 		birth = timestamppb.New(*u.Birth)
 	}
-	links := make([]*proto.Links, 0) // todo
+
 	protoUserInfo := proto.UserInfo{
 		Avatar:           u.Avatar.String,
 		Description:      u.Description.String,
@@ -126,7 +133,7 @@ func (u *UserInfo) ToProtoUserInfo() (*proto.UserInfo, error) {
 		Links:            links,
 		MiddleName:       u.MiddleName.String,
 		Name:             u.Name,
-		Role:             proto.ProjectRole(u.Role),
+		ProjectRole:      proto.ProjectRole(u.ProjectRole),
 		Salt:             u.Salt,
 		ShortDescription: u.ShortDescription.String,
 		Surname:          u.Surname,

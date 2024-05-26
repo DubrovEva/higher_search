@@ -13,7 +13,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../google/protobuf/timestamp";
 import { Gender } from "./common";
 import { Faculty } from "./common";
-import { Links } from "./common";
+import { Link } from "./common";
 /**
  * @generated from protobuf message user.User
  */
@@ -66,9 +66,9 @@ export interface UserInfo {
      */
     middleName: string;
     /**
-     * @generated from protobuf field: user.ProjectRole role = 5;
+     * @generated from protobuf field: user.ProjectRole project_role = 5;
      */
-    role: ProjectRole;
+    projectRole: ProjectRole;
     /**
      * @generated from protobuf field: string hash = 6;
      */
@@ -90,9 +90,9 @@ export interface UserInfo {
      */
     avatar: string;
     /**
-     * @generated from protobuf field: repeated common.Links links = 11;
+     * @generated from protobuf field: repeated common.Link links = 11;
      */
-    links: Links[];
+    links: Link[];
     /**
      * @generated from protobuf field: common.Faculty faculty = 12;
      */
@@ -128,7 +128,11 @@ export interface AuthInfo {
      */
     isAuth: boolean;
     /**
-     * @generated from protobuf field: user.UserID userID = 2;
+     * @generated from protobuf field: bool ableToModerate = 2;
+     */
+    ableToModerate: boolean;
+    /**
+     * @generated from protobuf field: user.UserID userID = 3;
      */
     userID?: UserID;
 }
@@ -312,13 +316,13 @@ class UserInfo$Type extends MessageType<UserInfo> {
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "surname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "middle_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "role", kind: "enum", T: () => ["user.ProjectRole", ProjectRole] },
+            { no: 5, name: "project_role", kind: "enum", T: () => ["user.ProjectRole", ProjectRole] },
             { no: 6, name: "hash", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "salt", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "shortDescription", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Links },
+            { no: 11, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Link },
             { no: 12, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
             { no: 13, name: "gender", kind: "enum", T: () => ["common.Gender", Gender] },
             { no: 14, name: "birth", kind: "message", T: () => Timestamp },
@@ -331,7 +335,7 @@ class UserInfo$Type extends MessageType<UserInfo> {
         message.name = "";
         message.surname = "";
         message.middleName = "";
-        message.role = 0;
+        message.projectRole = 0;
         message.hash = "";
         message.salt = "";
         message.shortDescription = "";
@@ -362,8 +366,8 @@ class UserInfo$Type extends MessageType<UserInfo> {
                 case /* string middle_name */ 4:
                     message.middleName = reader.string();
                     break;
-                case /* user.ProjectRole role */ 5:
-                    message.role = reader.int32();
+                case /* user.ProjectRole project_role */ 5:
+                    message.projectRole = reader.int32();
                     break;
                 case /* string hash */ 6:
                     message.hash = reader.string();
@@ -380,8 +384,8 @@ class UserInfo$Type extends MessageType<UserInfo> {
                 case /* string avatar */ 10:
                     message.avatar = reader.string();
                     break;
-                case /* repeated common.Links links */ 11:
-                    message.links.push(Links.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated common.Link links */ 11:
+                    message.links.push(Link.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* common.Faculty faculty */ 12:
                     message.faculty = reader.int32();
@@ -419,9 +423,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
         /* string middle_name = 4; */
         if (message.middleName !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.middleName);
-        /* user.ProjectRole role = 5; */
-        if (message.role !== 0)
-            writer.tag(5, WireType.Varint).int32(message.role);
+        /* user.ProjectRole project_role = 5; */
+        if (message.projectRole !== 0)
+            writer.tag(5, WireType.Varint).int32(message.projectRole);
         /* string hash = 6; */
         if (message.hash !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.hash);
@@ -437,9 +441,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
         /* string avatar = 10; */
         if (message.avatar !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.avatar);
-        /* repeated common.Links links = 11; */
+        /* repeated common.Link links = 11; */
         for (let i = 0; i < message.links.length; i++)
-            Links.internalBinaryWrite(message.links[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            Link.internalBinaryWrite(message.links[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* common.Faculty faculty = 12; */
         if (message.faculty !== 0)
             writer.tag(12, WireType.Varint).int32(message.faculty);
@@ -514,12 +518,14 @@ class AuthInfo$Type extends MessageType<AuthInfo> {
     constructor() {
         super("user.AuthInfo", [
             { no: 1, name: "isAuth", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "userID", kind: "message", T: () => UserID }
+            { no: 2, name: "ableToModerate", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "userID", kind: "message", T: () => UserID }
         ]);
     }
     create(value?: PartialMessage<AuthInfo>): AuthInfo {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.isAuth = false;
+        message.ableToModerate = false;
         if (value !== undefined)
             reflectionMergePartial<AuthInfo>(this, message, value);
         return message;
@@ -532,7 +538,10 @@ class AuthInfo$Type extends MessageType<AuthInfo> {
                 case /* bool isAuth */ 1:
                     message.isAuth = reader.bool();
                     break;
-                case /* user.UserID userID */ 2:
+                case /* bool ableToModerate */ 2:
+                    message.ableToModerate = reader.bool();
+                    break;
+                case /* user.UserID userID */ 3:
                     message.userID = UserID.internalBinaryRead(reader, reader.uint32(), options, message.userID);
                     break;
                 default:
@@ -550,9 +559,12 @@ class AuthInfo$Type extends MessageType<AuthInfo> {
         /* bool isAuth = 1; */
         if (message.isAuth !== false)
             writer.tag(1, WireType.Varint).bool(message.isAuth);
-        /* user.UserID userID = 2; */
+        /* bool ableToModerate = 2; */
+        if (message.ableToModerate !== false)
+            writer.tag(2, WireType.Varint).bool(message.ableToModerate);
+        /* user.UserID userID = 3; */
         if (message.userID)
-            UserID.internalBinaryWrite(message.userID, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            UserID.internalBinaryWrite(message.userID, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

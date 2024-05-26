@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/DubrovEva/higher_search/backend/internal/models"
 	service "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
@@ -24,13 +26,16 @@ func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 	studorg := &models.StudorgDB{ID: studorgID}
 	err := s.db.Get(studorg, "SELECT * FROM studorgs WHERE id = $1", studorg.ID)
 	if err != nil {
-		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
-		// TODO: логи и завертывание ошибок
-		return nil, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		// TODO: логи
+		return nil, fmt.Errorf("failed to get studorg from repository: %w", err)
 	}
 
 	tags, err := s.GetTags(studorgID)
 	if err != nil {
+		// TODO: логи
 		return nil, fmt.Errorf("failed to get studorg tags: %w", err)
 	}
 	studorg.Tags = tags
@@ -202,4 +207,18 @@ func (s *Studorg) DeleteTags(studorg *models.StudorgDB) error {
 	_, err := s.db.NamedExec(`DELETE FROM studorg2tag WHERE studorg_id = :id`, studorg)
 
 	return err
+}
+
+func (s *Studorg) Moderate(studorg *models.StudorgDB) error {
+	_, err := s.db.NamedExec(`
+		UPDATE Studorgs
+		SET 
+		    moderation_comment=:moderation_comment, 
+		    moderation_status=:moderation_status
+		WHERE ID = :id`, studorg)
+	if err != nil {
+		return fmt.Errorf("failed to moderate studorg (%d): %w", studorg.ID, err)
+	}
+
+	return nil
 }
