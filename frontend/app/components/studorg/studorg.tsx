@@ -9,18 +9,11 @@ import {
     Divider,
     Icon,
     Image,
-    Item,
-    ItemContent,
-    ItemExtra,
-    ItemGroup,
-    ItemHeader,
-    ItemImage,
-    ItemMeta,
     Label
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import dummy from "../../assets/dummy.png?url";
-import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
+import {ModerationStatus, Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {category} from "~/components/options";
 import Client from "~/client";
 import {NoOrganizationsMessage, NoOrgsMessage} from "~/components/messages";
@@ -47,7 +40,7 @@ export function OrgCard(params: { studorgInfo: StudorgInfo, ID: StudorgID}) {
     }, [])
 
     return (
-        <Card href={"/studorg/" + params.ID.iD} color={"grey"}>
+        <Card href={"/studorg/" + params.ID.iD} color={"grey"} >
             <CardContent>
                 <Image floated='left' rounded size='tiny' src={dummy}/>
                 <CardHeader> {params.studorgInfo.name} </CardHeader>
@@ -94,7 +87,10 @@ function UserOrgCard(params: {studorg: Studorg}) {
             <CardHeader > {params.studorg.studorgInfo?.name}
             </CardHeader>
             {params.studorg.studorgInfo?.admissionTime && <CardMeta> Участник с <AdmissionTime seconds={+params.studorg.studorgInfo?.admissionTime?.seconds}/> </CardMeta> }
-            <CardContent extra> <RoleToLabel role={params.studorg.studorgInfo?.role!}/> </CardContent>
+            <CardContent extra>
+                <RoleToLabel role={params.studorg.studorgInfo?.role!}/>
+                <ModerationStatusToLabel status={params.studorg.studorgInfo?.moderationStatus!}/>
+            </CardContent>
         </CardContent>
     </Card>
 }
@@ -141,5 +137,11 @@ function RoleToLabel(params: {role: StudorgRole}) {
         return <Label color="green"> Глава </Label>
     } else {
         return <Label> Участник </Label>
+    }
+}
+
+function ModerationStatusToLabel(params: {status: ModerationStatus}) {
+    if (params.status == ModerationStatus.HIDDEN) {
+        return <Label color="red" basic> Скрыта модератором </Label>
     }
 }

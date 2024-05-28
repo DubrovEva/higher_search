@@ -17,12 +17,12 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { StudorgRole } from "../models/studorg";
 import { ErrorCode } from "../models/errors";
 import { Studorgs } from "../models/studorg";
+import { StudorgID } from "../models/studorg";
 import { Studorg } from "../models/studorg";
 import { Participants } from "../models/participant";
 import { Participant } from "../models/participant";
 import { UserID } from "../models/user";
 import { User } from "../models/user";
-import { StudorgID } from "../models/studorg";
 import { Language } from "../models/common";
 import { Campus } from "../models/common";
 import { Faculty } from "../models/common";
@@ -87,23 +87,6 @@ export interface SearchRequest {
      * @generated from protobuf field: repeated string tags = 4;
      */
     tags: string[];
-}
-/**
- * @generated from protobuf message router.ModerationRequest
- */
-export interface ModerationRequest {
-    /**
-     * @generated from protobuf field: studorg.StudorgID id = 1;
-     */
-    id?: StudorgID;
-    /**
-     * @generated from protobuf field: string moderationStatus = 2;
-     */
-    moderationStatus: string;
-    /**
-     * @generated from protobuf field: string moderationComment = 3;
-     */
-    moderationComment: string;
 }
 // responses
 
@@ -558,68 +541,6 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
  * @generated MessageType for protobuf message router.SearchRequest
  */
 export const SearchRequest = new SearchRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ModerationRequest$Type extends MessageType<ModerationRequest> {
-    constructor() {
-        super("router.ModerationRequest", [
-            { no: 1, name: "id", kind: "message", T: () => StudorgID },
-            { no: 2, name: "moderationStatus", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "moderationComment", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<ModerationRequest>): ModerationRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.moderationStatus = "";
-        message.moderationComment = "";
-        if (value !== undefined)
-            reflectionMergePartial<ModerationRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ModerationRequest): ModerationRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* studorg.StudorgID id */ 1:
-                    message.id = StudorgID.internalBinaryRead(reader, reader.uint32(), options, message.id);
-                    break;
-                case /* string moderationStatus */ 2:
-                    message.moderationStatus = reader.string();
-                    break;
-                case /* string moderationComment */ 3:
-                    message.moderationComment = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ModerationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* studorg.StudorgID id = 1; */
-        if (message.id)
-            StudorgID.internalBinaryWrite(message.id, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string moderationStatus = 2; */
-        if (message.moderationStatus !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.moderationStatus);
-        /* string moderationComment = 3; */
-        if (message.moderationComment !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.moderationComment);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message router.ModerationRequest
- */
-export const ModerationRequest = new ModerationRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserResponse$Type extends MessageType<UserResponse> {
     constructor() {

@@ -32,6 +32,7 @@ CREATE TABLE studorgs
 
     moderation_status  INTEGER             NOT NULL,
     moderation_comment VARCHAR,
+    moderator_id       INTEGER,
 
     short_description  VARCHAR,
     description        VARCHAR,

@@ -5,7 +5,6 @@ import styles from "~/styles/account.css?url";
 
 import {
     Button,
-    ButtonGroup,
     Container,
     Divider,
     Form,
@@ -17,7 +16,8 @@ import {
     Grid,
     GridColumn,
     Header,
-    Icon, Segment,
+    Icon,
+    Segment,
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
@@ -32,7 +32,7 @@ import {UserCard} from "~/components/user";
 import {LoadingMessage, NoRightsMessage, SavedMessage} from "~/components/messages";
 import {FacultyForm} from "~/components/studorg/faculty";
 import {Link} from "~/proto/models/common";
-import {LinkForm, LinksForm} from "~/components/studorg/links";
+import {LinkForm} from "~/components/studorg/links";
 
 export const meta: MetaFunction = () => {
     return [
@@ -162,7 +162,7 @@ function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInf
                     {links && links.map((link) => <LinkForm id={link.id} links={links} setLinks={setLinks}/>)}
 
                     <Button onClick={addLink} icon={"plus"}> Добавить </Button>
-                    <Button onClick={handleSubmit} > Сохранить </Button>
+                    <Button onClick={handleSubmit}> Сохранить </Button>
                     <SavedMessage/>
                 </Segment>
             </Form>
@@ -171,7 +171,7 @@ function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInf
     )
 }
 
-function PageContent(params: {userID: UserID}) {
+function PageContent(params: { userID: UserID }) {
     const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined)
 
     useEffect(() => {
@@ -181,12 +181,9 @@ function PageContent(params: {userID: UserID}) {
     }, [])
 
     if (userInfo === undefined) {
-        return <LoadingMessage/>
-    }
-    console.log("userInfo", userInfo)
-
-    const save = (e: { preventDefault: () => void; }) => {
-
+        return <Container className={"main"}>
+            <LoadingMessage/>
+        </Container>
     }
 
     return (

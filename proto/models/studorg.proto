@@ -13,24 +13,26 @@ message StudorgInfo {
   string name = 1;
   google.protobuf.Timestamp createdAt = 2;
   studorg.StudorgStatus studorgStatus = 3;
+
   studorg.ModerationStatus moderationStatus = 4;
   string moderationComment = 5;
+  int64 moderatorID = 6;
 
-  string shortDescription = 6;
-  string description = 7;
+  string shortDescription = 7;
+  string description = 8;
 
-  common.Campus campus = 8;
-  common.Faculty faculty = 9;
-  common.Language language = 10;
+  common.Campus campus = 9;
+  common.Faculty faculty = 10;
+  common.Language language = 11;
 
-  repeated common.Link links = 11;
-  string logo = 12;
+  repeated common.Link links = 12;
+  string logo = 13;
 
-  repeated string tags = 13;
-  repeated Contact contacts = 14;
+  repeated string tags = 14;
+  repeated Contact contacts = 15;
 
-  studorg.StudorgRole role = 15;
-  google.protobuf.Timestamp admissionTime = 16;
+  studorg.StudorgRole role = 16;
+  google.protobuf.Timestamp admissionTime = 17;
 }
 
 message Studorg {

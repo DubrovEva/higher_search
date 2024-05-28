@@ -222,7 +222,7 @@ func (r *Router) GetStudorg(_ context.Context, studorgID *proto.StudorgID) (*ser
 	return &service.StudorgResponse{Response: &service.StudorgResponse_Studorg{Studorg: result}}, nil
 }
 
-func (r *Router) InsertStudorg(ctx context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgIDResponse, error) {
+func (r *Router) CreateStudorg(ctx context.Context, StudorgInfo *proto.StudorgInfo) (*service.StudorgIDResponse, error) {
 	userID, err := r.JwtManager.ValidateAuthorization(ctx)
 	if err != nil {
 		protoErr := service.Error{Msg: err.Error(), Code: proto.ErrorCode_AUTH_FAILED}
@@ -255,6 +255,9 @@ func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert protoStudorg to dbStudorg: %w", err)
 	}
+
+	fmt.Println("successed convertion")
+	fmt.Println(studorgDB)
 
 	if err = r.Studorg.Update(studorgDB); err != nil {
 		return nil, fmt.Errorf("failed to update studorg in db: %w", err)
@@ -428,11 +431,19 @@ func (r *Router) UpdateParticipant(_ context.Context, protoParticipant *proto.Pa
 
 // moderation methods
 
-func (r *Router) ModerateStudorg(_ context.Context, protoStudorg *proto.Studorg) (*service.SuccessResponse, error) {
+func (r *Router) ModerateStudorg(ctx context.Context, protoStudorg *proto.Studorg) (*service.SuccessResponse, error) {
+	userID, err := r.JwtManager.ValidateAuthorization(ctx)
+	if err != nil {
+		protoErr := service.Error{Msg: err.Error(), Code: proto.ErrorCode_AUTH_FAILED}
+		return &service.SuccessResponse{Response: &service.SuccessResponse_Err{Err: &protoErr}}, nil
+	}
+
 	studorgDB, err := models.NewStudorgDB(protoStudorg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert protoStudorg to dbStudorg: %w", err)
 	}
+
+	studorgDB.ModeratorID = models.ToSqlInt64(userID.ID)
 
 	if err = r.Studorg.Moderate(studorgDB); err != nil {
 		return nil, fmt.Errorf("failed to update studorg in db: %w", err)

@@ -1,7 +1,13 @@
 import {RouterClient} from "~/proto/api/router_client";
 import {GrpcWebFetchTransport} from "@protobuf-ts/grpcweb-transport"
-import {Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
-import {AuthorizationRequest, RegistrationRequest, SearchRequest, WithoutParameters} from "~/proto/api/router";
+import {ModerationStatus, Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
+import {
+    AuthorizationRequest,
+    ParticipantsResponse,
+    RegistrationRequest,
+    SearchRequest,
+    WithoutParameters
+} from "~/proto/api/router";
 import {User, UserID} from "~/proto/models/user";
 import {Participant} from "~/proto/models/participant";
 
@@ -125,8 +131,13 @@ export default class Client {
         // todo: обработка ошибок
     }
 
-    async getParticipants(studorgID: StudorgID) {
-        const response = await this.router.getParticipants(studorgID).response
+    async getParticipants(studorgID: StudorgID, onlyOrganizers: boolean) {
+        let response : ParticipantsResponse
+        if (onlyOrganizers) {
+            response = await this.router.getOrganizers(studorgID).response
+        } else {
+            response = await this.router.getParticipants(studorgID).response
+        }
 
         if (response.response.oneofKind == "participants") {
             return response.response.participants
@@ -138,15 +149,6 @@ export default class Client {
         const response = await this.router.updateParticipant(participant).response
 
         return response.response.oneofKind == "success";
-        // todo: обработка ошибок
-    }
-
-    async getOrganizers(studorgID: StudorgID) {
-        const response = await this.router.getOrganizers(studorgID).response
-
-        if (response.response.oneofKind == "participants") {
-            return response.response.participants
-        }
         // todo: обработка ошибок
     }
 
@@ -214,6 +216,32 @@ export default class Client {
         const response = await this.router.getPersonalStudorgRole(studorgID).response
         return response.role
 
+        // todo: обработка ошибок
+    }
+
+    async hideStudorg(studorg: Studorg) {
+        if (studorg.studorgInfo == undefined) {
+            studorg.studorgInfo = StudorgInfo.create()
+        }
+
+        studorg.studorgInfo.moderationStatus = ModerationStatus.HIDDEN
+
+        const response = await this.router.moderateStudorg(studorg).response
+
+        return response.response.oneofKind == "success";
+        // todo: обработка ошибок
+    }
+
+    async showStudorg(studorg: Studorg) {
+        if (studorg.studorgInfo == undefined) {
+            studorg.studorgInfo = StudorgInfo.create()
+        }
+
+        studorg.studorgInfo.moderationStatus = ModerationStatus.NOT_MODERATED
+
+        const response = await this.router.moderateStudorg(studorg).response
+
+        return response.response.oneofKind == "success";
         // todo: обработка ошибок
     }
 }

@@ -15,19 +15,21 @@ type StudorgDB struct {
 }
 
 type StudorgInfo struct {
-	Name             string    `db:"name"`
-	CreatedAt        time.Time `db:"created_at"`
-	StudorgStatus    int64     `db:"studorg_status"`
-	ModerationStatus int64     `db:"moderation_status"`
+	Name          string    `db:"name"`
+	CreatedAt     time.Time `db:"created_at"`
+	StudorgStatus int64     `db:"studorg_status"`
 
+	ModerationStatus  int64          `db:"moderation_status"`
 	ModerationComment sql.NullString `db:"moderation_comment"`
-	ShortDescription  sql.NullString `db:"short_description"`
-	Description       sql.NullString `db:"description"`
-	Campus            sql.NullInt64  `db:"campus"`
-	Faculty           sql.NullInt64  `db:"faculty"`
-	Language          sql.NullInt64  `db:"language"`
-	Links             sql.NullString `db:"links"`
-	Logo              sql.NullString `db:"logo"`
+	ModeratorID       sql.NullInt64  `db:"moderator_id"`
+
+	ShortDescription sql.NullString `db:"short_description"`
+	Description      sql.NullString `db:"description"`
+	Campus           sql.NullInt64  `db:"campus"`
+	Faculty          sql.NullInt64  `db:"faculty"`
+	Language         sql.NullInt64  `db:"language"`
+	Links            sql.NullString `db:"links"`
+	Logo             sql.NullString `db:"logo"`
 
 	Tags          []string      `db:"tags"`
 	Contacts      []*Contact    `db:"contacts.tsx"`
@@ -63,13 +65,11 @@ func NewStudorgDB(Studorg *proto.Studorg) (*StudorgDB, error) {
 		StudorgInfo: nil,
 	}
 
-	if Studorg.StudorgInfo != nil {
-		StudorgInfoDB, err := NewStudorgInfoDB(Studorg.StudorgInfo)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert proto.Studorg to StudorgDB: %w", err)
-		}
-		StudorgDB.StudorgInfo = StudorgInfoDB
+	StudorgInfoDB, err := NewStudorgInfoDB(Studorg.StudorgInfo)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert proto.Studorg to StudorgDB: %w", err)
 	}
+	StudorgDB.StudorgInfo = StudorgInfoDB
 
 	return &StudorgDB, nil
 }
@@ -102,11 +102,13 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 	}
 
 	StudorgInfoDB := StudorgInfo{
-		Name:              protoInfo.Name,
-		CreatedAt:         createdAt,
-		StudorgStatus:     int64(protoInfo.StudorgStatus),
+		Name:          protoInfo.Name,
+		CreatedAt:     createdAt,
+		StudorgStatus: int64(protoInfo.StudorgStatus),
+
 		ModerationStatus:  int64(protoInfo.ModerationStatus),
 		ModerationComment: ToSqlString(protoInfo.ModerationComment),
+		ModeratorID:       ToSqlInt64(protoInfo.ModeratorID),
 
 		ShortDescription: ToSqlString(protoInfo.ShortDescription),
 		Description:      ToSqlString(protoInfo.Description),
@@ -126,7 +128,7 @@ func NewStudorgInfoDB(protoInfo *proto.StudorgInfo) (*StudorgInfo, error) {
 }
 
 func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
-	protoStudorgInfo, err := u.ToProtoStudorgInfo()
+	protoStudorgInfo, err := u.ToProto()
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert StudorgInfoDB to ProtoStudorgInfo: %w", err)
 	}
@@ -139,7 +141,11 @@ func (u *StudorgDB) ToProtoStudorg() (*proto.Studorg, error) {
 	return &protoStudorg, nil
 }
 
-func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
+func (s *StudorgInfo) ToProto() (*proto.StudorgInfo, error) {
+	if s == nil {
+		return nil, fmt.Errorf("StudorgInfo is empty")
+	}
+
 	links, err := jsonToLinks(s.Links.String)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert json to proto.StudorgInfo: %w", err)
@@ -165,6 +171,7 @@ func (s *StudorgInfo) ToProtoStudorgInfo() (*proto.StudorgInfo, error) {
 
 		ModerationStatus:  proto.ModerationStatus(s.ModerationStatus),
 		ModerationComment: s.ModerationComment.String,
+		ModeratorID:       s.ModeratorID.Int64,
 
 		ShortDescription: s.ShortDescription.String,
 		Description:      s.Description.String,

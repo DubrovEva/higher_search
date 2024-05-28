@@ -2,11 +2,11 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/studorg.css?url";
-import {Button, Container, Divider, Grid, GridColumn, Header, Label, Segment, SidebarPusher} from "semantic-ui-react";
+import {Button, Container, Divider, Grid, GridColumn, Header, Label, Segment} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import {FixedMenu} from "~/components/menu";
 import Client from "~/client";
-import {StudorgID, StudorgInfo} from "~/proto/models/studorg";
+import {ModerationStatus, StudorgID, StudorgInfo} from "~/proto/models/studorg";
 import {useParams} from "react-router";
 import {AuthInfo} from "~/proto/models/user";
 import {LoadingMessage} from "~/components/messages";
@@ -14,6 +14,7 @@ import {LinksView} from "~/components/studorg/links";
 import {faculty} from "~/components/studorg/faculty";
 import {language} from "~/components/studorg/language";
 import {campus} from "~/components/studorg/campus";
+import {Moderation, OrgHiddenMessage} from "~/components/moderation";
 
 export const meta: MetaFunction = () => {
     return [
@@ -49,6 +50,10 @@ function UserInStudorgButton(params: { studorgID: StudorgID }) {
 }
 
 function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: StudorgID, authInfo: AuthInfo }) {
+    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN) {
+        return <OrgHiddenMessage/>
+    }
+
     const currentCampus = campus.find(x => x.value === params.studorgInfo.campus)?.text
     const currentLanguage = language.find(x => x.value === params.studorgInfo.language)?.text
     const currentFaculty = faculty.find(x => x.value === params.studorgInfo.faculty)?.text
@@ -69,13 +74,13 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
 
             <Grid stackable columns={"equal"} stretched>
                 <GridColumn width={3}>
-                    <Label horizontal>  {currentCampus}</Label>
+                    <Label horizontal> {currentCampus}</Label>
                 </GridColumn>
                 <GridColumn>
-                    <Label horizontal>  {currentFaculty}</Label>
+                    <Label horizontal> {currentFaculty}</Label>
                 </GridColumn>
                 <GridColumn width={3}>
-                    <Label horizontal>  {currentLanguage} </Label>
+                    <Label horizontal> {currentLanguage} </Label>
                 </GridColumn>
             </Grid>
 
@@ -93,8 +98,10 @@ export default function ViewStudorg() {
     studorgID.iD = params.studorgid?.toString()!
 
     useEffect(() => {
-        Client.getInstance().getStudorgInfo(studorgID).then(x => setStudorgInfo(x))
-    }, [])
+        if (studorgInfo === undefined) {
+            Client.getInstance().getStudorgInfo(studorgID).then(x => setStudorgInfo(x))
+        }
+    }, [studorgInfo])
 
     const [authInfo, setAuthInfo] = useState(AuthInfo.create())
     useEffect(() => {
@@ -103,16 +110,16 @@ export default function ViewStudorg() {
 
     return (
         <>
-            <SidebarPusher>
-                <FixedMenu authInfo={authInfo}/>
-                <Container text className={"main"}>
-                    {
-                        studorgInfo ?
-                            <OrganizationInfo studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
-                            : <LoadingMessage/>
-                    }
-                </Container>
-            </SidebarPusher>
+            <FixedMenu authInfo={authInfo}/>
+            <Container text className={"main"}>
+                {
+                    studorgInfo ?
+                        <OrganizationInfo studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
+                        : <LoadingMessage/>
+                }
+                {authInfo.ableToModerate &&
+                    <Moderation studorg={{iD: studorgID, studorgInfo: studorgInfo}} setStudorgInfo={setStudorgInfo}/>}
+            </Container>
 
         </>
     );

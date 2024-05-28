@@ -1,5 +1,15 @@
 import {Participant} from "~/proto/models/participant";
-import {Button, Card, CardContent, CardDescription, CardHeader, Dimmer, Icon, Image} from "semantic-ui-react";
+import {
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    Dimmer,
+    Icon,
+    Image,
+    Placeholder, PlaceholderLine
+} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import Client from "~/client";
 import {LinksView} from "~/components/studorg/links";
@@ -40,6 +50,19 @@ export function ParticipantCard(params: { participant: Participant }) {
             </CardContent>
         </Card>
     );
+}
+
+export function ParticipantPlaceholder() {
+    return (
+        <Placeholder>
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+        </Placeholder>
+    )
 }
 
 function AdminButton(params: {participant: Participant}) {

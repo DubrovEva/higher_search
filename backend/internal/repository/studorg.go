@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/DubrovEva/higher_search/backend/internal/models"
 	service "github.com/DubrovEva/higher_search/backend/pkg/proto/api"
+	proto "github.com/DubrovEva/higher_search/backend/pkg/proto/models"
 	"github.com/jmoiron/sqlx"
 	"log"
 )
@@ -27,9 +28,9 @@ func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 	err := s.db.Get(studorg, "SELECT * FROM studorgs WHERE id = $1", studorg.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
+			return nil, models.ErrStudorgNotFound
 		}
-		// TODO: логи
+
 		return nil, fmt.Errorf("failed to get studorg from repository: %w", err)
 	}
 
@@ -45,7 +46,7 @@ func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 
 func (s *Studorg) GetAll() ([]models.StudorgDB, error) {
 	var studorgs []models.StudorgDB
-	err := s.db.Select(&studorgs, "SELECT * FROM studorgs")
+	err := s.db.Select(&studorgs, "SELECT * FROM studorgs WHERE NOT moderation_status = $1", int64(proto.ModerationStatus_HIDDEN))
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
@@ -88,7 +89,7 @@ func (s *Studorg) Search(request *service.SearchRequest) ([]models.StudorgDB, er
 func (s *Studorg) GetByUser(userID int64) ([]models.StudorgDB, error) {
 	var studorgs []models.StudorgDB
 	err := s.db.Select(&studorgs, `SELECT
-    	id, name, created_at, studorg_status, moderation_status, moderation_comment, short_description, description, campus, faculty, language, links, logo, role, admission_time
+    	id, name, created_at, studorg_status, moderation_status, moderation_comment, moderator_id, short_description, description, campus, faculty, language, links, logo, role, admission_time
     FROM studorgs JOIN user2studorg ON studorgs.id = user2studorg.studorg_id WHERE user2studorg.user_id = $1`, userID)
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
@@ -214,7 +215,8 @@ func (s *Studorg) Moderate(studorg *models.StudorgDB) error {
 		UPDATE Studorgs
 		SET 
 		    moderation_comment=:moderation_comment, 
-		    moderation_status=:moderation_status
+		    moderation_status=:moderation_status,
+			moderator_id=:moderator_id
 		WHERE ID = :id`, studorg)
 	if err != nil {
 		return fmt.Errorf("failed to moderate studorg (%d): %w", studorg.ID, err)

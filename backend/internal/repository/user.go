@@ -30,7 +30,7 @@ func (u *User) Get(userID int64) (*models.UserDB, error) {
 	err := u.db.Get(user, "SELECT * FROM users WHERE ID = $1", user.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
+			return nil, models.ErrUserNotFound
 		}
 		// TODO: логи и завертывание ошибок
 		return nil, err

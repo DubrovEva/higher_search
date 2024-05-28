@@ -50,47 +50,51 @@ export interface StudorgInfo {
      */
     moderationComment: string;
     /**
-     * @generated from protobuf field: string shortDescription = 6;
+     * @generated from protobuf field: int64 moderatorID = 6;
+     */
+    moderatorID: string;
+    /**
+     * @generated from protobuf field: string shortDescription = 7;
      */
     shortDescription: string;
     /**
-     * @generated from protobuf field: string description = 7;
+     * @generated from protobuf field: string description = 8;
      */
     description: string;
     /**
-     * @generated from protobuf field: common.Campus campus = 8;
+     * @generated from protobuf field: common.Campus campus = 9;
      */
     campus: Campus;
     /**
-     * @generated from protobuf field: common.Faculty faculty = 9;
+     * @generated from protobuf field: common.Faculty faculty = 10;
      */
     faculty: Faculty;
     /**
-     * @generated from protobuf field: common.Language language = 10;
+     * @generated from protobuf field: common.Language language = 11;
      */
     language: Language;
     /**
-     * @generated from protobuf field: repeated common.Link links = 11;
+     * @generated from protobuf field: repeated common.Link links = 12;
      */
     links: Link[];
     /**
-     * @generated from protobuf field: string logo = 12;
+     * @generated from protobuf field: string logo = 13;
      */
     logo: string;
     /**
-     * @generated from protobuf field: repeated string tags = 13;
+     * @generated from protobuf field: repeated string tags = 14;
      */
     tags: string[];
     /**
-     * @generated from protobuf field: repeated studorg.Contact contacts = 14;
+     * @generated from protobuf field: repeated studorg.Contact contacts = 15;
      */
     contacts: Contact[];
     /**
-     * @generated from protobuf field: studorg.StudorgRole role = 15;
+     * @generated from protobuf field: studorg.StudorgRole role = 16;
      */
     role: StudorgRole;
     /**
-     * @generated from protobuf field: google.protobuf.Timestamp admissionTime = 16;
+     * @generated from protobuf field: google.protobuf.Timestamp admissionTime = 17;
      */
     admissionTime?: Timestamp;
 }
@@ -248,17 +252,18 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
             { no: 3, name: "studorgStatus", kind: "enum", T: () => ["studorg.StudorgStatus", StudorgStatus] },
             { no: 4, name: "moderationStatus", kind: "enum", T: () => ["studorg.ModerationStatus", ModerationStatus] },
             { no: 5, name: "moderationComment", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "shortDescription", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "campus", kind: "enum", T: () => ["common.Campus", Campus] },
-            { no: 9, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
-            { no: 10, name: "language", kind: "enum", T: () => ["common.Language", Language] },
-            { no: 11, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Link },
-            { no: 12, name: "logo", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 13, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 14, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact },
-            { no: 15, name: "role", kind: "enum", T: () => ["studorg.StudorgRole", StudorgRole] },
-            { no: 16, name: "admissionTime", kind: "message", T: () => Timestamp }
+            { no: 6, name: "moderatorID", kind: "scalar", T: 3 /*ScalarType.INT64*/ },
+            { no: 7, name: "shortDescription", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "campus", kind: "enum", T: () => ["common.Campus", Campus] },
+            { no: 10, name: "faculty", kind: "enum", T: () => ["common.Faculty", Faculty] },
+            { no: 11, name: "language", kind: "enum", T: () => ["common.Language", Language] },
+            { no: 12, name: "links", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Link },
+            { no: 13, name: "logo", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 15, name: "contacts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Contact },
+            { no: 16, name: "role", kind: "enum", T: () => ["studorg.StudorgRole", StudorgRole] },
+            { no: 17, name: "admissionTime", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<StudorgInfo>): StudorgInfo {
@@ -267,6 +272,7 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         message.studorgStatus = 0;
         message.moderationStatus = 0;
         message.moderationComment = "";
+        message.moderatorID = "0";
         message.shortDescription = "";
         message.description = "";
         message.campus = 0;
@@ -301,37 +307,40 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
                 case /* string moderationComment */ 5:
                     message.moderationComment = reader.string();
                     break;
-                case /* string shortDescription */ 6:
+                case /* int64 moderatorID */ 6:
+                    message.moderatorID = reader.int64().toString();
+                    break;
+                case /* string shortDescription */ 7:
                     message.shortDescription = reader.string();
                     break;
-                case /* string description */ 7:
+                case /* string description */ 8:
                     message.description = reader.string();
                     break;
-                case /* common.Campus campus */ 8:
+                case /* common.Campus campus */ 9:
                     message.campus = reader.int32();
                     break;
-                case /* common.Faculty faculty */ 9:
+                case /* common.Faculty faculty */ 10:
                     message.faculty = reader.int32();
                     break;
-                case /* common.Language language */ 10:
+                case /* common.Language language */ 11:
                     message.language = reader.int32();
                     break;
-                case /* repeated common.Link links */ 11:
+                case /* repeated common.Link links */ 12:
                     message.links.push(Link.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* string logo */ 12:
+                case /* string logo */ 13:
                     message.logo = reader.string();
                     break;
-                case /* repeated string tags */ 13:
+                case /* repeated string tags */ 14:
                     message.tags.push(reader.string());
                     break;
-                case /* repeated studorg.Contact contacts */ 14:
+                case /* repeated studorg.Contact contacts */ 15:
                     message.contacts.push(Contact.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* studorg.StudorgRole role */ 15:
+                case /* studorg.StudorgRole role */ 16:
                     message.role = reader.int32();
                     break;
-                case /* google.protobuf.Timestamp admissionTime */ 16:
+                case /* google.protobuf.Timestamp admissionTime */ 17:
                     message.admissionTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.admissionTime);
                     break;
                 default:
@@ -361,39 +370,42 @@ class StudorgInfo$Type extends MessageType<StudorgInfo> {
         /* string moderationComment = 5; */
         if (message.moderationComment !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.moderationComment);
-        /* string shortDescription = 6; */
+        /* int64 moderatorID = 6; */
+        if (message.moderatorID !== "0")
+            writer.tag(6, WireType.Varint).int64(message.moderatorID);
+        /* string shortDescription = 7; */
         if (message.shortDescription !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.shortDescription);
-        /* string description = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.shortDescription);
+        /* string description = 8; */
         if (message.description !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.description);
-        /* common.Campus campus = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.description);
+        /* common.Campus campus = 9; */
         if (message.campus !== 0)
-            writer.tag(8, WireType.Varint).int32(message.campus);
-        /* common.Faculty faculty = 9; */
+            writer.tag(9, WireType.Varint).int32(message.campus);
+        /* common.Faculty faculty = 10; */
         if (message.faculty !== 0)
-            writer.tag(9, WireType.Varint).int32(message.faculty);
-        /* common.Language language = 10; */
+            writer.tag(10, WireType.Varint).int32(message.faculty);
+        /* common.Language language = 11; */
         if (message.language !== 0)
-            writer.tag(10, WireType.Varint).int32(message.language);
-        /* repeated common.Link links = 11; */
+            writer.tag(11, WireType.Varint).int32(message.language);
+        /* repeated common.Link links = 12; */
         for (let i = 0; i < message.links.length; i++)
-            Link.internalBinaryWrite(message.links[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* string logo = 12; */
+            Link.internalBinaryWrite(message.links[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* string logo = 13; */
         if (message.logo !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.logo);
-        /* repeated string tags = 13; */
+            writer.tag(13, WireType.LengthDelimited).string(message.logo);
+        /* repeated string tags = 14; */
         for (let i = 0; i < message.tags.length; i++)
-            writer.tag(13, WireType.LengthDelimited).string(message.tags[i]);
-        /* repeated studorg.Contact contacts = 14; */
+            writer.tag(14, WireType.LengthDelimited).string(message.tags[i]);
+        /* repeated studorg.Contact contacts = 15; */
         for (let i = 0; i < message.contacts.length; i++)
-            Contact.internalBinaryWrite(message.contacts[i], writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* studorg.StudorgRole role = 15; */
+            Contact.internalBinaryWrite(message.contacts[i], writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* studorg.StudorgRole role = 16; */
         if (message.role !== 0)
-            writer.tag(15, WireType.Varint).int32(message.role);
-        /* google.protobuf.Timestamp admissionTime = 16; */
+            writer.tag(16, WireType.Varint).int32(message.role);
+        /* google.protobuf.Timestamp admissionTime = 17; */
         if (message.admissionTime)
-            Timestamp.internalBinaryWrite(message.admissionTime, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.admissionTime, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

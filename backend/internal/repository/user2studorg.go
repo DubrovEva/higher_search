@@ -59,7 +59,7 @@ func (u *User2Studorg) Get(participant *models.ParticipantDB) (*models.Participa
 		participant.UserID,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
+			return nil, models.ErrParticipantNotFound
 		}
 		return nil, fmt.Errorf("failed to get user2studorg from db: %w", err)
 	}
@@ -172,11 +172,11 @@ func (u *User2Studorg) GetPersonalStudorgsNumber(userID int64) (int64, error) {
 }
 
 func (u *User2Studorg) CheckUserInStudorg(participant *models.ParticipantDB) bool {
-	result := models.ParticipantDB{
+	result := &models.ParticipantDB{
 		StudorgID: participant.StudorgID,
 		UserID:    participant.UserID,
 	}
-	_, err := u.Get(&result)
+	result, err := u.Get(result)
 
-	return err == nil
+	return err == nil && result != nil
 }

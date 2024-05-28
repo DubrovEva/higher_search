@@ -8,6 +8,7 @@ var (
 	ErrNoMetadata          = fmt.Errorf("no metadata in context")
 	ErrDeletingHead        = fmt.Errorf("can't delete head")
 
-	ErrStudorgNotFound = fmt.Errorf("studorg not found")
-	ErrUserNotFound    = fmt.Errorf("user not found")
+	ErrStudorgNotFound     = fmt.Errorf("studorg not found")
+	ErrUserNotFound        = fmt.Errorf("user not found")
+	ErrParticipantNotFound = fmt.Errorf("participant not found")
 )
