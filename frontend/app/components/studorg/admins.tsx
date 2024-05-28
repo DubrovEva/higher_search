@@ -131,3 +131,86 @@
 //         </Segment>
 //     )
 // }
+
+import {StudorgID, StudorgRole} from "~/proto/models/studorg";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardGroup,
+    CardHeader,
+    Dimmer,
+    Header,
+    Icon,
+    Image,
+    Segment
+} from "semantic-ui-react";
+import React, {useEffect, useState} from "react";
+import Client from "~/client";
+import {Participant} from "~/proto/models/participant";
+import dummy from "../../assets/dummy.png?url";
+import {OrganizationsNumber, UserCard} from "~/components/user";
+import {LinksView} from "~/components/studorg/links";
+
+export function Admins(params: { studorgID: StudorgID }) {
+    const [participants, setParticipants] = useState<Participant[] | undefined>(undefined)
+    useEffect(() => {
+        Client.getInstance().getParticipants(params.studorgID, true).then(response =>
+            setParticipants(response!.participants))
+    }, [])
+
+    if (participants === undefined || participants.length === 0) {
+        return <></>
+    }
+
+    return (
+        <Segment basic>
+            <Header as={"h3"} textAlign={"center"} > Администраторы сообщества </Header>
+
+            <CardGroup itemsPerRow={1}>
+                {participants?.map(participant =>
+                    <AdminCard key={participant.id} participant={participant}/>
+                )}
+
+            </CardGroup>
+
+        </Segment>
+    )
+}
+
+export function AdminCard(params: { participant: Participant }) {
+    if (!params.participant.userInfo) {
+        return <Card>loading...</Card>
+    }
+
+    const [studorgsNumber, setStudorgsNumber] = useState<number | null>(null)
+    useEffect(() => {
+        Client.getInstance().studorgsNumber(params.participant.userID!).then(result => setStudorgsNumber(result))
+    }, [])
+
+    const [active, setActive] = useState(false)
+
+    return (
+        <Card onClick={() => setActive(!active)}>
+            <Dimmer active={active} onClickOutside={() => setActive(!active)} page>
+                <UserCard user={{userInfo: params.participant.userInfo, iD: params.participant.userID}}/>
+                <LinksView links={params.participant.userInfo!.links}/>
+            </Dimmer>
+            <CardContent>
+                <CardContent>
+                    <Image src={dummy} size={"mini"} floated={"right"}/>
+                </CardContent>
+                <CardHeader>
+                    {params.participant.userInfo!.name} {params.participant.userInfo!.surname}
+                    {"  "}{params.participant.role === StudorgRole.HEAD && <Icon name="star"/>}
+                </CardHeader>
+                <CardDescription>
+                    {params.participant.userInfo!.description}
+                </CardDescription>
+            </CardContent>
+            <CardContent extra>
+                {studorgsNumber != null && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber}/></>}
+            </CardContent>
+        </Card>
+    );
+}

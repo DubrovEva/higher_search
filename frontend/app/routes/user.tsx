@@ -61,7 +61,7 @@ function Organizations() {
     );
 }
 
-function PersonalInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInfo: any }) {
+function PersonalInfo(params: { userID: UserID, userInfo: UserInfo | undefined, updateUserInfo: any }) {
     const [saved, saveInfo] = useState(false)
 
     const handleUpdate = (key: keyof UserInfo) => {
@@ -73,7 +73,6 @@ function PersonalInfo(params: { userID: UserID, userInfo: UserInfo, updateUserIn
     const handleSubmit = async () => {
         await Client.getInstance().updateUserInfo({userInfo: params.userInfo, iD: params.userID});
         saveInfo(true)
-        setTimeout(() => saveInfo(false), 2000)
     }
 
     return (
@@ -83,7 +82,7 @@ function PersonalInfo(params: { userID: UserID, userInfo: UserInfo, updateUserIn
             <Grid stackable columns={2}>
                 <GridColumn> <UserCard user={{userInfo: params.userInfo, iD: params.userID}}/> </GridColumn>
                 <GridColumn>
-                    <Form onSubmit={handleSubmit} success={saved}>
+                    {params.userInfo && <Form onSubmit={handleSubmit} success={saved}>
                         <FormGroup widths='equal'>
                             <FormInput fluid label="Фамилия" placeholder='Фамилия' value={params.userInfo.surname}
                                        onChange={handleUpdate("surname")}/>
@@ -120,6 +119,7 @@ function PersonalInfo(params: { userID: UserID, userInfo: UserInfo, updateUserIn
                         <SavedMessage/>
                         <FormButton type="submit"> Сохранить </FormButton>
                     </Form>
+                    }
                 </GridColumn>
             </Grid>
         </Container>
@@ -133,9 +133,6 @@ function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInf
     if (links === undefined && params.userInfo.links.length !== 0) {
         setLinks(params.userInfo.links)
     }
-
-    console.log("links", links)
-    console.log("userInfo.links", params.userInfo.links)
 
     const addLink = (e: { preventDefault: () => void; }) => {
         e.preventDefault()
@@ -180,16 +177,10 @@ function PageContent(params: { userID: UserID }) {
         })
     }, [])
 
-    if (userInfo === undefined) {
-        return <Container className={"main"}>
-            <LoadingMessage/>
-        </Container>
-    }
-
     return (
         <>
             <PersonalInfo userInfo={userInfo} userID={params.userID} updateUserInfo={setUserInfo}/>
-            <ContactInfo userInfo={userInfo} userID={params.userID} updateUserInfo={setUserInfo}/>
+            {userInfo && <ContactInfo userInfo={userInfo} userID={params.userID} updateUserInfo={setUserInfo}/>}
             <Organizations/>
         </>
     )
@@ -200,12 +191,21 @@ export default function ViewUser() {
     useEffect(() => {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
+    console.log(authInfo)
+
+    if (authInfo === undefined) {
+        return <></>
+    }
+
+    if (!authInfo.isAuth || authInfo.userID === undefined) {
+        return <></>
+    }
 
     return (
         <>
             <FixedMenuForAccount authInfo={authInfo}/>
 
-            {authInfo.isAuth ? <PageContent userID={authInfo.userID!}/> : <NoRightsMessage/>}
+            <PageContent userID={authInfo.userID}/>
 
             <CustomFooter/>
         </>

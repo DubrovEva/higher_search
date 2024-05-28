@@ -12,19 +12,20 @@ import {
     FormGroup,
     FormInput,
     FormTextArea,
-    Header
+    Header, Placeholder, PlaceholderLine, PlaceholderParagraph
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {category} from "~/components/options";
 import {StudorgInfo} from "~/proto/models/studorg";
 import {AuthInfo} from "~/proto/models/user";
 import {NoRightsMessage} from "~/components/messages";
 import {FacultyForm} from "~/components/studorg/faculty";
 import {LanguageForm} from "~/components/studorg/language";
 import {CampusForm} from "~/components/studorg/campus";
+import {TagsForm} from "~/components/studorg/tags";
+import {PlaceholderForm} from "~/components/placeholder";
 
 export const meta: MetaFunction = () => {
     return [
@@ -86,10 +87,7 @@ function StudorgInfoForm() {
                           placeholder='Полное описание организации, будет отображено на отдельной странице.'
                           {...editable('description')}/>
 
-            <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection options={category}
-                          value={studorgInfo.tags}
-                          onChange={handleUpdate("tags")}
-            />
+            <TagsForm onChange={handleUpdate("tags")} value={studorgInfo.tags}/>
 
             <FormGroup widths='equal'>
             </FormGroup>
@@ -99,13 +97,15 @@ function StudorgInfoForm() {
     );
 }
 
-function AllInfo() {
-    return (
-        <Container text className={"main"}>
-            <Header size={"huge"}> Создание студенческой организации </Header>
-            <StudorgInfoForm/>
-        </Container>
-    );
+function AllInfo(params: {authInfo: AuthInfo | undefined}) {
+    if (params.authInfo === undefined || !params.authInfo.isAuth) {
+        return <PlaceholderForm/>
+    }
+    if (!params.authInfo.isAuth) {
+        return <NoRightsMessage/>
+    }
+
+    return <StudorgInfoForm/>
 }
 
 export default function CreateStudorg() {
@@ -114,21 +114,16 @@ export default function CreateStudorg() {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
 
-    if (!authInfo.isAuth) {
-        return <>
-            <FixedMenu authInfo={authInfo}/>
-            <Container text className={"main"}>
-                <NoRightsMessage/>
-            </Container>
-            <CustomFooter/>
-        </>
-    }
-
     return (
         <>
             <FixedMenu authInfo={authInfo}/>
 
-            <AllInfo/>
+            <Container text className={"main"}>
+                <Header size={"huge"}> Создание студенческой организации </Header>
+
+                <AllInfo authInfo={authInfo}/>
+
+            </Container>
 
             <CustomFooter/>
         </>

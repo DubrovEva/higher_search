@@ -64,7 +64,7 @@ export const Moderation = (params: {
         params.setStudorgInfo(undefined)
     }
 
-    return <>
+    return <Segment basic padded>
         <Dimmer page onClickOutside={onClickOutside} active={active}>
             <Segment style={{ width: 400 }}>
                 <Message warning>
@@ -84,7 +84,7 @@ export const Moderation = (params: {
             </Segment>
         </Dimmer>
         <HideOrShowFormButton status={studorgInfo.moderationStatus} hide={onClickHide} show={onClickShow}/>
-    </>
+    </Segment>
 }
 
 function HideOrShowFormButton(params: { status: ModerationStatus, hide: () => void, show: () => void }) {

@@ -13,7 +13,7 @@ import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
 import {AuthInfo, User} from "~/proto/models/user";
 import Client from "~/client";
-import {ClickableUserCard, UserCard} from "~/components/user";
+import {ClickableUserCard} from "~/components/user";
 import {LoadingMessage} from "~/components/messages";
 
 export const meta: MetaFunction = () => {

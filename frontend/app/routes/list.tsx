@@ -13,6 +13,7 @@ import {FixedMenu} from "~/components/menu";
 import Client from "~/client";
 import {Studorg} from "~/proto/models/studorg";
 import {AuthInfo} from "~/proto/models/user";
+import {OrgCardsPlaceholder} from "~/components/placeholder";
 
 export const meta: MetaFunction = () => {
     return [
@@ -36,7 +37,9 @@ function Body() {
         <Container text className="main">
             <Header size={"huge"}> Все организации </Header>
             <Divider/>
-            {studorgs ? <OrgCards studorgs={studorgs}/> : <span>Loading...</span>}
+            {studorgs ? <OrgCards studorgs={studorgs}/> :
+                <OrgCardsPlaceholder/>
+            }
         </Container>
     );
 }

@@ -15,6 +15,7 @@ import {faculty} from "~/components/studorg/faculty";
 import {language} from "~/components/studorg/language";
 import {campus} from "~/components/studorg/campus";
 import {Moderation, OrgHiddenMessage} from "~/components/moderation";
+import {Admins} from "~/components/studorg/admins";
 
 export const meta: MetaFunction = () => {
     return [
@@ -84,7 +85,15 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
                 </GridColumn>
             </Grid>
 
-            <LinksView links={params.studorgInfo.links!}/>
+
+            <Grid columns={2} container inverted>
+                <GridColumn width={6}>
+                    <LinksView links={params.studorgInfo.links!}/>
+                </GridColumn>
+                <GridColumn width={10} floated={"right"}>
+                    <Admins studorgID={params.studorgID}/>
+                </GridColumn>
+            </Grid>
 
         </>
     );
@@ -111,15 +120,19 @@ export default function ViewStudorg() {
     return (
         <>
             <FixedMenu authInfo={authInfo}/>
+
             <Container text className={"main"}>
                 {
                     studorgInfo ?
                         <OrganizationInfo studorgInfo={studorgInfo} studorgID={studorgID} authInfo={authInfo}/>
                         : <LoadingMessage/>
                 }
+
                 {authInfo.ableToModerate &&
                     <Moderation studorg={{iD: studorgID, studorgInfo: studorgInfo}} setStudorgInfo={setStudorgInfo}/>}
+
             </Container>
+
 
         </>
     );

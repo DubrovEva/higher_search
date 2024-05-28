@@ -9,14 +9,14 @@ import {
     Divider,
     Icon,
     Image,
-    Label
+    Label, Placeholder, PlaceholderHeader, PlaceholderLine, PlaceholderParagraph
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import dummy from "../../assets/dummy.png?url";
 import {ModerationStatus, Studorg, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
-import {category} from "~/components/options";
 import Client from "~/client";
 import {NoOrganizationsMessage, NoOrgsMessage} from "~/components/messages";
+import {category} from "~/components/studorg/tags";
 
 export function OrgCards(params: { studorgs: Studorg[]}) {
     if (params.studorgs.length == 0) {

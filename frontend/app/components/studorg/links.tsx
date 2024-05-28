@@ -5,8 +5,6 @@ import {
     FormButton,
     FormGroup,
     FormInput,
-    Grid,
-    GridColumn,
     Header,
     Segment,
     SemanticCOLORS
@@ -29,15 +27,13 @@ export function LinksForm(params: { links: Link[], setLinks: (links: Link[]) => 
         params.setLinks(params.links.concat({id: crypto.randomUUID()} as Link))
     }
 
-    return (
-        <Segment>
-            <Header as={"h5"}> Ссылки на внешние источники </Header>
+    return <Segment>
+        <Header as={"h5"}> Ссылки на внешние источники </Header>
 
-            {params.links.map((link) => <LinkForm id={link.id} links={params.links} setLinks={params.setLinks}/>)}
+        {params.links.map((link) => <LinkForm id={link.id} links={params.links} setLinks={params.setLinks}/>)}
 
-            <Button onClick={handleSubmit} circular> Добавить </Button>
-        </Segment>
-    )
+        <Button onClick={handleSubmit} circular> Добавить </Button>
+    </Segment>
 }
 
 export function LinkForm(params: { links: Link[], id: string, setLinks: (links: Link[]) => void }) {
@@ -104,9 +100,7 @@ function LinkButton(params: { link: Link, compact: boolean }) {
 }
 
 export function CompactLinksView(params: { links: Link[] }) {
-    return (
-        <Segment basic>
-            {params.links.map((link) => <LinkButton link={link} compact={true}/>)}
-        </Segment>
-    )
+    return <Segment basic>
+        {params.links.map((link) => <LinkButton link={link} compact={true}/>)}
+    </Segment>
 }

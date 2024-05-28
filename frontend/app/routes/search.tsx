@@ -14,7 +14,6 @@ import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
 import {FixedMenu} from "~/components/menu";
-import {category} from "~/components/options";
 import {AuthInfo} from "~/proto/models/user";
 import Client from "~/client";
 import {SearchRequest} from "~/proto/api/router";
@@ -24,6 +23,8 @@ import {LoadingMessage} from "~/components/messages";
 import {FacultyForm} from "~/components/studorg/faculty";
 import {LanguageForm} from "~/components/studorg/language";
 import {CampusForm} from "~/components/studorg/campus";
+import {category} from "~/components/studorg/tags";
+import {OrgCardsPlaceholder} from "~/components/placeholder";
 
 export const meta: MetaFunction = () => {
     return [
@@ -37,7 +38,7 @@ export const links: LinksFunction = () => [
 ];
 
 function SearchParams() {
-    const [studorgs, setStudorgs] = useState(null as Studorg[] | undefined | null)
+    const [studorgs, setStudorgs] = useState(undefined as Studorg[] | undefined)
     const [searchRequest, setSearchRequest] = useState(SearchRequest.create())
 
     const handleSubmit = async () => {
@@ -76,15 +77,12 @@ function SearchParams() {
             <FormButton> Искать </FormButton>
         </Form>
         </Segment>
-            <Result studorgs={studorgs}/>
+            {studorgs === undefined ? OrgCardsPlaceholder : <Result studorgs={studorgs}/>}
         </>
     );
 }
 
-function Result(params: {studorgs: Studorg[] | undefined | null}) {
-    if (params.studorgs === undefined) {
-        return <LoadingMessage/>
-    }
+function Result(params: {studorgs: Studorg[]}) {
     if (params.studorgs === null) {
         return <></>
     }

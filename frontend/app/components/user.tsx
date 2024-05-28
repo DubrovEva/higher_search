@@ -1,6 +1,5 @@
 import {User} from "~/proto/models/user";
 import {
-    Button,
     Card,
     CardContent,
     CardDescription,
@@ -9,13 +8,15 @@ import {
     Dimmer,
     Icon,
     Image,
-    Placeholder, PlaceholderLine
+    Placeholder,
+    PlaceholderHeader,
+    PlaceholderImage,
+    PlaceholderLine
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import Client from "~/client";
 import dummy from "../assets/dummy.png?url";
 import {faculty} from "~/components/studorg/faculty";
-import {Participant} from "~/proto/models/participant";
 import {LinksView} from "~/components/studorg/links";
 
 
@@ -31,7 +32,7 @@ export function OrganizationsNumber(params: { number: number }) {
 
 export function UserCard(params: { user: User }) {
     if (!params.user.userInfo) {
-        return <Card>loading...</Card>
+        return <UserCardPlaceholder/>
     }
     const currentFaculty = faculty.find(f => f.value === params.user.userInfo!.faculty)?.text
 
@@ -60,6 +61,34 @@ export function UserCard(params: { user: User }) {
             </CardContent>
         </Card>
     );
+}
+
+export function UserCardPlaceholder() {
+    return <Card>
+        <Placeholder style={{height: 260, width: 290}}>
+            <PlaceholderImage wrapped/>
+        </Placeholder>
+
+        <CardContent>
+
+            <Placeholder>
+                <PlaceholderHeader/>
+            </Placeholder>
+
+            <Placeholder>
+                <PlaceholderLine/>
+                <PlaceholderLine/>
+                <PlaceholderLine/>
+            </Placeholder>
+        </CardContent>
+
+        <CardMeta>
+            <Placeholder>
+                <PlaceholderLine/>
+            </Placeholder>
+        </CardMeta>
+
+    </Card>
 }
 
 export function ClickableUserCard(params: { user: User }) {
@@ -99,12 +128,12 @@ export function ClickableUserCard(params: { user: User }) {
 export function ParticipantPlaceholder() {
     return (
         <Placeholder>
-            <PlaceholderLine />
-            <PlaceholderLine />
-            <PlaceholderLine />
-            <PlaceholderLine />
-            <PlaceholderLine />
-            <PlaceholderLine />
+            <PlaceholderLine/>
+            <PlaceholderLine/>
+            <PlaceholderLine/>
+            <PlaceholderLine/>
+            <PlaceholderLine/>
+            <PlaceholderLine/>
         </Placeholder>
     )
 }

@@ -40,7 +40,10 @@ export function ParticipantCard(params: { participant: Participant }) {
                 <CardContent>
                     <Image src={dummy} size={"mini"} floated={"right"}/>
                 </CardContent>
-                <CardHeader> {params.participant.userInfo!.name} {params.participant.userInfo!.surname} </CardHeader>
+                <CardHeader>
+                    {params.participant.userInfo!.name} {params.participant.userInfo!.surname}
+                    {"  "}{params.participant.role === StudorgRole.HEAD && <Icon name="star"/>}
+                </CardHeader>
                 <CardDescription>
                     {params.participant.userInfo!.description}
                 </CardDescription>
