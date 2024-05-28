@@ -51,7 +51,7 @@ export default function Login() {
     }
 
     return (
-        <Grid verticalAlign={"middle"} textAlign={"center"}>
+        <Grid verticalAlign={"middle"} textAlign={"center"} style={{height: "100vh"}}>
             <GridColumn>
                 <Header as="h1" color={"black"}>
                     <Image src={my_logo} href={"/"}/>
@@ -70,7 +70,7 @@ export default function Login() {
                                 error
                                 header='Некорректные данные'
                                 id={"errorMessage"}
-                                content='Проверьте правильность введенных данных. Email должен быть с доменом @edu.hse.ru'
+                                content='Проверьте правильность введенных данных. Email должен быть с доменом @edu.hse.ru или @hse.ru'
                             />
                         </FormField>
                         <Button fluid color="black" size="large" type="submit"> Зарегистрироваться </Button>
