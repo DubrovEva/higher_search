@@ -12,5 +12,9 @@ export enum ErrorCode {
     /**
      * @generated from protobuf enum value: AUTH_FAILED = 1;
      */
-    AUTH_FAILED = 1
+    AUTH_FAILED = 1,
+    /**
+     * @generated from protobuf enum value: INVALID_EMAIL = 2;
+     */
+    INVALID_EMAIL = 2
 }

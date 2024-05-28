@@ -6,9 +6,10 @@ import {
     ParticipantsResponse,
     RegistrationRequest,
     SearchRequest,
+    UsersRequest,
     WithoutParameters
 } from "~/proto/api/router";
-import {User, UserID} from "~/proto/models/user";
+import {ProjectRole, User, UserID} from "~/proto/models/user";
 import {Participant} from "~/proto/models/participant";
 
 export default class Client {
@@ -49,6 +50,36 @@ export default class Client {
         const response = await this.router.getUser(userID).response
         if (response.response.oneofKind == "user") {
             return response.response.user.userInfo
+        }
+        // if (response.response.oneofKind == "err") {
+        //     throw response.response.err
+        // }
+        // throw "unknown response"
+        // todo: обработка ошибок
+    }
+
+    async getDevelopers() {
+        const request = UsersRequest.create()
+        request.projectRole = ProjectRole.DEVELOPER
+
+        const response = await this.router.getUsers(request).response
+        if (response.response.oneofKind == "users") {
+            return response.response.users.users
+        }
+        // if (response.response.oneofKind == "err") {
+        //     throw response.response.err
+        // }
+        // throw "unknown response"
+        // todo: обработка ошибок
+    }
+
+    async getModerators() {
+        const request = UsersRequest.create()
+        request.projectRole = ProjectRole.MODERATOR
+
+        const response = await this.router.getUsers(request).response
+        if (response.response.oneofKind == "users") {
+            return response.response.users.users
         }
         // if (response.response.oneofKind == "err") {
         //     throw response.response.err

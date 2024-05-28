@@ -12,6 +12,7 @@ service Router {
   // user methods
   rpc GetPersonalInfo(WithoutParameters) returns (UserResponse);
   rpc GetUser (user.UserID) returns (UserResponse);
+  rpc GetUsers (UsersRequest) returns (UsersResponse);
   rpc InsertUser (user.UserInfo) returns (UserResponse);
   rpc UpdateUser (user.User) returns (SuccessResponse);
 
@@ -70,12 +71,23 @@ message SearchRequest {
   repeated string tags = 4;
 }
 
+message UsersRequest {
+  user.ProjectRole project_role = 1; // project_role
+}
+
 // responses
 
 message UserResponse {
   oneof response {
     Error err = 1;
     user.User user = 2;
+  }
+}
+
+message UsersResponse {
+  oneof response {
+    Error err = 1;
+    user.Users users = 2;
   }
 }
 

@@ -57,7 +57,7 @@ func NewUserInfoDB(protoInfo *proto.UserInfo) (*UserInfo, error) {
 	if protoInfo.Surname == "" {
 		return nil, fmt.Errorf("field Surname is empty")
 	}
-	email, err := processEmail(protoInfo.Email)
+	email, err := ProcessEmail(protoInfo.Email)
 	if err != nil {
 		return nil, fmt.Errorf("field Email isn't valid: %w", err)
 	}
@@ -145,14 +145,26 @@ func (u *UserInfo) ToProto() (*proto.UserInfo, error) {
 	return &protoUserInfo, nil
 }
 
-func processEmail(email string) (string, error) {
+func ProcessEmail(email string) (string, error) {
 	address, err := mail.ParseAddress(email)
 	if err != nil {
 		return "", err
 	}
-	if !strings.Contains(address.Address, "@edu.hse.ru") {
+	if !strings.Contains(address.Address, "@edu.hse.ru") && !strings.Contains(address.Address, "@hse.ru") {
 		return "", fmt.Errorf("domen doesn't equal edu.hse.ru")
 	}
 
 	return address.Address, nil
+}
+
+func ListUsersToProto(users []UserDB) ([]*proto.User, error) {
+	protoUsers := make([]*proto.User, 0, len(users))
+	for _, user := range users {
+		protoUser, err := user.ToProtoUser()
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert UserDB to proto.User: %w", err)
+		}
+		protoUsers = append(protoUsers, protoUser)
+	}
+	return protoUsers, nil
 }

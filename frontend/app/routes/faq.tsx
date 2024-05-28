@@ -4,7 +4,7 @@ import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/account.css?url";
 import {
     Container,
-    Header,
+    Header, List, ListItem, Segment, SegmentGroup,
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
@@ -34,8 +34,37 @@ export default function FAQ() {
         <>
             <FixedMenu authInfo={authInfo}/>
 
-            <Container text className={"main"}  >
+            <Container text className={"main"}>
                 <Header size={"huge"}> Часто задаваемые вопросы </Header>
+
+                <Segment basic>
+                    <Segment padded>
+                        <Header as={"h3"}> Как создать студенческую организацию? </Header>
+
+                        <p> Для того, чтобы создать студенческую организацию, необходимо авторизоваться или зарегистрироваться на сайте.</p>
+
+                    </Segment>
+
+                    <Segment padded>
+                        <Header as={"h3"}> Моя организация будет считаться официальной организацией ВШЭ? </Header>
+
+                        <p>
+                            Нет, все текущие организации не считаются официальными, если ЦПСИ не согласовывал их отдельно.
+                        </p>
+
+                    </Segment>
+
+                    <Segment padded>
+                        <Header as={"h3"}> Почему моя организация пропала из общего списка? </Header>
+
+                        <p>
+                            Организации, нарушающие правила сервиса, скрываются модератором. Для того, чтобы снова сделать
+                            организацию публичной, нужно исправить указанные недостатки и подать заявку на повторную проверку модератором.
+                        </p>
+
+                    </Segment>
+
+                </Segment>
             </Container>
 
             <CustomFooter/>

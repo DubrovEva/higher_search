@@ -26,6 +26,7 @@ type RouterClient interface {
 	// user methods
 	GetPersonalInfo(ctx context.Context, in *WithoutParameters, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUser(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*UserResponse, error)
+	GetUsers(ctx context.Context, in *UsersRequest, opts ...grpc.CallOption) (*UsersResponse, error)
 	InsertUser(ctx context.Context, in *models.UserInfo, opts ...grpc.CallOption) (*UserResponse, error)
 	UpdateUser(ctx context.Context, in *models.User, opts ...grpc.CallOption) (*SuccessResponse, error)
 	// authorization methods
@@ -72,6 +73,15 @@ func (c *routerClient) GetPersonalInfo(ctx context.Context, in *WithoutParameter
 func (c *routerClient) GetUser(ctx context.Context, in *models.UserID, opts ...grpc.CallOption) (*UserResponse, error) {
 	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, "/router.Router/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) GetUsers(ctx context.Context, in *UsersRequest, opts ...grpc.CallOption) (*UsersResponse, error) {
+	out := new(UsersResponse)
+	err := c.cc.Invoke(ctx, "/router.Router/GetUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -274,6 +284,7 @@ type RouterServer interface {
 	// user methods
 	GetPersonalInfo(context.Context, *WithoutParameters) (*UserResponse, error)
 	GetUser(context.Context, *models.UserID) (*UserResponse, error)
+	GetUsers(context.Context, *UsersRequest) (*UsersResponse, error)
 	InsertUser(context.Context, *models.UserInfo) (*UserResponse, error)
 	UpdateUser(context.Context, *models.User) (*SuccessResponse, error)
 	// authorization methods
@@ -310,6 +321,9 @@ func (UnimplementedRouterServer) GetPersonalInfo(context.Context, *WithoutParame
 }
 func (UnimplementedRouterServer) GetUser(context.Context, *models.UserID) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedRouterServer) GetUsers(context.Context, *UsersRequest) (*UsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedRouterServer) InsertUser(context.Context, *models.UserInfo) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertUser not implemented")
@@ -419,6 +433,24 @@ func _Router_GetUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RouterServer).GetUser(ctx, req.(*models.UserID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/router.Router/GetUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).GetUsers(ctx, req.(*UsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -815,6 +847,10 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _Router_GetUser_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _Router_GetUsers_Handler,
 		},
 		{
 			MethodName: "InsertUser",

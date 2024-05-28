@@ -21,6 +21,7 @@ type Router struct {
 
 type UserRepo interface {
 	Get(userID int64) (*models.UserDB, error)
+	GetAll(role int64) ([]models.UserDB, error)
 	Insert(userInfo *models.UserInfo) (*models.UserDB, error)
 	Update(user *models.UserDB) error
 	GetByAuthorizationData(email, password string) (*models.UserDB, error)
@@ -102,6 +103,22 @@ func (r *Router) GetUser(_ context.Context, userID *proto.UserID) (*service.User
 	}
 
 	return &service.UserResponse{Response: &service.UserResponse_User{User: result}}, nil
+}
+
+func (r *Router) GetUsers(_ context.Context, request *service.UsersRequest) (*service.UsersResponse, error) {
+	role := int64(request.GetProjectRole())
+	users, err := r.User.GetAll(role)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users from db: %w", err)
+	}
+
+	result, err := models.ListUsersToProto(users)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert UserDB to proto.User: %w", err)
+	}
+
+	protoUsers := &proto.Users{Users: result}
+	return &service.UsersResponse{Response: &service.UsersResponse_Users{Users: protoUsers}}, nil
 }
 
 func (r *Router) InsertUser(_ context.Context, userInfo *proto.UserInfo) (*service.UserResponse, error) {
@@ -189,6 +206,11 @@ func (r *Router) RegisterUser(
 	ctx context.Context,
 	registrationRequest *service.RegistrationRequest,
 ) (*service.UserIDResponse, error) {
+	if _, err := models.ProcessEmail(registrationRequest.Email); err != nil {
+		protoError := &service.Error{Msg: err.Error(), Code: proto.ErrorCode_INVALID_EMAIL}
+		return &service.UserIDResponse{Response: &service.UserIDResponse_Err{Err: protoError}}, nil
+	}
+
 	userDB, err := r.User.Create(registrationRequest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)

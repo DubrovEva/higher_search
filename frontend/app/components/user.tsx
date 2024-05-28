@@ -1,9 +1,22 @@
 import {User} from "~/proto/models/user";
-import {Button, Card, CardContent, CardDescription, CardHeader, CardMeta, Dimmer, Icon, Image} from "semantic-ui-react";
+import {
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardMeta,
+    Dimmer,
+    Icon,
+    Image,
+    Placeholder, PlaceholderLine
+} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import Client from "~/client";
 import dummy from "../assets/dummy.png?url";
 import {faculty} from "~/components/studorg/faculty";
+import {Participant} from "~/proto/models/participant";
+import {LinksView} from "~/components/studorg/links";
 
 
 export function OrganizationsNumber(params: { number: number }) {
@@ -47,4 +60,51 @@ export function UserCard(params: { user: User }) {
             </CardContent>
         </Card>
     );
+}
+
+export function ClickableUserCard(params: { user: User }) {
+    if (!params.user.userInfo) {
+        return <></>
+    }
+
+    const [studorgsNumber, setStudorgsNumber] = useState<number | null>(null)
+    useEffect(() => {
+        Client.getInstance().studorgsNumber(params.user.iD!).then(result => setStudorgsNumber(result))
+    }, [])
+
+    const [active, setActive] = useState(false)
+
+    return (
+        <Card onClick={() => setActive(!active)}>
+            <Dimmer active={active} onClickOutside={() => setActive(!active)} page>
+                <UserCard user={{userInfo: params.user.userInfo, iD: params.user.iD}}/>
+                <LinksView links={params.user.userInfo!.links}/>
+            </Dimmer>
+            <CardContent>
+                <CardContent>
+                    <Image src={dummy} size={"mini"} floated={"right"}/>
+                </CardContent>
+                <CardHeader> {params.user.userInfo!.name} {params.user.userInfo!.surname} </CardHeader>
+                <CardDescription>
+                    {params.user.userInfo!.description}
+                </CardDescription>
+            </CardContent>
+            <CardContent extra>
+                {studorgsNumber != null && <><Icon name='users'/> <OrganizationsNumber number={studorgsNumber}/></>}
+            </CardContent>
+        </Card>
+    );
+}
+
+export function ParticipantPlaceholder() {
+    return (
+        <Placeholder>
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+            <PlaceholderLine />
+        </Placeholder>
+    )
 }

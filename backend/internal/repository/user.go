@@ -39,6 +39,20 @@ func (u *User) Get(userID int64) (*models.UserDB, error) {
 	return user, nil
 }
 
+func (u *User) GetAll(role int64) ([]models.UserDB, error) {
+	var users []models.UserDB
+	err := u.db.Select(&users, "SELECT * FROM users WHERE project_role = $1", role)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		// TODO: логи и завертывание ошибок
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (u *User) Insert(userInfo *models.UserInfo) (*models.UserDB, error) {
 	user := &models.UserDB{ID: 0, UserInfo: userInfo}
 

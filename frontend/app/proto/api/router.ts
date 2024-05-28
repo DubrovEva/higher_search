@@ -22,7 +22,9 @@ import { Studorg } from "../models/studorg";
 import { Participants } from "../models/participant";
 import { Participant } from "../models/participant";
 import { UserID } from "../models/user";
+import { Users } from "../models/user";
 import { User } from "../models/user";
+import { ProjectRole } from "../models/user";
 import { Language } from "../models/common";
 import { Campus } from "../models/common";
 import { Faculty } from "../models/common";
@@ -88,6 +90,15 @@ export interface SearchRequest {
      */
     tags: string[];
 }
+/**
+ * @generated from protobuf message router.UsersRequest
+ */
+export interface UsersRequest {
+    /**
+     * @generated from protobuf field: user.ProjectRole project_role = 1;
+     */
+    projectRole: ProjectRole; // project_role
+}
 // responses
 
 /**
@@ -109,6 +120,29 @@ export interface UserResponse {
          * @generated from protobuf field: user.User user = 2;
          */
         user: User;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message router.UsersResponse
+ */
+export interface UsersResponse {
+    /**
+     * @generated from protobuf oneof: response
+     */
+    response: {
+        oneofKind: "err";
+        /**
+         * @generated from protobuf field: router.Error err = 1;
+         */
+        err: Error;
+    } | {
+        oneofKind: "users";
+        /**
+         * @generated from protobuf field: user.Users users = 2;
+         */
+        users: Users;
     } | {
         oneofKind: undefined;
     };
@@ -542,6 +576,53 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
  */
 export const SearchRequest = new SearchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UsersRequest$Type extends MessageType<UsersRequest> {
+    constructor() {
+        super("router.UsersRequest", [
+            { no: 1, name: "project_role", kind: "enum", T: () => ["user.ProjectRole", ProjectRole] }
+        ]);
+    }
+    create(value?: PartialMessage<UsersRequest>): UsersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.projectRole = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UsersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UsersRequest): UsersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* user.ProjectRole project_role */ 1:
+                    message.projectRole = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UsersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* user.ProjectRole project_role = 1; */
+        if (message.projectRole !== 0)
+            writer.tag(1, WireType.Varint).int32(message.projectRole);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.UsersRequest
+ */
+export const UsersRequest = new UsersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UserResponse$Type extends MessageType<UserResponse> {
     constructor() {
         super("router.UserResponse", [
@@ -601,6 +682,66 @@ class UserResponse$Type extends MessageType<UserResponse> {
  * @generated MessageType for protobuf message router.UserResponse
  */
 export const UserResponse = new UserResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UsersResponse$Type extends MessageType<UsersResponse> {
+    constructor() {
+        super("router.UsersResponse", [
+            { no: 1, name: "err", kind: "message", oneof: "response", T: () => Error },
+            { no: 2, name: "users", kind: "message", oneof: "response", T: () => Users }
+        ]);
+    }
+    create(value?: PartialMessage<UsersResponse>): UsersResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.response = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<UsersResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UsersResponse): UsersResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* router.Error err */ 1:
+                    message.response = {
+                        oneofKind: "err",
+                        err: Error.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).err)
+                    };
+                    break;
+                case /* user.Users users */ 2:
+                    message.response = {
+                        oneofKind: "users",
+                        users: Users.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).users)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UsersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* router.Error err = 1; */
+        if (message.response.oneofKind === "err")
+            Error.internalBinaryWrite(message.response.err, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* user.Users users = 2; */
+        if (message.response.oneofKind === "users")
+            Users.internalBinaryWrite(message.response.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message router.UsersResponse
+ */
+export const UsersResponse = new UsersResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserIDResponse$Type extends MessageType<UserIDResponse> {
     constructor() {
@@ -1189,6 +1330,7 @@ export const RoleResponse = new RoleResponse$Type();
 export const Router = new ServiceType("router.Router", [
     { name: "GetPersonalInfo", options: {}, I: WithoutParameters, O: UserResponse },
     { name: "GetUser", options: {}, I: UserID, O: UserResponse },
+    { name: "GetUsers", options: {}, I: UsersRequest, O: UsersResponse },
     { name: "InsertUser", options: {}, I: UserInfo, O: UserResponse },
     { name: "UpdateUser", options: {}, I: User, O: SuccessResponse },
     { name: "AuthorizeUser", options: {}, I: AuthorizationRequest, O: UserIDResponse },

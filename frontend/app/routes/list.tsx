@@ -41,7 +41,7 @@ function Body() {
     );
 }
 
-export default function List() {
+export default function StudorgsList() {
     const [authInfo, setAuthInfo] = useState(AuthInfo.create())
     useEffect(() => {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
