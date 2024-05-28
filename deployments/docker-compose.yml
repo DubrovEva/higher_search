@@ -19,10 +19,10 @@ services:
       - database
     ports:
       - "8080:8080"
-#  frontend:
-#    build:
-#      context: ../frontend/
-#    ports:
-#      - "80:3000"
+  frontend:
+    build:
+      context: ../frontend/
+    ports:
+      - "80:3000"
 volumes:
   pg_data: {}
