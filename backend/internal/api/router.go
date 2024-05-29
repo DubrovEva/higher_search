@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -325,7 +324,7 @@ func (r *Router) GetPersonalStudorgRole(ctx context.Context, studorgID *proto.St
 
 	result, err := r.User2Studorg.Get(participant)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, models.ErrParticipantNotFound) {
 			return &service.RoleResponse{Role: proto.StudorgRole_NOT_PARTICIPANT}, nil
 		}
 		return nil, fmt.Errorf("failed to get user role in studorg: %w", err)

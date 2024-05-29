@@ -46,7 +46,7 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
         <>
             <Segment>
                 <Header size="huge">
-                    {params.authInfo.isAuth && <UserInStudorgButton studorgID={params.studorgID}/>}
+                    <UserInStudorgButton studorgID={params.studorgID}/>
                     {params.studorgInfo.name}
 
                 </Header>
