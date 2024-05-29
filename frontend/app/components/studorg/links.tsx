@@ -14,7 +14,7 @@ import {v4 as uuidv4} from "uuid";
 
 export function LinksView(params: { links: Link[] }) {
     return (
-        <Segment basic floated={"right"}>
+        <Segment basic>
             <ButtonGroup labeled vertical icon>
                 {params.links.map((link) => <LinkButton link={link} compact={false}/>)}
             </ButtonGroup>
