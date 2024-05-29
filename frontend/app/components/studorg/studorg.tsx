@@ -141,7 +141,7 @@ function RoleToLabel(params: {role: StudorgRole}) {
 }
 
 function ModerationStatusToLabel(params: {status: ModerationStatus}) {
-    if (params.status == ModerationStatus.HIDDEN) {
+    if (params.status == ModerationStatus.HIDDEN_BY_MODERATOR) {
         return <Label color="red" basic> Скрыта модератором </Label>
     }
 }

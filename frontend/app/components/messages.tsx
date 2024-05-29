@@ -37,6 +37,19 @@ export function NoRightsMessage() {
     </Message>
 }
 
+export const OrgHiddenByModeratorMessage = () => (
+    <Message
+        warning
+        header='Организация скрыта модератором'
+    />
+)
+
+export const OrgHiddenByHeadMessage = () => (
+    <Message
+        warning
+        header='Организация скрыта главой организации'
+    />
+)
 
 export const NoOrganizationsMessage = () => (
     <Message>

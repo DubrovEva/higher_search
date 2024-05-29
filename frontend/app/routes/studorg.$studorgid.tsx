@@ -6,16 +6,18 @@ import {Button, Container, Divider, Grid, GridColumn, Header, Label, Segment} fr
 import React, {useEffect, useState} from "react";
 import {FixedMenu} from "~/components/menu";
 import Client from "~/client";
-import {ModerationStatus, StudorgID, StudorgInfo} from "~/proto/models/studorg";
+import {ModerationStatus, StudorgID, StudorgInfo, StudorgRole} from "~/proto/models/studorg";
 import {useParams} from "react-router";
 import {AuthInfo} from "~/proto/models/user";
-import {LoadingMessage} from "~/components/messages";
+import {LoadingMessage, OrgHiddenByHeadMessage, OrgHiddenByModeratorMessage} from "~/components/messages";
 import {LinksView} from "~/components/studorg/links";
 import {faculty} from "~/components/studorg/faculty";
 import {language} from "~/components/studorg/language";
 import {campus} from "~/components/studorg/campus";
-import {Moderation, OrgHiddenMessage} from "~/components/moderation";
+import {Moderation} from "~/components/moderation";
 import {Admins} from "~/components/studorg/admins";
+import {TagsView} from "~/components/studorg/tags";
+import {UserInStudorgButton} from "~/components/studorg/buttons";
 
 export const meta: MetaFunction = () => {
     return [
@@ -28,31 +30,12 @@ export const links: LinksFunction = () => [
     {rel: "stylesheet", href: styles},
 ];
 
-function UserInStudorgButton(params: { studorgID: StudorgID }) {
-    const [isUserInStudorg, setIsUserInStudorg] = useState(false)
-
-    Client.getInstance().checkUserInStudorg(params.studorgID).then(check => setIsUserInStudorg(check))
-
-    const addUserToStudorg = async () => {
-        await Client.getInstance().addUserToStudorg(params.studorgID)
-        setIsUserInStudorg(true)
-    }
-    const deleteUserFromStudorg = async () => {
-        await Client.getInstance().deleteUserFromStudorg(params.studorgID)
-        setIsUserInStudorg(false)
-    }
-
-    if (isUserInStudorg) {
-        return <Button floated={"right"} basic onClick={deleteUserFromStudorg}> Покинуть организацию </Button>
-    }
-    return (
-        <Button floated={"right"} basic onClick={addUserToStudorg}> Вступить в организацию </Button>
-    )
-}
-
 function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: StudorgID, authInfo: AuthInfo }) {
-    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN) {
-        return <OrgHiddenMessage/>
+    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN_BY_MODERATOR) {
+        return <OrgHiddenByModeratorMessage/>
+    }
+    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN_BY_HEAD) {
+        return <OrgHiddenByHeadMessage/>
     }
 
     const currentCampus = campus.find(x => x.value === params.studorgInfo.campus)?.text
@@ -87,11 +70,12 @@ function OrganizationInfo(params: { studorgInfo: StudorgInfo, studorgID: Studorg
 
 
             <Grid columns={2} container inverted>
-                <GridColumn width={6}>
-                    <LinksView links={params.studorgInfo.links!}/>
+                <GridColumn width={5}>
+                    <TagsView tags={params.studorgInfo.tags!}/>
                 </GridColumn>
                 <GridColumn width={10} floated={"right"}>
                     <Admins studorgID={params.studorgID}/>
+                    <LinksView links={params.studorgInfo.links!}/>
                 </GridColumn>
             </Grid>
 

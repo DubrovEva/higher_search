@@ -53,8 +53,9 @@ enum StudorgStatus {
 enum ModerationStatus {
   OTHER_MODERATION_STATUS = 0;
   NOT_MODERATED = 1;
-  HIDDEN = 2;
-  APPROVED = 3;
+  HIDDEN_BY_MODERATOR = 2;
+  HIDDEN_BY_HEAD = 3;
+  APPROVED = 4;
 }
 
 enum StudorgRole {
@@ -62,7 +63,8 @@ enum StudorgRole {
   HEAD = 1;
   ORGANIZER = 2;
   PARTICIPANT = 3;
-  UNKNOWN = 4;
+  NOT_PARTICIPANT = 4;
+  UNKNOWN = 5;
 }
 
 message Contact {

@@ -97,6 +97,7 @@ function PersonalInfo(params: { userID: UserID, userInfo: UserInfo | undefined, 
                                 fluid
                                 label="Пол"
                                 options={gender}
+                                width={5}
                                 placeholder='Пол'
                                 value={params.userInfo.gender}
                                 onChange={handleUpdate("gender")}

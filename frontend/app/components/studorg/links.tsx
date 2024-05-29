@@ -14,7 +14,7 @@ import {v4 as uuidv4} from "uuid";
 
 export function LinksView(params: { links: Link[] }) {
     return (
-        <Segment basic>
+        <Segment basic floated={"right"}>
             <ButtonGroup labeled vertical icon>
                 {params.links.map((link) => <LinkButton link={link} compact={false}/>)}
             </ButtonGroup>
@@ -61,7 +61,7 @@ export function LinkForm(params: { links: Link[], id: string, setLinks: (links: 
                    width={8}
         />
         <FormInput required
-                   placeholder='Cсылка на источник'
+                   placeholder='Cсылка на источник: https://example/ru'
                    value={link.value}
                    onChange={handleUpdate("value")}
                    width={8}

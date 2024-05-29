@@ -55,7 +55,7 @@ type Filter<T, F> = {
 };
 
 function ModerationStatusView(params: { studorgInfo: StudorgInfo }) {
-    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN) {
+    if (params.studorgInfo.moderationStatus === ModerationStatus.HIDDEN_BY_MODERATOR) {
         return <OrgHiddenMessageFullInfo studorgInfo={params.studorgInfo}/>
     }
 }

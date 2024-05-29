@@ -10,7 +10,7 @@ import (
 func ProtoRequestToQuery(request *service.SearchRequest) string {
 	var conditions []string
 
-	conditions = append(conditions, fmt.Sprintf("NOT moderation_status = %d", int64(proto.ModerationStatus_HIDDEN)))
+	conditions = append(conditions, fmt.Sprintf("NOT moderation_status = %d", int64(proto.ModerationStatus_HIDDEN_BY_MODERATOR)))
 
 	if request.Faculty != proto.Faculty_OTHER_FACULTY {
 		conditions = append(conditions, fmt.Sprintf("Studorgs.Faculty = %d", int64(request.Faculty)))

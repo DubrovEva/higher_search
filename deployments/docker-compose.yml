@@ -5,8 +5,6 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data/pgdata
       - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
-    ports:
-      - "5432:5432"
     env_file: .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
@@ -19,10 +17,12 @@ services:
       - database
     ports:
       - "8080:8080"
+    restart: always
   frontend:
     build:
       context: ../frontend/
     ports:
       - "80:3000"
+    restart: always
 volumes:
   pg_data: {}

@@ -163,13 +163,17 @@ export enum ModerationStatus {
      */
     NOT_MODERATED = 1,
     /**
-     * @generated from protobuf enum value: HIDDEN = 2;
+     * @generated from protobuf enum value: HIDDEN_BY_MODERATOR = 2;
      */
-    HIDDEN = 2,
+    HIDDEN_BY_MODERATOR = 2,
     /**
-     * @generated from protobuf enum value: APPROVED = 3;
+     * @generated from protobuf enum value: HIDDEN_BY_HEAD = 3;
      */
-    APPROVED = 3
+    HIDDEN_BY_HEAD = 3,
+    /**
+     * @generated from protobuf enum value: APPROVED = 4;
+     */
+    APPROVED = 4
 }
 /**
  * @generated from protobuf enum studorg.StudorgRole
@@ -192,9 +196,13 @@ export enum StudorgRole {
      */
     PARTICIPANT = 3,
     /**
-     * @generated from protobuf enum value: UNKNOWN = 4;
+     * @generated from protobuf enum value: NOT_PARTICIPANT = 4;
      */
-    UNKNOWN = 4
+    NOT_PARTICIPANT = 4,
+    /**
+     * @generated from protobuf enum value: UNKNOWN = 5;
+     */
+    UNKNOWN = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StudorgID$Type extends MessageType<StudorgID> {

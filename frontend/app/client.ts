@@ -255,7 +255,7 @@ export default class Client {
             studorg.studorgInfo = StudorgInfo.create()
         }
 
-        studorg.studorgInfo.moderationStatus = ModerationStatus.HIDDEN
+        studorg.studorgInfo.moderationStatus = ModerationStatus.HIDDEN_BY_MODERATOR
 
         const response = await this.router.moderateStudorg(studorg).response
 

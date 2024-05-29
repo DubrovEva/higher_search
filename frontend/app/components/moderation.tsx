@@ -88,19 +88,12 @@ export const Moderation = (params: {
 }
 
 function HideOrShowFormButton(params: { status: ModerationStatus, hide: () => void, show: () => void }) {
-    if (params.status == ModerationStatus.HIDDEN) {
+    if (params.status == ModerationStatus.HIDDEN_BY_MODERATOR) {
         return <Button fluid onClick={params.show}> Сделать организацию видимой </Button>
     }
 
     return <Button fluid onClick={params.hide}> Скрыть организацию </Button>
 }
-
-export const OrgHiddenMessage = () => (
-    <Message
-        warning
-        header='Организация скрыта модератором'
-    />
-)
 
 export const OrgHiddenMessageFullInfo = (params: {studorgInfo: StudorgInfo}) => (
     <Message error>

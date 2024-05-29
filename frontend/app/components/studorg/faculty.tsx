@@ -32,6 +32,7 @@ export function FacultyForm(params: {onChange: any, value: Faculty}) {
         <FormSelect
             fluid
             label="Факультет"
+            width={11}
             options={faculty}
             onChange={params.onChange}
             value={params.value}
