@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -179,10 +178,6 @@ func (r *Router) AuthorizeUser(
 func (r *Router) IsAuth(ctx context.Context, _ *service.WithoutParameters) (*proto.AuthInfo, error) {
 	userID, err := r.JwtManager.ValidateAuthorization(ctx)
 	if err != nil {
-		if errors.Is(err, models.ErrNoMetadata) {
-			return nil, err
-		}
-
 		return &proto.AuthInfo{IsAuth: false}, nil
 	}
 

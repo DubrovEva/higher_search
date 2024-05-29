@@ -50,6 +50,9 @@ func (j *JWTManagerImpl) ValidateAuthorization(ctx context.Context) (*proto.User
 	}
 
 	cookie := md.Get("Cookie")
+	if len(cookie) == 0 {
+		return nil, models.ErrNoCookie
+	}
 
 	userID, err := j.VerifyJWT(cookie[0])
 	if err != nil {
