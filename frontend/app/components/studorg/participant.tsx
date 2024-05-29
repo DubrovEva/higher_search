@@ -75,12 +75,12 @@ function AdminButton(params: {participant: Participant}) {
 
     const makeAdmin = () => {
         params.participant.role = StudorgRole.ORGANIZER
-        Client.getInstance().updateParticipant(params.participant).then(result =>console.log(result))
+        Client.getInstance().updateParticipant(params.participant).then()
     }
 
     const makeParticipant = () => {
         params.participant.role = StudorgRole.PARTICIPANT
-        Client.getInstance().updateParticipant(params.participant).then(result =>console.log(result))
+        Client.getInstance().updateParticipant(params.participant).then()
     }
 
     if (params.participant.role === StudorgRole.ORGANIZER) {

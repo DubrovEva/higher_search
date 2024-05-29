@@ -21,6 +21,7 @@ import {
 } from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
+import { v4 as uuidv4 } from 'uuid';
 import {CustomFooter} from "~/components/footer";
 import {FixedMenuForAccount} from "~/components/menu";
 import {gender} from "~/components/options";
@@ -29,7 +30,7 @@ import {AuthInfo, UserID, UserInfo} from "~/proto/models/user";
 import {UserOrgCards} from "~/components/studorg/studorg";
 import {Studorg} from "~/proto/models/studorg";
 import {UserCard} from "~/components/user";
-import {LoadingMessage, NoRightsMessage, SavedMessage} from "~/components/messages";
+import {SavedMessage} from "~/components/messages";
 import {FacultyForm} from "~/components/studorg/faculty";
 import {Link} from "~/proto/models/common";
 import {LinkForm} from "~/components/studorg/links";
@@ -136,7 +137,7 @@ function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInf
 
     const addLink = (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        setLinks(links!.concat({id: crypto.randomUUID()} as Link))
+        setLinks(links!.concat({id: uuidv4()} as Link))
     }
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -191,7 +192,6 @@ export default function ViewUser() {
     useEffect(() => {
         Client.getInstance().authInfo().then(info => setAuthInfo(info))
     }, [])
-    console.log(authInfo)
 
     if (authInfo === undefined) {
         return <></>

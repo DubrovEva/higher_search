@@ -273,9 +273,6 @@ func (r *Router) UpdateStudorg(_ context.Context, protoStudorg *proto.Studorg) (
 		return nil, fmt.Errorf("failed to convert protoStudorg to dbStudorg: %w", err)
 	}
 
-	fmt.Println("successed convertion")
-	fmt.Println(studorgDB)
-
 	if err = r.Studorg.Update(studorgDB); err != nil {
 		return nil, fmt.Errorf("failed to update studorg in db: %w", err)
 	}

@@ -10,6 +10,7 @@ import {
     SemanticCOLORS
 } from "semantic-ui-react";
 import React from "react";
+import {v4 as uuidv4} from "uuid";
 
 export function LinksView(params: { links: Link[] }) {
     return (
@@ -24,7 +25,7 @@ export function LinksView(params: { links: Link[] }) {
 export function LinksForm(params: { links: Link[], setLinks: (links: Link[]) => void }) {
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        params.setLinks(params.links.concat({id: crypto.randomUUID()} as Link))
+        params.setLinks(params.links.concat({id: uuidv4()} as Link))
     }
 
     return <Segment>

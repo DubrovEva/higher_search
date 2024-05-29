@@ -66,7 +66,8 @@ function StudorgInfoForm(params: { studorgID: StudorgID, studorgInfo: StudorgInf
 
     if (links === undefined && params.studorgInfo) {
         setLinks(params.studorgInfo.links)
-    } else if (links === undefined) {
+    }
+    if (links === undefined) {
         return <></>
     }
 
@@ -157,7 +158,6 @@ function Participants(params: { studorgID: StudorgID, onlyOrganizers: boolean })
 function AllInfo(params: { studorgID: StudorgID }) {
     const [state, setState] = useState("info")
     const [isOrg, setIsOrg] = useState<boolean | undefined>(undefined)
-    const [tabActive, setTabActive] = useState(false)
     const [studorgInfo, setStudorgInfo] = useState<StudorgInfo | undefined>(
         undefined
     )
