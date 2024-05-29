@@ -130,7 +130,7 @@ function ContactInfo(params: { userID: UserID, userInfo: UserInfo, updateUserInf
     const [saved, saveInfo] = useState(false)
     const [links, setLinks] = useState<Link[] | undefined>(undefined)
 
-    if (links === undefined && params.userInfo.links.length !== 0) {
+    if (links === undefined && params.userInfo) {
         setLinks(params.userInfo.links)
     }
 

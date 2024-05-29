@@ -64,7 +64,7 @@ function StudorgInfoForm(params: { studorgID: StudorgID, studorgInfo: StudorgInf
     const [saved, saveInfo] = useState(false)
     const [links, setLinks] = useState<Link[] | undefined>(undefined)
 
-    if (links === undefined && params.studorgInfo && params.studorgInfo.links !== undefined) {
+    if (links === undefined && params.studorgInfo) {
         setLinks(params.studorgInfo.links)
     } else if (links === undefined) {
         return <></>
@@ -112,7 +112,7 @@ function StudorgInfoForm(params: { studorgID: StudorgID, studorgInfo: StudorgInf
                           placeholder='Полное описание организации, будет отображено на отдельной странице.'
                           {...editable('description')}/>
 
-            <LinksForm links={links!} setLinks={setLinks}/>
+            <LinksForm links={links} setLinks={setLinks}/>
 
             <TagsForm onChange={handleUpdate("tags")} value={params.studorgInfo.tags}/>
 
