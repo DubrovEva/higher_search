@@ -183,7 +183,7 @@ func (r *Router) IsAuth(ctx context.Context, _ *service.WithoutParameters) (*pro
 
 	userDB, err := r.User.Get(userID.GetID())
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user from db: %w", err)
+		return &proto.AuthInfo{IsAuth: false}, nil
 	}
 
 	return &proto.AuthInfo{IsAuth: true, UserID: userID, AbleToModerate: userDB.AbleToModerate()}, nil
