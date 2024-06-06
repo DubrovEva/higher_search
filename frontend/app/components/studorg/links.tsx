@@ -14,7 +14,7 @@ import {v4 as uuidv4} from "uuid";
 
 export function LinksView(params: { links: Link[] }) {
     return (
-        <Segment basic floated={"right"}>
+        <Segment basic textAlign={"center"}>
             <ButtonGroup labeled vertical icon>
                 {params.links.map((link) => <LinkButton link={link} compact={false}/>)}
             </ButtonGroup>
@@ -28,7 +28,7 @@ export function LinksForm(params: { links: Link[], setLinks: (links: Link[]) => 
         params.setLinks(params.links.concat({id: uuidv4()} as Link))
     }
 
-    return <Segment>
+    return <Segment >
         <Header as={"h5"}> Ссылки на внешние источники </Header>
 
         {params.links.map((link) => <LinkForm id={link.id} links={params.links} setLinks={params.setLinks}/>)}

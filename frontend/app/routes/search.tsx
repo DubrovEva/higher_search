@@ -3,13 +3,7 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/account.css?url";
 
-import {
-    Container,
-    FormButton,
-    FormGroup,
-    Header,
-    Form, FormDropdown, Segment
-} from "semantic-ui-react";
+import {Container, Divider, Form, FormButton, FormDropdown, FormGroup, Header, Segment} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 
 import {CustomFooter} from "~/components/footer";
@@ -19,7 +13,6 @@ import Client from "~/client";
 import {SearchRequest} from "~/proto/api/router";
 import {Studorg,} from "~/proto/models/studorg";
 import {OrgCards} from "~/components/studorg/studorg";
-import {LoadingMessage} from "~/components/messages";
 import {FacultyForm} from "~/components/studorg/faculty";
 import {LanguageForm} from "~/components/studorg/language";
 import {CampusForm} from "~/components/studorg/campus";
@@ -55,42 +48,45 @@ function SearchParams() {
     return (
         <>
             <Segment secondary>
-            <Header size={"huge"}> Поиск студенческой организации </Header>
-        <Form onSubmit={handleSubmit}>
+                <Header size={"huge"}> Поиск студенческой организации </Header>
+                <Form onSubmit={handleSubmit}>
 
-            <FormGroup widths="equal">
+                    <FormGroup widths="equal">
 
-                <CampusForm value={searchRequest.campus} onChange={handleUpdate("campus")}/>
+                        <CampusForm value={searchRequest.campus} onChange={handleUpdate("campus")}/>
 
-                <FacultyForm value={searchRequest.faculty} onChange={handleUpdate("faculty")}/>
+                        <FacultyForm value={searchRequest.faculty} onChange={handleUpdate("faculty")}/>
 
-                <LanguageForm value={searchRequest.language} onChange={handleUpdate("language")}/>
+                        <LanguageForm value={searchRequest.language} onChange={handleUpdate("language")}/>
 
 
-            </FormGroup>
-            <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection
-                          options={category}
-                          value={searchRequest.tags}
-                          onChange={handleUpdate("tags")}
-            />
+                    </FormGroup>
+                    <FormDropdown label={"Категории"} placeholder='Категории' fluid multiple selection
+                                  options={category}
+                                  value={searchRequest.tags}
+                                  onChange={handleUpdate("tags")}
+                    />
 
-            <FormButton> Искать </FormButton>
-        </Form>
-        </Segment>
+                    <Divider horizontal/>
+                    <FormButton> Искать </FormButton>
+                </Form>
+            </Segment>
             {studorgs === undefined ? OrgCardsPlaceholder : <Result studorgs={studorgs}/>}
         </>
     );
 }
 
-function Result(params: {studorgs: Studorg[]}) {
+function Result(params: { studorgs: Studorg[] }) {
     if (params.studorgs === null) {
         return <></>
     }
 
     return (
-        <Segment basic>
-            <OrgCards studorgs={params.studorgs}/>
-        </Segment>
+        <>
+            <Segment basic>
+                <OrgCards studorgs={params.studorgs}/>
+            </Segment>
+        </>
     )
 
 }
@@ -105,7 +101,7 @@ export default function Search() {
         <>
             <FixedMenu authInfo={authInfo}/>
 
-            <Container text className={"main"}  >
+            <Container text className={"main"}>
                 <SearchParams/>
             </Container>
 

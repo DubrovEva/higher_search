@@ -38,7 +38,7 @@ func ProtoRequestToQuery(request *service.SearchRequest) string {
 	if len(conditions) != 0 {
 		queryConditions = " WHERE " + strings.Join(conditions, " AND ")
 	}
-	query := `SELECT * FROM studorgs` + queryConditions
+	query := `SELECT * FROM studorgs` + queryConditions + `ORDER BY name`
 
 	return query
 }

@@ -2,7 +2,6 @@ import type {LinksFunction, MetaFunction} from "@remix-run/node";
 
 import semanticStyles from "semantic-ui-css/semantic.min.css?url";
 import styles from "~/styles/index.css?url";
-import {useNavigate} from "react-router-dom";
 
 import {
     Button,
@@ -94,7 +93,7 @@ function HeaderOfPage(props: { toggleSidebar: () => void }) {
                 <h2>Сервис для поиска студенческих организаций Высшей Школы Экономики</h2>
 
 
-                <Button size="huge" primary href={"/search"}> Поиск <i className="right arrow icon"> </i></Button>
+                <Button size="huge" primary href={"/search"}> Поиск <Icon name="arrow right"/> </Button>
             </Container>
 
         </Segment>

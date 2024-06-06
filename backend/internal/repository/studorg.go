@@ -46,7 +46,7 @@ func (s *Studorg) Get(studorgID int64) (*models.StudorgDB, error) {
 
 func (s *Studorg) GetAll() ([]models.StudorgDB, error) {
 	var studorgs []models.StudorgDB
-	err := s.db.Select(&studorgs, "SELECT * FROM studorgs WHERE NOT moderation_status IN ($1, $2)", int64(proto.ModerationStatus_HIDDEN_BY_MODERATOR), int64(proto.ModerationStatus_HIDDEN_BY_HEAD))
+	err := s.db.Select(&studorgs, "SELECT * FROM studorgs WHERE NOT moderation_status IN ($1, $2) ORDER BY name", int64(proto.ModerationStatus_HIDDEN_BY_MODERATOR), int64(proto.ModerationStatus_HIDDEN_BY_HEAD))
 	if err != nil {
 		// TODO: обрабатывать "sql: no rows in result set" и прочие ошибки
 		// TODO: логи и завертывание ошибок
