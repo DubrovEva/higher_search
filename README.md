@@ -2,6 +2,8 @@
 
 Приложение для навигации в студенческих организациях Высшей Школы Экономики.
 
+[Демонстрация](https://drive.google.com/file/d/1LmxBtdD1PVRjHaWdU64ul6usvQLFM-RV/view?usp=drive_link)
+
 ###  Запуск 
 
 Из директории deployments: ```docker compose up --build```  
